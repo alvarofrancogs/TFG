@@ -1,0 +1,57 @@
+spring:
+  application:
+    name: oasisclub-backend
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    validate-on-migrate: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+
+server:
+  port: ${PORT:8080}
+  
+  
+  forward-headers-strategy: framework
+
+springdoc:
+  
+  api-docs:
+    enabled: ${SWAGGER_ENABLED:true}
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLED:true}
+    path: /swagger-ui.html
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: 86400000
+  cors:
+    allowed-origins: ${CORS_ORIGINS:https://tfg-mocha.vercel.app,http://localhost:4200,http://127.0.0.1:4200,http://localhost:4300,http://127.0.0.1:4300}
+  frontend-url: ${FRONTEND_URL:https://tfg-mocha.vercel.app}
+  mail:
+    override-to: ${MAIL_OVERRIDE_TO:}
+  stripe:
+    secret-key: ${STRIPE_SECRET_KEY:}
+    webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
