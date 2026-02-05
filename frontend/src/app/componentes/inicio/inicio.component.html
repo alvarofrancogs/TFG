@@ -1,0 +1,116 @@
+<div class="min-h-screen bg-white">
+
+  
+  <section class="home-hero" aria-label="Oasis Club">
+    
+    <div class="home-hero__media">
+      <img ngSrc="images/home-hero-ultrareal.png" alt="Interior premium de Oasis Club" class="home-hero__image" fill priority>
+      
+      <div class="home-hero__mobile-overlay">
+        <h1 class="home-hero__mobile-title" aria-hidden="true">
+          Vive el <span class="italic">deporte.</span>
+        </h1>
+      </div>
+    </div>
+
+    <div class="home-hero__content">
+      <div class="home-hero__copy">
+        <h1 class="home-hero__desktop-title leading-[1.1] font-normal text-gray-900 mb-4"
+          style="font-family: 'Playfair Display', serif; font-size: clamp(3.5rem, 8vw, 7rem);">
+          Vive el
+          <span class="italic text-[#0B2118]">deporte.</span>
+        </h1>
+        <p class="text-[15px] lg:text-[17px] font-light text-gray-500 leading-relaxed mb-6 max-w-sm">
+          Pádel, fútbol y gimnasio en un mismo club.
+          Reserva, juega y repite.
+        </p>
+        <a routerLink="/quienes-somos"
+          class="inline-flex items-center gap-2 text-[12px] font-semibold tracking-[0.15em] uppercase text-emerald-950 border border-emerald-950/30 px-6 py-3 hover:bg-emerald-950 hover:text-white transition-all duration-300">
+          Quiénes Somos
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  
+  <div class="sports-section">
+    <div class="max-w-screen-2xl mx-auto px-5 lg:px-12">
+      <div class="sports-layout">
+
+      
+      <div class="sports-header">
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-3">Nuestras instalaciones</p>
+        <h2 class="text-emerald-950 leading-[1.1] mb-3"
+          style="font-family: 'Playfair Display', serif; font-size: clamp(1.75rem, 5vw, 3rem);">
+          Elige tu deporte<br>
+          <span class="italic">y a jugar.</span>
+        </h2>
+        <div class="w-10 h-[2px] bg-[#0B2118] mb-4"></div>
+        <p class="text-[14px] font-light text-gray-500 leading-relaxed max-w-xs lg:max-w-sm">
+          Tres espacios, un mismo objetivo: que vengas, disfrutes y repitas.
+        </p>
+      </div>
+
+      
+      <div class="sports-cards-wrapper">
+        <div class="sports-cards">
+
+          <a routerLink="/instalaciones/padel" class="sport-card group">
+            <img ngSrc="images/sport-padel-ultrareal.png" alt="Pádel"
+              class="sport-card__img transition-transform duration-500 group-hover:scale-105" fill>
+            <div class="sport-card__overlay group-hover:bg-[#0B2118]/20 transition-colors duration-500"></div>
+            <div class="sport-card__info">
+              <h3 class="text-base font-medium mb-0.5">Pádel</h3>
+              <p class="text-xs font-light opacity-90">Reserva tu pista y juega</p>
+              <span class="sport-card__cta">
+                Descubrir
+                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </span>
+            </div>
+          </a>
+
+          <a routerLink="/instalaciones/futbol" class="sport-card group">
+            <img ngSrc="images/sport-futbol-ultrareal.png" alt="Fútbol"
+              class="sport-card__img transition-transform duration-500 group-hover:scale-105" fill>
+            <div class="sport-card__overlay group-hover:bg-[#0B2118]/20 transition-colors duration-500"></div>
+            <div class="sport-card__info">
+              <h3 class="text-base font-medium mb-0.5">Fútbol</h3>
+              <p class="text-xs font-light opacity-90">Partidos con tus colegas</p>
+              <span class="sport-card__cta">
+                Descubrir
+                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </span>
+            </div>
+          </a>
+
+          <a routerLink="/instalaciones/gimnasio" class="sport-card group">
+            <img ngSrc="images/sport-gimnasio-ultrareal.png" alt="Fitness"
+              class="sport-card__img transition-transform duration-500 group-hover:scale-105" fill>
+            <div class="sport-card__overlay group-hover:bg-[#0B2118]/20 transition-colors duration-500"></div>
+            <div class="sport-card__info">
+              <h3 class="text-base font-medium mb-0.5">Fitness</h3>
+              <p class="text-xs font-light opacity-90">Entrena sin excusas</p>
+              <span class="sport-card__cta">
+                Descubrir
+                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </span>
+            </div>
+          </a>
+
+        </div>
+        
+        <p class="sports-scroll-hint">Desliza para ver más →</p>
+      </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
