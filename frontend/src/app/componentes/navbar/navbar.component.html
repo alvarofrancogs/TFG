@@ -1,0 +1,186 @@
+<nav class="fixed w-full z-50 bg-white border-b border-gray-100 transition-opacity duration-200"
+  [class.hidden]="isAdmin"
+  [class.opacity-0]="isMobileMenuOpen()"
+  [class.pointer-events-none]="isMobileMenuOpen()">
+  <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+    <div class="flex justify-between items-center h-20 md:h-24">
+      <a routerLink="/" class="text-xl md:text-2xl tracking-tighter text-emerald-950">
+        OASIS<span class="font-bold">CLUB</span>
+      </a>
+
+      <div class="hidden md:flex space-x-12 relative" #desktopLinks>
+        <a routerLink="/" routerLinkActive="nav-link--active"
+          [routerLinkActiveOptions]="{exact: true}"
+          class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
+          Inicio
+        </a>
+        <a routerLink="/quienes-somos" routerLinkActive="nav-link--active"
+          class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors cursor-pointer">
+          Quiénes Somos
+        </a>
+        <a routerLink="/eventos" routerLinkActive="nav-link--active"
+          class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
+          Eventos
+        </a>
+        <a routerLink="/contacto" routerLinkActive="nav-link--active"
+          class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
+          Contacto
+        </a>
+        @if (auth.isLoggedIn()) {
+          <a routerLink="/reservar" routerLinkActive="nav-link--active"
+            class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
+            Reservar
+          </a>
+          <a routerLink="/gimnasio" routerLinkActive="nav-link--active"
+            class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
+            Gimnasio
+          </a>
+          <a routerLink="/perfil" routerLinkActive="nav-link--active"
+            class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
+            Mi Área
+          </a>
+        }
+
+        <span #navIndicator class="nav-indicator"
+          [style.left]="indicatorStyle().left"
+          [style.width]="indicatorStyle().width"
+          [style.opacity]="indicatorStyle().opacity"></span>
+      </div>
+
+      <div class="flex items-center">
+        @if (auth.isLoggedIn()) {
+          <a routerLink="/perfil"
+            class="hidden md:block text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors mr-6">
+            Perfil
+          </a>
+          <div class="hidden md:block h-6 w-px bg-gray-200 mr-6"></div>
+          <button (click)="logout()"
+            class="hidden md:block bg-[#0B2118] text-white text-[13px] font-medium px-6 py-2.5 hover:bg-emerald-900 transition-colors">
+            Salir
+          </button>
+        } @else {
+          <a routerLink="/login"
+            class="hidden md:block text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors mr-6">
+            Acceder
+          </a>
+          <div class="hidden md:block h-6 w-px bg-gray-200 mr-6"></div>
+          <a routerLink="/registro"
+            class="hidden md:block bg-[#0B2118] text-white text-[13px] font-medium px-6 py-2.5 hover:bg-emerald-900 transition-colors">
+            Hazte socio
+          </a>
+        }
+
+        <button (click)="isMobileMenuOpen.set(!isMobileMenuOpen())"
+          class="md:hidden p-2 ml-4 text-emerald-950 relative w-10 h-10 flex items-center justify-center"
+          aria-controls="mobile-menu"
+          [attr.aria-expanded]="isMobileMenuOpen()"
+          [attr.aria-label]="isMobileMenuOpen() ? 'Cerrar menú' : 'Abrir menú'">
+          <span class="hamburger" [class.hamburger--open]="isMobileMenuOpen()" aria-hidden="true">
+            <span class="hamburger__line"></span>
+            <span class="hamburger__line"></span>
+            <span class="hamburger__line"></span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<div class="mobile-overlay md:hidden"
+  [class.mobile-overlay--visible]="isMobileMenuOpen()"
+  (click)="isMobileMenuOpen.set(false)"
+  aria-hidden="true"></div>
+
+<aside id="mobile-menu"
+  class="mobile-panel md:hidden"
+  [class.mobile-panel--open]="isMobileMenuOpen()"
+  [attr.inert]="!isMobileMenuOpen() ? '' : null">
+
+  <div class="mobile-panel__header">
+    <a routerLink="/" (click)="isMobileMenuOpen.set(false)" class="text-lg tracking-tighter text-emerald-950">
+      OASIS<span class="font-bold">CLUB</span>
+    </a>
+    <button (click)="isMobileMenuOpen.set(false)" class="mobile-panel__close" aria-label="Cerrar menú">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+
+  <nav class="mobile-panel__nav">
+    <p class="mobile-panel__label">Navegación</p>
+
+    <a routerLink="/" (click)="isMobileMenuOpen.set(false)"
+      routerLinkActive="mobile-link--active" [routerLinkActiveOptions]="{exact: true}"
+      class="mobile-link">
+      <span>Inicio</span>
+      <svg class="mobile-link__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+      </svg>
+    </a>
+    <a routerLink="/quienes-somos" (click)="isMobileMenuOpen.set(false)"
+      routerLinkActive="mobile-link--active" class="mobile-link">
+      <span>Quiénes Somos</span>
+      <svg class="mobile-link__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+      </svg>
+    </a>
+    <a routerLink="/eventos" (click)="isMobileMenuOpen.set(false)"
+      routerLinkActive="mobile-link--active" class="mobile-link">
+      <span>Eventos</span>
+      <svg class="mobile-link__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+      </svg>
+    </a>
+    <a routerLink="/contacto" (click)="isMobileMenuOpen.set(false)"
+      routerLinkActive="mobile-link--active" class="mobile-link">
+      <span>Contacto</span>
+      <svg class="mobile-link__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+      </svg>
+    </a>
+
+    @if (auth.isLoggedIn()) {
+      <p class="mobile-panel__label mobile-panel__label--spaced">Mi cuenta</p>
+      <a routerLink="/reservar" (click)="isMobileMenuOpen.set(false)"
+        routerLinkActive="mobile-link--active" class="mobile-link">
+        <span>Reservar</span>
+        <svg class="mobile-link__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
+      <a routerLink="/gimnasio" (click)="isMobileMenuOpen.set(false)"
+        routerLinkActive="mobile-link--active" class="mobile-link">
+        <span>Gimnasio</span>
+        <svg class="mobile-link__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
+      <a routerLink="/perfil" (click)="isMobileMenuOpen.set(false)"
+        routerLinkActive="mobile-link--active" class="mobile-link">
+        <span>Mi Área</span>
+        <svg class="mobile-link__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
+    }
+  </nav>
+
+  <div class="mobile-panel__footer">
+    @if (auth.isLoggedIn()) {
+      <button (click)="logout()" class="mobile-panel__btn mobile-panel__btn--outline">
+        Cerrar sesión
+      </button>
+    } @else {
+      <a routerLink="/login" (click)="isMobileMenuOpen.set(false)"
+        class="mobile-panel__btn mobile-panel__btn--outline">
+        Acceder
+      </a>
+      <a routerLink="/registro" (click)="isMobileMenuOpen.set(false)"
+        class="mobile-panel__btn mobile-panel__btn--primary">
+        Hazte socio
+      </a>
+    }
+  </div>
+</aside>
