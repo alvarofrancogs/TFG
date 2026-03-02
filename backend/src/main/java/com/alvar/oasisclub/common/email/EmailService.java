@@ -18,4 +18,527 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class EmailService {
+
+  private static final Logger log = LoggerFactory.getLogger(EmailService.class);
+  private static final DateTimeFormatter RESERVATION_DATE_FORMATTER =
+      DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
+  private static final DateTimeFormatter RESERVATION_TIME_FORMATTER =
+      DateTimeFormatter.ofPattern("HH:mm");
+
+  private final JavaMailSender mailSender;
+  private final MailSenderProperties mailSenderProperties;
+
+  @Async
+  public void sendPasswordResetEmail(String toEmail, String resetLink) {
+    String subject = "Oasis Club | Reset Password";
+    String plainText = buildResetEmailText(resetLink);
+    String htmlText = buildResetEmailHtml(resetLink);
+    sendEmail(toEmail, subject, plainText, htmlText, "password-reset");
+  }
+
+  @Async
+  public void sendWelcomeEmail(String toEmail, String userName) {
+    String subject = "Welcome to Oasis Club";
+    String plainText = buildWelcomeEmailText(userName);
+    String htmlText = buildWelcomeEmailHtml(userName);
+    sendEmail(toEmail, subject, plainText, htmlText, "welcome");
+  }
+
+  @Async
+  public void sendReservationConfirmedEmail(
+      String toEmail,
+      String userName,
+      String sport,
+      String courtName,
+      LocalDate date,
+      LocalTime time
+  ) {
+    String subject = "Oasis Club | Reserva confirmada";
+    String plainText = buildReservationConfirmedEmailText(userName, sport, courtName, date, time);
+    String htmlText = buildReservationConfirmedEmailHtml(userName, sport, courtName, date, time);
+    sendEmail(toEmail, subject, plainText, htmlText, "reservation-confirmed");
+  }
+
+  @Async
+  public void sendReservationCancelledEmail(
+      String toEmail,
+      String userName,
+      String sport,
+      String courtName,
+      LocalDate date,
+      LocalTime time
+  ) {
+    String subject = "Oasis Club | Reserva cancelada";
+    String plainText = buildReservationCancelledEmailText(userName, sport, courtName, date, time);
+    String htmlText = buildReservationCancelledEmailHtml(userName, sport, courtName, date, time);
+    sendEmail(toEmail, subject, plainText, htmlText, "reservation-cancelled");
+  }
+
+  @Async
+  public void sendNewsletterConfirmationEmail(String toEmail) {
+    String subject = "Oasis Club | Suscripción a novedades";
+    String plainText = """
+        OASIS CLUB
+
+        Suscripción confirmada
+
+        Gracias por suscribirte a las novedades de Oasis Club.
+        Serás el primero en enterarte de nuevos eventos, torneos y actividades.
+
+        El equipo de Oasis Club.
+        """;
+    String htmlContent = """
+        <div style="text-align: center;">
+          <h2 style="margin: 0 0 16px; font-size: 24px; font-weight: 300; letter-spacing: -0.02em; color: #18181b;">
+            Ya estás suscrito
+          </h2>
+          <p style="margin: 0 0 20px; color: #52525b; font-size: 15px; line-height: 1.7; font-weight: 300;">
+            Gracias por suscribirte a las novedades de <strong>Oasis Club</strong>.
+          </p>
+          <p style="margin: 0 0 36px; color: #52525b; font-size: 15px; line-height: 1.7; font-weight: 300;">
+            Serás el primero en enterarte de nuevos eventos, torneos y actividades exclusivas para socios.
+          </p>
+          <div style="margin: 36px 0;">
+            <span style="display: inline-block; border: 1px solid #022c22; color: #022c22; padding: 16px 40px; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">
+              Suscripción Activa
+            </span>
+          </div>
+          <p style="margin: 0; color: #a1a1aa; font-size: 13px; line-height: 1.6;">
+            Puedes cancelar tu suscripción en cualquier momento contactando con nosotros.
+          </p>
+        </div>
+        """;
+    sendEmail(toEmail, subject, plainText, wrapEmailLayout(htmlContent), "newsletter-subscription");
+  }
+  @Async
+  public void sendEventRegistrationEmail(
+      String toEmail,
+      String userName,
+      String eventTitle,
+      LocalDate eventDate,
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
+    String subject = "Oasis Club | Inscripción confirmada";
+    String plainText = buildEventRegistrationEmailText(userName, eventTitle, eventDate, startTime, endTime);
+    String htmlText = buildEventRegistrationEmailHtml(userName, eventTitle, eventDate, startTime, endTime);
+    sendEmail(toEmail, subject, plainText, htmlText, "event-registration");
+  }
+
+  private void sendEmail(String toEmail, String subject, String plainText, String htmlText, String type) {
+    try {
+      MimeMessage message = mailSender.createMimeMessage();
+      MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+      String finalRecipient = resolveRecipient(toEmail);
+
+      helper.setFrom(mailSenderProperties.getFromEmail());
+      helper.setTo(finalRecipient);
+      helper.setSubject(subject);
+      helper.setText(plainText, htmlText);
+
+      mailSender.send(message);
+      log.info("{} email sent to {} (requested for {})", type, finalRecipient, toEmail);
+    } catch (Exception e) {
+      log.error("Error sending {} email to {}: {}", type, toEmail, e.getMessage(), e);
+    }
+  }
+
+  private String resolveRecipient(String requestedRecipient) {
+    String overrideTo = mailSenderProperties.getOverrideTo();
+    if (overrideTo != null && !overrideTo.isBlank()) {
+      return overrideTo.trim();
+    }
+    return requestedRecipient;
+  }
+
+  private String buildResetEmailText(String resetLink) {
+    return """
+        OASIS CLUB
+        
+        Recuperar clave
+
+        Hemos recibido una solicitud para restablecer la contraseña de tu cuenta.
+        Usa el siguiente enlace para crear una nueva clave de acceso:
+        %s
+
+        Este enlace expirara en 30 minutos.
+        Si no solicitaste este cambio, puedes ignorar este correo con total seguridad.
+        """.formatted(resetLink);
+  }
+
+  private String buildWelcomeEmailText(String userName) {
+    return """
+        OASIS CLUB
+        
+        Bienvenido, %s
+
+        Tu cuenta en Oasis Club ha sido creada y activada correctamente.
+        Ya puedes acceder a nuestra plataforma para gestionar tus reservas, explorar nuestras instalaciones y disfrutar de la experiencia premium que ofrecemos.
+
+        Nos vemos en el club.
+        """.formatted(userName);
+  }
+
+  private String buildReservationConfirmedEmailText(
+      String userName,
+      String sport,
+      String courtName,
+      LocalDate date,
+      LocalTime time
+  ) {
+    return """
+        OASIS CLUB
+        
+        Reserva confirmada
+
+        Hola, %s.
+
+        Tu reserva ha sido confirmada correctamente.
+
+        Deporte: %s
+        Pista: %s
+        Fecha: %s
+        Hora: %s
+
+        Te esperamos en el club.
+        """.formatted(userName, sport, courtName, formatReservationDate(date), formatReservationTime(time));
+  }
+
+  private String buildReservationCancelledEmailText(
+      String userName,
+      String sport,
+      String courtName,
+      LocalDate date,
+      LocalTime time
+  ) {
+    return """
+        OASIS CLUB
+        
+        Reserva cancelada
+
+        Hola, %s.
+
+        Te confirmamos que tu reserva ha sido cancelada correctamente.
+
+        Deporte: %s
+        Pista: %s
+        Fecha: %s
+        Hora: %s
+
+        Puedes crear una nueva reserva cuando quieras desde tu perfil.
+        """.formatted(userName, sport, courtName, formatReservationDate(date), formatReservationTime(time));
+  }
+
+  private String buildResetEmailHtml(String resetLink) {
+    String content = """
+        <div style="text-align: center;">
+          <h2 style="margin: 0 0 16px; font-size: 24px; font-weight: 300; letter-spacing: -0.02em; color: #18181b;">
+            Recuperar tu clave
+          </h2>
+          <p style="margin: 0 0 32px; color: #52525b; font-size: 15px; line-height: 1.7; font-weight: 300;">
+            Hemos recibido una solicitud para restablecer la contraseña de acceso a tu cuenta. Haz clic en el siguiente enlace para definir una nueva clave de forma segura.
+          </p>
+          <div style="margin: 36px 0;">
+            <a href="%s" style="display: inline-block; background-color: #022c22; color: #ffffff; text-decoration: none; padding: 18px 40px; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">
+              Restablecer Contraseña
+            </a>
+          </div>
+          <p style="margin: 0 0 12px; color: #71717a; font-size: 13px; line-height: 1.6;">
+            <strong>Nota de seguridad:</strong> Este enlace caducará en 30 minutos.
+          </p>
+          <p style="margin: 0; color: #a1a1aa; font-size: 13px; line-height: 1.6;">
+            Si no has solicitado este cambio, por favor ignora este correo. Tu cuenta sigue estando protegida.
+          </p>
+        </div>
+        """.formatted(resetLink);
+    return wrapEmailLayout(content);
+  }
+
+  private String buildWelcomeEmailHtml(String userName) {
+    String content = """
+        <div style="text-align: center;">
+          <h2 style="margin: 0 0 16px; font-size: 24px; font-weight: 300; letter-spacing: -0.02em; color: #18181b;">
+            Nos alegra tenerte, %s
+          </h2>
+          <p style="margin: 0 0 20px; color: #52525b; font-size: 15px; line-height: 1.7; font-weight: 300;">
+            Te confirmamos que tu cuenta en <strong>Oasis Club</strong> ha sido activada correctamente.
+          </p>
+          <p style="margin: 0 0 36px; color: #52525b; font-size: 15px; line-height: 1.7; font-weight: 300;">
+            A partir de este momento puedes acceder a nuestra plataforma exclusiva para gestionar tus reservas, explorar las instalaciones y disfrutar plenamente de la experiencia premium que ofrecemos.
+          </p>
+          <div style="margin: 36px 0;">
+            <span style="display: inline-block; border: 1px solid #022c22; color: #022c22; padding: 16px 40px; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">
+              Plan Activo
+            </span>
+          </div>
+          <p style="margin: 0; color: #a1a1aa; font-size: 13px; line-height: 1.6;">
+            Tu historia en Oasis Club acaba de comenzar. Esperamos verte muy pronto en nuestras instalaciones.
+          </p>
+        </div>
+        """.formatted(userName);
+    return wrapEmailLayout(content);
+  }
+
+  private String buildReservationConfirmedEmailHtml(
+      String userName,
+      String sport,
+      String courtName,
+      LocalDate date,
+      LocalTime time
+  ) {
+    String content = """
+        <div style="text-align: center;">
+          <h2 style="margin: 0 0 16px; font-size: 24px; font-weight: 300; letter-spacing: -0.02em; color: #18181b;">
+            Reserva confirmada
+          </h2>
+          <p style="margin: 0 0 28px; color: #52525b; font-size: 15px; line-height: 1.7; font-weight: 300;">
+            Hola, <strong>%s</strong>. Tu reserva en <strong>Oasis Club</strong> ha sido confirmada correctamente.
+          </p>
+          %s
+          <div style="margin: 36px 0;">
+            <span style="display: inline-block; border: 1px solid #022c22; color: #022c22; padding: 16px 40px; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">
+              Reserva Activa
+            </span>
+          </div>
+          <p style="margin: 0; color: #a1a1aa; font-size: 13px; line-height: 1.6;">
+            Te esperamos en el club. Revisa tu perfil si necesitas consultar o gestionar tus reservas.
+          </p>
+        </div>
+        """.formatted(
+            escapeHtml(userName),
+            buildReservationDetailsHtml(sport, courtName, date, time)
+        );
+    return wrapEmailLayout(content);
+  }
+
+  private String buildReservationCancelledEmailHtml(
+      String userName,
+      String sport,
+      String courtName,
+      LocalDate date,
+      LocalTime time
+  ) {
+    String content = """
+        <div style="text-align: center;">
+          <h2 style="margin: 0 0 16px; font-size: 24px; font-weight: 300; letter-spacing: -0.02em; color: #18181b;">
+            Reserva cancelada
+          </h2>
+          <p style="margin: 0 0 28px; color: #52525b; font-size: 15px; line-height: 1.7; font-weight: 300;">
+            Hola, <strong>%s</strong>. Te confirmamos que tu reserva ha sido cancelada correctamente.
+          </p>
+          %s
+          <div style="margin: 36px 0;">
+            <span style="display: inline-block; border: 1px solid #a1a1aa; color: #52525b; padding: 16px 40px; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">
+              Reserva Cancelada
+            </span>
+          </div>
+          <p style="margin: 0; color: #a1a1aa; font-size: 13px; line-height: 1.6;">
+            Puedes crear una nueva reserva cuando quieras desde tu perfil.
+          </p>
+        </div>
+        """.formatted(
+            escapeHtml(userName),
+            buildReservationDetailsHtml(sport, courtName, date, time)
+        );
+    return wrapEmailLayout(content);
+  }
+
+  private String buildReservationDetailsHtml(String sport, String courtName, LocalDate date, LocalTime time) {
+    return """
+        <div style="background-color: #f9fafb; border: 1px solid #f4f4f5; padding: 24px; text-align: left; margin: 0 0 8px;">
+          <table width="100%%" border="0" cellspacing="0" cellpadding="0">
+            %s
+            %s
+            %s
+            %s
+          </table>
+        </div>
+        """.formatted(
+            buildReservationDetailRow("Deporte", sport),
+            buildReservationDetailRow("Pista", courtName),
+            buildReservationDetailRow("Fecha", formatReservationDate(date)),
+            buildReservationDetailRow("Hora", formatReservationTime(time))
+        );
+  }
+
+  private String buildReservationDetailRow(String label, String value) {
+    return """
+        <tr>
+          <td style="padding: 10px 0; color: #71717a; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; border-bottom: 1px solid #e4e4e7;">
+            %s
+          </td>
+          <td align="right" style="padding: 10px 0; color: #022c22; font-size: 14px; font-weight: 600; border-bottom: 1px solid #e4e4e7;">
+            %s
+          </td>
+        </tr>
+        """.formatted(escapeHtml(label), escapeHtml(value));
+  }
+
+  private String formatReservationDate(LocalDate date) {
+    return date.format(RESERVATION_DATE_FORMATTER);
+  }
+
+  private String formatReservationTime(LocalTime time) {
+    return time.format(RESERVATION_TIME_FORMATTER);
+  }
+
+  private String escapeHtml(String value) {
+    if (value == null) {
+      return "";
+    }
+    return value
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace("\"", "&quot;")
+        .replace("'", "&#39;");
+  }
+
+  private String wrapEmailLayout(String content) {
+    int year = Year.now().getValue();
+    return """
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Oasis Club</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f4f5; -webkit-font-smoothing: antialiased;">
+          <table width="100%%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f4f4f5; padding: 40px 20px;">
+            <tr>
+              <td align="center">
+                
+                <table width="100%%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #ffffff; border-top: 4px solid #022c22; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);">
+                  
+                  <tr>
+                    <td style="padding: 48px 48px 0 48px; text-align: center;">
+                      <div style="font-size: 20px; font-weight: 700; color: #022c22; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 32px;">
+                        OASIS CLUB
+                      </div>
+                      <div style="height: 1px; background-color: #e4e4e7; width: 100%%;"></div>
+                    </td>
+                  </tr>
+        
+                  <tr>
+                    <td style="padding: 40px 48px;">
+                      %s
+                    </td>
+                  </tr>
+        
+                  <tr>
+                    <td style="padding: 0 48px 40px 48px;">
+                      <div style="background-color: #f9fafb; border: 1px solid #f4f4f5; padding: 24px; text-align: center;">
+                        <p style="margin: 0; color: #52525b; font-size: 13px; font-weight: 400; line-height: 1.6;">
+                          ¿Tienes alguna duda o necesitas ayuda?<br>
+                          Contacta con nuestro equipo de soporte en<br>
+                          <a href="mailto:soporte@oasisclub.com" style="color: #022c22; text-decoration: underline; font-weight: 600;">soporte@oasisclub.com</a>
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+        
+                  <tr>
+                    <td style="padding: 32px 48px; background-color: #022c22; text-align: center;">
+                      <p style="margin: 0 0 12px; color: #d4d4d8; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600;">
+                        © %d OASIS CLUB. RESERVADOS TODOS LOS DERECHOS.
+                      </p>
+                      <p style="margin: 0; color: #a1a1aa; font-size: 11px; line-height: 1.6;">
+                        Urb. Oasis de los Alcázares · Región de Murcia, España<br>
+                        Este es un mensaje automático, por favor no respondas directamente a este correo.
+                      </p>
+                    </td>
+                  </tr>
+        
+                </table>
+        
+                <table width="100%%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px;">
+                  <tr>
+                    <td style="padding: 24px 0; text-align: center;">
+                      <p style="margin: 0; color: #71717a; font-size: 12px;">
+                        Protegemos la privacidad y seguridad de tus datos
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+                
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+        """.formatted(content, year);
+  }
+
+  private String buildEventRegistrationEmailText(
+      String userName,
+      String eventTitle,
+      LocalDate eventDate,
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
+    return """
+        OASIS CLUB
+        
+        Inscripción confirmada
+
+        Hola, %s.
+
+        Te confirmamos que tu inscripción al siguiente evento ha sido registrada correctamente.
+
+        Evento: %s
+        Fecha: %s
+        Horario: %s – %s
+
+        Te esperamos en el club.
+        """.formatted(
+        userName,
+        eventTitle,
+        formatReservationDate(eventDate),
+        formatReservationTime(startTime),
+        formatReservationTime(endTime)
+    );
+  }
+
+  private String buildEventRegistrationEmailHtml(
+      String userName,
+      String eventTitle,
+      LocalDate eventDate,
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
+    String content = """
+        <div style="text-align: center;">
+          <h2 style="margin: 0 0 16px; font-size: 24px; font-weight: 300; letter-spacing: -0.02em; color: #18181b;">
+            Inscripción confirmada
+          </h2>
+          <p style="margin: 0 0 28px; color: #52525b; font-size: 15px; line-height: 1.7; font-weight: 300;">
+            Hola, <strong>%s</strong>. Tu inscripción en <strong>Oasis Club</strong> ha sido registrada correctamente.
+          </p>
+          <div style="background-color: #f9fafb; border: 1px solid #f4f4f5; padding: 24px; text-align: left; margin: 0 0 28px;">
+            <table width="100%%" border="0" cellspacing="0" cellpadding="0">
+              %s
+              %s
+              %s
+            </table>
+          </div>
+          <div style="margin: 36px 0;">
+            <span style="display: inline-block; border: 1px solid #022c22; color: #022c22; padding: 16px 40px; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">
+              Inscripción Activa
+            </span>
+          </div>
+          <p style="margin: 0; color: #a1a1aa; font-size: 13px; line-height: 1.6;">
+            Te esperamos en el club. Puedes consultar tus eventos desde tu perfil.
+          </p>
+        </div>
+        """.formatted(
+        escapeHtml(userName),
+        buildReservationDetailRow("Evento", eventTitle),
+        buildReservationDetailRow("Fecha", formatReservationDate(eventDate)),
+        buildReservationDetailRow("Horario", formatReservationTime(startTime) + " – " + formatReservationTime(endTime))
+    );
+    return wrapEmailLayout(content);
+  }
 }
+
+
