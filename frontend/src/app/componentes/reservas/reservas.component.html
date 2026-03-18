@@ -1,0 +1,336 @@
+<div class="min-h-screen bg-white pt-24">
+
+  @if (!auth.isLoggedIn()) {
+    <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+      <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">Acceso</p>
+      <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
+        style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
+        Reserva tu <span class="italic text-[#0B2118]">pista.</span>
+      </h1>
+      <p class="text-[15px] lg:text-[17px] font-light text-gray-500 leading-relaxed max-w-lg mb-10">
+        Para reservar pistas y ver la disponibilidad en tiempo real, necesitas iniciar sesión en tu cuenta de socio.
+      </p>
+      <a routerLink="/login" class="res-btn">
+        <span class="res-btn__dash">—</span>
+        Iniciar Sesión
+      </a>
+    </section>
+  } @else {
+
+    @if (currentStep() === 1) {
+      <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">01 / Deporte</p>
+        <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
+          style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
+          Elige tu <span class="italic text-[#0B2118]">deporte.</span>
+        </h1>
+        <p class="text-[15px] lg:text-[17px] font-light text-gray-500 leading-relaxed max-w-lg mb-12">
+          Selecciona el deporte para el que quieres reservar pista.
+        </p>
+      </section>
+
+      <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 pb-24">
+        <div class="w-full h-px bg-gray-100 mb-12"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
+
+          <button (click)="selectSport('FUTBOL')" class="sport-card group">
+            <div class="sport-card__inner">
+              <img ngSrc="images/sport-futbol-ultrareal.png" alt="Fútbol"
+                class="object-cover transition-transform duration-700 group-hover:scale-105"
+                fill sizes="(min-width: 768px) 50vw, 100vw" priority>
+              <div class="absolute inset-0 bg-[#0B2118]/50 transition-opacity duration-500 group-hover:bg-[#0B2118]/65"></div>
+              <div class="sport-card__content">
+                <span class="sport-card__tag">Fútbol</span>
+                <h2 class="sport-card__title">Fútbol</h2>
+                <span class="res-btn res-btn--light mt-6">
+                  <span class="res-btn__dash">—</span>
+                  Seleccionar
+                </span>
+              </div>
+            </div>
+          </button>
+
+          <button (click)="selectSport('PADEL')" class="sport-card group">
+            <div class="sport-card__inner">
+              <img ngSrc="images/sport-padel-ultrareal.png" alt="Pádel"
+                class="object-cover transition-transform duration-700 group-hover:scale-105"
+                fill sizes="(min-width: 768px) 50vw, 100vw">
+              <div class="absolute inset-0 bg-[#0B2118]/50 transition-opacity duration-500 group-hover:bg-[#0B2118]/65"></div>
+              <div class="sport-card__content">
+                <span class="sport-card__tag">Pádel</span>
+                <h2 class="sport-card__title">Pádel</h2>
+                <span class="res-btn res-btn--light mt-6">
+                  <span class="res-btn__dash">—</span>
+                  Seleccionar
+                </span>
+              </div>
+            </div>
+          </button>
+
+        </div>
+      </div>
+    }
+
+    @if (currentStep() === 2) {
+      <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+        <button (click)="goBack()" class="res-back-btn mb-8">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Volver
+        </button>
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">02 / Instalación</p>
+        <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
+          style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
+          Elige tu <span class="italic text-[#0B2118]">pista.</span>
+        </h1>
+        <p class="text-[15px] lg:text-[17px] font-light text-gray-500 leading-relaxed max-w-lg mb-12">
+          Pistas de {{ selectedSport() === 'PADEL' ? 'Pádel' : 'Fútbol' }} disponibles en Oasis Club.
+        </p>
+      </section>
+
+      <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 pb-24">
+        <div class="w-full h-px bg-gray-100 mb-12"></div>
+        @if (availableCourts().length === 0 && !errorMessage()) {
+          <div class="space-y-0 animate-pulse">
+            @for (_ of [1,2,3]; track $index) {
+              <div class="court-row">
+                <div class="court-row__body space-y-2">
+                  <div class="h-3 bg-gray-100 rounded w-12"></div>
+                  <div class="h-4 bg-gray-100 rounded w-40"></div>
+                  <div class="h-3 bg-gray-100 rounded w-64"></div>
+                </div>
+                <div class="court-row__action">
+                  <div class="h-10 bg-gray-100 rounded w-28"></div>
+                </div>
+              </div>
+            }
+          </div>
+        } @else if (availableCourts().length === 0) {
+          <div class="py-20 text-center">
+            <p class="text-[13px] font-light text-gray-600 uppercase tracking-widest">No hay pistas disponibles</p>
+          </div>
+        } @else {
+          <div class="space-y-0">
+            @for (court of availableCourts(); track court.id) {
+              <article class="court-row group"
+                tabindex="0"
+                (click)="selectCourt(court)"
+                (keydown.enter)="selectCourt(court)"
+                (keydown.space)="selectCourt(court)">
+                <div class="court-row__body">
+                  <span class="court-row__tag">{{ selectedSport() === 'PADEL' ? 'Pádel' : 'Fútbol' }}</span>
+                  <h2 class="court-row__title">{{ court.name }}</h2>
+                  <p class="court-row__desc">Pista habilitada para torneos y juego libre.</p>
+                </div>
+                <div class="court-row__action">
+                  <button type="button" class="res-btn">
+                    <span class="res-btn__dash">—</span>
+                    Seleccionar
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    @if (currentStep() === 3) {
+      <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+        <button (click)="goBack()" class="res-back-btn mb-8">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Volver
+        </button>
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">03 / Fecha y Horario</p>
+        <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
+          style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
+          {{ selectedCourt()?.name }}
+        </h1>
+        <p class="text-[15px] lg:text-[17px] font-light text-gray-500 leading-relaxed max-w-lg mb-12">
+          Elige el día y la hora en que quieres jugar.
+        </p>
+      </section>
+
+      <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 pb-24">
+        <div class="w-full h-px bg-gray-100 mb-8"></div>
+
+        <div class="flex gap-3 flex-wrap mb-8">
+          @for (day of availableDates(); track day) {
+            <button
+              (click)="selectDate(day)"
+              [class]="isSelectedDate(day) ? 'res-filter res-filter--active' : 'res-filter'">
+              {{ formatDateUI(day) }}
+            </button>
+          }
+        </div>
+
+        <div class="w-full h-px bg-gray-100 mb-10"></div>
+
+        <div class="space-y-0">
+          @if (availableTimes().length === 0 && !errorMessage()) {
+            <div class="animate-pulse space-y-0">
+              @for (_ of [1,2,3,4,5,6]; track $index) {
+                <div class="time-row">
+                  <div class="time-row__time space-y-1">
+                    <div class="h-6 bg-gray-100 rounded w-12"></div>
+                    <div class="h-2 bg-gray-100 rounded w-16"></div>
+                  </div>
+                  <div class="time-row__divider"></div>
+                  <div class="time-row__body space-y-2">
+                    <div class="h-3 bg-gray-100 rounded w-10"></div>
+                    <div class="h-3 bg-gray-100 rounded w-32"></div>
+                  </div>
+                  <div class="time-row__action">
+                    <div class="h-10 bg-gray-100 rounded w-28"></div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+          @for (slot of availableTimes(); track slot.time) {
+            <article
+              [class]="!slot.available ? 'time-row time-row--blocked' : selectedTime() === slot.time ? 'time-row time-row--selected' : 'time-row group'"
+              [attr.tabindex]="slot.available ? 0 : -1"
+              (click)="selectTime(slot.time, slot.available)"
+              (keydown.enter)="selectTime(slot.time, slot.available)"
+              (keydown.space)="selectTime(slot.time, slot.available)">
+              <div class="time-row__time">
+                <span class="time-row__hour">{{ slot.time }}</span>
+                <span class="time-row__label">{{ slot.available ? 'Disponible' : 'Reservado' }}</span>
+              </div>
+              <div class="time-row__divider"></div>
+              <div class="time-row__body">
+                <span [class]="slot.available ? 'time-row__tag time-row__tag--free' : 'time-row__tag time-row__tag--taken'">
+                  {{ slot.available ? 'Libre' : 'Ocupado' }}
+                </span>
+                <span class="time-row__sport">{{ selectedSport() === 'PADEL' ? 'Pádel' : 'Fútbol' }} · {{ selectedCourt()?.name }}</span>
+              </div>
+              <div class="time-row__action">
+                @if (slot.available) {
+                  <button type="button" class="res-btn" [class.res-btn--selected]="selectedTime() === slot.time">
+                    <span class="res-btn__dash">—</span>
+                    {{ selectedTime() === slot.time ? 'Seleccionado' : 'Reservar' }}
+                  </button>
+                } @else {
+                  <button type="button" class="res-btn res-btn--disabled" disabled>
+                    <span class="res-btn__dash">—</span>
+                    No Disponible
+                  </button>
+                }
+              </div>
+            </article>
+          }
+          @if (availableTimes().length === 0) {
+            <div class="py-20 text-center">
+              <p class="text-[13px] font-light text-gray-600 uppercase tracking-widest">No hay disponibilidad para esta fecha</p>
+            </div>
+          }
+        </div>
+
+        @if (errorMessage()) {
+          <div class="mt-6 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-[13px]">
+            {{ errorMessage() }}
+          </div>
+        }
+
+        @if (selectedTime()) {
+          <div class="mt-12 pt-8 border-t border-gray-100 flex justify-end">
+            <button (click)="goToConfirm()" class="res-btn res-btn--primary">
+              <span class="res-btn__dash">—</span>
+              Continuar
+            </button>
+          </div>
+        }
+      </div>
+    }
+
+    @if (currentStep() === 4) {
+      <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+        <button (click)="goBack()" class="res-back-btn mb-8">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Volver
+        </button>
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">04 / Confirmación</p>
+        <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
+          style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
+          Confirmar <span class="italic text-[#0B2118]">reserva.</span>
+        </h1>
+      </section>
+
+      <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 pb-24">
+        <div class="w-full h-px bg-gray-100 mb-12"></div>
+
+        <div class="max-w-xl">
+          <div class="space-y-0 mb-10">
+            <div class="confirm-row">
+              <span class="confirm-row__label">Deporte</span>
+              <span class="confirm-row__value">{{ selectedSport() === 'PADEL' ? 'Pádel' : 'Fútbol' }}</span>
+            </div>
+            <div class="confirm-row">
+              <span class="confirm-row__label">Pista</span>
+              <span class="confirm-row__value">{{ selectedCourt()?.name }}</span>
+            </div>
+            <div class="confirm-row">
+              <span class="confirm-row__label">Fecha</span>
+              <span class="confirm-row__value">{{ formatDateUI(selectedDate()) }}</span>
+            </div>
+            <div class="confirm-row">
+              <span class="confirm-row__label">Hora</span>
+              <span class="confirm-row__value">{{ selectedTime() }}</span>
+            </div>
+            <div class="confirm-row confirm-row--total">
+              <span class="confirm-row__label">Total</span>
+              <span class="confirm-row__value confirm-row__value--price">{{ reservationPrice() }}</span>
+            </div>
+          </div>
+
+          @if (errorMessage()) {
+            <div class="mb-6 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-[13px]">
+              {{ errorMessage() }}
+            </div>
+          }
+
+          <div class="flex gap-4">
+            <button (click)="goBack()" class="res-btn res-btn--outline flex-1">
+              <span class="res-btn__dash">—</span>
+              Modificar
+            </button>
+            <button (click)="confirmReservation()" [disabled]="isSubmitting()" class="res-btn res-btn--primary flex-1">
+              <span class="res-btn__dash">—</span>
+              {{ isSubmitting() ? 'Redirigiendo...' : 'Pagar y Reservar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (currentStep() === 5) {
+      <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-emerald-600 mb-6">Reserva completada</p>
+        <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
+          style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
+          Reserva <span class="italic text-[#0B2118]">confirmada.</span>
+        </h1>
+        <p class="text-[15px] lg:text-[17px] font-light text-gray-500 leading-relaxed max-w-lg mb-10">
+          {{ successMessage() }}
+        </p>
+        <div class="flex gap-4 flex-wrap">
+          <a routerLink="/perfil" class="res-btn res-btn--outline">
+            <span class="res-btn__dash">—</span>
+            Ver Mis Reservas
+          </a>
+          <button (click)="reset()" class="res-btn res-btn--primary">
+            <span class="res-btn__dash">—</span>
+            Nueva Reserva
+          </button>
+        </div>
+      </section>
+    }
+
+  }
+</div>
