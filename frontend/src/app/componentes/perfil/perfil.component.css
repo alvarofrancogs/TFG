@@ -1,0 +1,386 @@
+
+
+.pf-page {
+  padding-top: 5rem; 
+}
+
+.pf-hero {
+  padding: 1.5rem 1.25rem 1.75rem;
+  max-width: 90rem;
+  margin: 0 auto;
+}
+
+.pf-body {
+  padding: 0 1.25rem 3rem;
+  max-width: 90rem;
+  margin: 0 auto;
+}
+
+.pf-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.pf-btn__dash {
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0;
+  opacity: 0.5;
+}
+
+.pf-reservation-row {
+  display: grid;
+  grid-template-columns: 2.75rem 1fr;
+  gap: 0.5rem 0.75rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.pf-reservation-row__date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  padding-top: 0.125rem;
+}
+
+.pf-reservation-row__day {
+  font-size: 1.5rem;
+  font-weight: 200;
+  color: #0B2118;
+  line-height: 1;
+}
+
+.pf-reservation-row__month {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-top: 3px;
+}
+
+.pf-reservation-row__divider {
+  display: none;
+}
+
+.pf-reservation-row__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0; 
+}
+
+.pf-sport-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #0B2118;
+  background: rgba(11, 33, 24, 0.06);
+  padding: 0.15rem 0.5rem;
+  width: fit-content;
+}
+
+.pf-reservation-row__title {
+  font-size: 14px;
+  font-weight: 400;
+  color: #111827;
+  font-family: 'Playfair Display', serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pf-reservation-row__meta {
+  font-size: 12px;
+  font-weight: 300;
+  color: #6b7280;
+}
+
+.pf-reservation-row__action {
+  grid-column: 1 / -1;
+  padding-top: 0.25rem;
+}
+
+.pf-reservation-row__action .btn-danger-outline {
+  width: 100%;
+  justify-content: center;
+  font-size: 10px;
+  padding: 0.5rem 0.75rem;
+}
+
+.pf-day-row {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.pf-day-row:first-of-type {
+  border-top: 1px solid #f3f4f6;
+}
+
+.pf-day-row__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.pf-day-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #0B2118;
+  background: rgba(11, 33, 24, 0.06);
+  padding: 0.15rem 0.5rem;
+  display: inline-block;
+  margin-bottom: 0.35rem;
+}
+
+.pf-day-row__title {
+  font-size: 15px;
+  font-weight: 400;
+  color: #111827;
+  font-family: 'Playfair Display', serif;
+}
+
+.pf-day-row__header .btn-danger-outline {
+  align-self: flex-start;
+  font-size: 10px;
+  padding: 0.4rem 0.75rem;
+}
+
+.pf-exercise-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid #f9fafb;
+}
+
+.pf-exercise-row__num {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #d1d5db;
+  flex-shrink: 0;
+  width: 1.25rem;
+  padding-top: 2px;
+}
+
+.pf-exercise-row__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.pf-exercise-row__name {
+  font-size: 13px;
+  font-weight: 400;
+  color: #111827;
+  word-break: break-word;
+}
+
+.pf-exercise-row__details {
+  font-size: 11px;
+  font-weight: 300;
+  color: #9ca3af;
+  letter-spacing: 0.05em;
+}
+
+.pf-exercise-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: #d1d5db;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.pf-exercise-remove:hover {
+  color: #dc2626;
+}
+
+@media (min-width: 640px) {
+  .pf-hero {
+    padding: 2rem 1.5rem 2rem;
+  }
+
+  .pf-body {
+    padding: 0 1.5rem 4rem;
+  }
+
+  
+  .pf-reservation-row {
+    grid-template-columns: 3.25rem 1px 1fr auto;
+    gap: 0 1.25rem;
+    align-items: center;
+    padding: 1.5rem 0;
+  }
+
+  .pf-reservation-row__date {
+    padding-top: 0;
+  }
+
+  
+  .pf-reservation-row__divider {
+    display: block;
+    width: 1px;
+    height: 3.5rem;
+    background: #e5e7eb;
+    align-self: center;
+  }
+
+  .pf-reservation-row__action {
+    grid-column: auto;
+    padding-top: 0;
+  }
+
+  .pf-reservation-row__action .btn-danger-outline {
+    width: auto;
+    font-size: 11px;
+    padding: 0.5rem 1rem;
+  }
+
+  .pf-reservation-row__title {
+    font-size: 15px;
+  }
+
+  
+  .pf-day-row__header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pf-hero {
+    padding: 3.5rem 3rem 3rem;
+  }
+
+  .pf-body {
+    padding: 0 3rem 5rem;
+  }
+
+  .pf-columns {
+    flex-direction: row;
+    gap: 3rem;
+  }
+
+  .pf-columns > div {
+    flex: 1;
+  }
+
+  .pf-reservation-row {
+    padding: 1.75rem 0;
+    gap: 0 1.5rem;
+  }
+
+  .pf-reservation-row:hover {
+    background: #fafafa;
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .pf-reservation-row__day {
+    font-size: 1.75rem;
+  }
+
+  .pf-day-row {
+    padding: 1.5rem 0;
+  }
+}
+
+
+.pf-confirm-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.pf-confirm-text {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #dc2626;
+}
+
+.pf-confirm-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-cancel-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid #d4d4d8;
+  background: transparent;
+  color: #52525b;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel-outline:hover {
+  border-color: #0B2118;
+  color: #0B2118;
+}
+
+.pf-exercise-confirm {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.pf-exercise-confirm__yes,
+.pf-exercise-confirm__no {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pf-exercise-confirm__yes {
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.pf-exercise-confirm__yes:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.pf-exercise-confirm__no {
+  border-color: #d4d4d8;
+  color: #71717a;
+}
+
+.pf-exercise-confirm__no:hover {
+  border-color: #0B2118;
+  color: #0B2118;
+}
