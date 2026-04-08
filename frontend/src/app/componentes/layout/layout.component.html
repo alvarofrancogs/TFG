@@ -1,0 +1,15 @@
+<div class="min-h-screen flex flex-col">
+  <app-navbar></app-navbar>
+  <main class="flex-grow flex flex-col">
+    <router-outlet></router-outlet>
+  </main>
+  @if (showFooter) {
+    <footer class="bg-emerald-950 pt-16 pb-8 border-t border-emerald-900 mt-auto text-emerald-50">
+      <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+          <!-- Brand -->
+          <div class="col-span-1 md:col-span-2">
+            <h3 class="text-2xl font-semibold mb-4 tracking-tight">Oasis Club</h3>
+            <p class="text-emerald-200/70 text-sm leading-relaxed max-w-sm">
+              Tu destino premium para el deporte y el bienestar. Instalaciones de primer nivel diseñadas para sacar tu mejor versión en cada partido y entrenamiento.
+            </p>
