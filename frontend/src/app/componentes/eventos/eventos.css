@@ -1,0 +1,249 @@
+
+
+.event-filter {
+  padding: 0.5rem 1.25rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border: 1px solid #e5e7eb;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.event-filter:hover {
+  border-color: #0B2118;
+  color: #0B2118;
+}
+
+.event-filter--active {
+  background: rgba(11, 33, 24, 0.07);
+  background-image: none;
+  border-color: #0B2118;
+  color: #0B2118;
+  font-weight: 800;
+}
+
+.event-row {
+  display: grid;
+  grid-template-columns: 4rem 1px 1fr auto auto;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.2s;
+}
+
+.event-row:hover {
+  background: #FAFAFA;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.event-row__date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.event-row__day {
+  font-size: 2rem;
+  font-weight: 200;
+  color: #0B2118;
+}
+
+.event-row__month {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+.event-row__divider {
+  width: 1px;
+  height: 4rem;
+  background: #e5e7eb;
+  align-self: center;
+}
+
+.event-row__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.event-row__tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #0B2118;
+  background: rgba(11, 33, 24, 0.06);
+  padding: 0.2rem 0.6rem;
+  width: fit-content;
+}
+
+.event-row__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.event-row__tag--masterclass {
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.07);
+}
+
+.event-row__tag--liga {
+  color: #0369a1;
+  background: rgba(3, 105, 161, 0.07);
+}
+
+.event-row__tag--social {
+  color: #b45309;
+  background: rgba(180, 83, 9, 0.07);
+}
+
+.event-row__tag--padel {
+  color: #065f46;
+  background: rgba(6, 95, 70, 0.07);
+}
+
+.event-row__tag--futbol {
+  color: #1d4ed8;
+  background: rgba(29, 78, 216, 0.07);
+}
+
+.event-row__tag--court {
+  color: #6b7280;
+  background: #f3f4f6;
+  display: inline-flex;
+  align-items: center;
+}
+
+.event-row__title {
+  font-size: 15px;
+  font-weight: 400;
+  color: #111827;
+  font-family: 'Playfair Display', serif;
+}
+
+.event-row__desc {
+  font-size: 13px;
+  font-weight: 300;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.event-row__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  min-width: 8rem;
+}
+
+.event-row__time {
+  font-size: 12px;
+  font-weight: 400;
+  color: #374151;
+}
+
+.event-row__spots {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #10b981;
+}
+
+.event-btn {
+  background: #0B2118;
+  color: #fff;
+  padding: 0.625rem 1.25rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid #0B2118;
+  transition: all 0.2s;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.event-btn:hover {
+  background: #1a4034;
+  border-color: #1a4034;
+}
+
+.event-btn--registered {
+  background: transparent;
+  color: #0B2118;
+  border: 1px solid #0B2118;
+}
+
+.event-btn--registered:hover {
+  background: #0B2118;
+  color: #fff;
+}
+
+.event-btn--disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  border-color: #f3f4f6;
+  cursor: not-allowed;
+}
+
+.event-row__tag--torneo {
+  color: #0B2118;
+  background: rgba(11, 33, 24, 0.06);
+}
+
+.event-row__tag--masterclass {
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.07);
+}
+
+.event-row__tag--social {
+  color: #b45309;
+  background: rgba(180, 83, 9, 0.07);
+}
+
+.event-row__tag--liga {
+  color: #0369a1;
+  background: rgba(3, 105, 161, 0.07);
+}
+
+@media (max-width: 768px) {
+  .event-row {
+    grid-template-columns: 3rem 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 0.75rem 1rem;
+  }
+
+  .event-row__divider { display: none; }
+
+  .event-row__body {
+    grid-column: 2;
+  }
+
+  .event-row__meta, .event-row__action {
+    grid-column: 1 / -1;
+    align-items: flex-start;
+  }
+
+  .event-row__meta {
+    flex-direction: row;
+    gap: 1rem;
+  }
+}
