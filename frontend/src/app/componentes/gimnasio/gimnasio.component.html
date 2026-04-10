@@ -1,0 +1,245 @@
+<div class="min-h-screen bg-white gym-page">
+
+  @if (!auth.isLoggedIn()) {
+    <section class="gym-hero">
+      <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-4 lg:mb-6">Acceso</p>
+      <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
+        style="font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 4.5rem);">
+        Tu <span class="italic text-[#0B2118]">gimnasio.</span>
+      </h1>
+      <p class="text-[14px] lg:text-[17px] font-light text-gray-500 leading-relaxed max-w-lg mb-8 lg:mb-10">
+        Para ver tu rutina personalizada y gestionar tu gimnasio, inicia sesión en tu cuenta de socio.
+      </p>
+      <a routerLink="/login" class="btn-green-outline">
+        <span class="gym-btn__dash">—</span>
+        Iniciar Sesión
+      </a>
+    </section>
+  } @else {
+
+    
+    <section class="gym-hero">
+      <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-4 lg:mb-6">Entrenamiento</p>
+      <h1 class="leading-[1.1] font-normal text-gray-900 mb-3"
+        style="font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 4.5rem);">
+        Tu <span class="italic text-[#0B2118]">rutina.</span>
+      </h1>
+      <p class="text-[14px] lg:text-[17px] font-light text-gray-500 leading-relaxed max-w-lg">
+        Planifica y personaliza tus días de entrenamiento en Oasis Club.
+      </p>
+    </section>
+
+    <div class="gym-body">
+      <div class="w-full h-px bg-gray-100 mb-6 lg:mb-10"></div>
+
+      @if (loading()) {
+        <div class="gym-layout animate-pulse">
+          <div class="gym-sidebar">
+            <div class="gym-sidebar__header">
+              <div class="h-3 bg-gray-100 rounded w-8"></div>
+            </div>
+            <div class="gym-days-list">
+              @for (_ of [1,2,3]; track $index) {
+                <div class="h-10 bg-gray-100 rounded mb-2"></div>
+              }
+            </div>
+          </div>
+          <div class="gym-main space-y-4">
+            <div class="h-6 bg-gray-100 rounded w-24"></div>
+            <div class="w-full h-px bg-gray-100"></div>
+            @for (_ of [1,2,3,4]; track $index) {
+              <div class="flex gap-4 py-4 border-b border-gray-50">
+                <div class="h-5 w-7 bg-gray-100 rounded shrink-0"></div>
+                <div class="flex-1 space-y-2">
+                  <div class="h-4 bg-gray-100 rounded w-1/3"></div>
+                  <div class="h-3 bg-gray-100 rounded w-1/4"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      } @else {
+      @if (routineDays().length === 0) {
+        <div class="py-20 lg:py-28 text-center">
+          <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-500 mb-4">Tu rutina está vacía</p>
+          <h2 class="leading-[1.2] font-normal text-gray-900 mb-4"
+            style="font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 3vw, 2.25rem);">
+            Empieza creando<br>
+            <span class="italic text-[#0B2118]">tu primer día.</span>
+          </h2>
+          <p class="text-[14px] font-light text-gray-500 max-w-md mx-auto mb-8">
+            Aquí construirás tu rutina personalizada. Añade los días y ejercicios que necesites.
+          </p>
+          <button (click)="addFirstDay()" class="btn-green-outline">
+            <span class="gym-btn__dash">—</span>
+            Crear primer día
+          </button>
+        </div>
+      } @else {
+      <div class="gym-layout">
+
+        
+        <div class="gym-sidebar">
+          <div class="gym-sidebar__header">
+            <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600">Días</p>
+            @if (isEditing()) {
+              <div class="flex items-center gap-2">
+                <button (click)="updateDays(-1)" class="gym-counter-btn">−</button>
+                <span class="text-sm font-light text-gray-900 w-5 text-center">{{ daysCount() }}</span>
+                <button (click)="updateDays(1)" class="gym-counter-btn">+</button>
+              </div>
+            }
+          </div>
+
+          
+          <div class="gym-days-list">
+            @for (day of routineDays(); track day.dayOrder) {
+              <button
+                (click)="selectDay(day.dayOrder)"
+                class="gym-day-btn"
+                [class.gym-day-btn--active]="selectedDayId() === day.dayOrder">
+                <span>Día {{ day.dayOrder }}</span>
+                @if (day.name) {
+                  <span class="gym-day-btn__name">{{ day.name }}</span>
+                }
+              </button>
+            }
+          </div>
+        </div>
+
+        
+        <div class="gym-main">
+          
+          <div class="gym-main__header">
+            <div class="gym-main__title-block">
+              <h2 class="text-xl lg:text-2xl font-light text-gray-900 mb-1"
+                style="font-family: 'Playfair Display', serif;">
+                Día {{ selectedDayId() }}
+              </h2>
+              @if (isEditing()) {
+                <input
+                  type="text"
+                  [ngModel]="currentDay()?.name"
+                  (ngModelChange)="updateDayName($event)"
+                  placeholder="Ej: Pecho y Tríceps"
+                  class="gym-day-name-input">
+              } @else {
+                <p class="text-[14px] font-light text-gray-600">{{ currentDay()?.name || 'Sin nombre' }}</p>
+              }
+            </div>
+
+            
+            <div class="gym-main__actions">
+              @if (isEditing()) {
+                @if (confirmDeleteDay()) {
+                  <div class="gym-confirm">
+                    <span class="gym-confirm__text">¿Eliminar día?</span>
+                    <div class="gym-confirm__actions">
+                      <button (click)="removeCurrentDay()" class="btn-danger-solid">
+                        <span class="gym-btn__dash">—</span>
+                        Confirmar
+                      </button>
+                      <button (click)="cancelDeleteDay()" class="btn-cancel-outline">
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                } @else {
+                  <button (click)="addExercise()" class="btn-green-outline">
+                    <span class="gym-btn__dash">—</span>
+                    Añadir ejercicio
+                  </button>
+                  <button (click)="requestDeleteDay()" class="btn-danger-outline">
+                    <span class="gym-btn__dash">—</span>
+                    Eliminar día
+                  </button>
+                  <button (click)="toggleEdit()" class="btn-green-outline">
+                    <span class="gym-btn__dash">—</span>
+                    Guardar
+                  </button>
+                }
+              } @else {
+                <button (click)="toggleEdit()" class="btn-green-outline">
+                  <span class="gym-btn__dash">—</span>
+                  Editar rutina
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="w-full h-px bg-gray-100 mb-2"></div>
+
+          
+          <div class="space-y-0">
+            @for (exercise of currentDay()?.exercises; track exercise.id ?? exercise.tempKey ?? i; let i = $index) {
+              <div class="gym-exercise-row group">
+                <div class="gym-exercise-row__num">{{ (i + 1).toString().padStart(2, '0') }}</div>
+                <div class="gym-exercise-row__divider"></div>
+
+                <div class="gym-exercise-row__body">
+                  @if (isEditing()) {
+                    <input
+                      type="text"
+                      [(ngModel)]="exercise.name"
+                      (ngModelChange)="updateExercise(getExerciseTrackKey(exercise, i), 'name', $event)"
+                      placeholder="Nombre del ejercicio"
+                      class="gym-exercise-input gym-exercise-input--name">
+                  } @else {
+                    <h3 class="gym-exercise-row__name">{{ exercise.name || 'Ejercicio sin nombre' }}</h3>
+                    <p class="gym-exercise-row__sub">{{ exercise.sets }} series × {{ exercise.reps }}</p>
+                  }
+                </div>
+
+                <div class="gym-exercise-row__stats">
+                  @if (isEditing()) {
+                    <div class="gym-stat-field">
+                      <input type="number" [ngModel]="exercise.sets"
+                        (ngModelChange)="updateExercise(getExerciseTrackKey(exercise, i), 'sets', $event)"
+                        class="gym-stat-input">
+                      <span class="gym-stat-label">Series</span>
+                    </div>
+                    <div class="gym-stat-field">
+                      <input type="text" [ngModel]="exercise.reps"
+                        (ngModelChange)="updateExercise(getExerciseTrackKey(exercise, i), 'reps', $event)"
+                        class="gym-stat-input">
+                      <span class="gym-stat-label">Reps</span>
+                    </div>
+                    <div class="gym-stat-field">
+                      <input type="text" [ngModel]="exercise.rest"
+                        (ngModelChange)="updateExercise(getExerciseTrackKey(exercise, i), 'rest', $event)"
+                        class="gym-stat-input">
+                      <span class="gym-stat-label">Descanso</span>
+                    </div>
+                    <button (click)="removeExercise(getExerciseTrackKey(exercise, i))" class="gym-remove-btn">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                      </svg>
+                    </button>
+                  } @else {
+                    <div class="text-right">
+                      <span class="block text-sm font-light text-gray-900">{{ exercise.rest }}</span>
+                      <span class="block text-[10px] font-bold tracking-[0.15em] uppercase text-gray-600 mt-0.5">Descanso</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (currentDay()?.exercises?.length === 0) {
+              <div class="py-14 lg:py-20 text-center">
+                <p class="text-[13px] font-light text-gray-600 uppercase tracking-widest">
+                  No hay ejercicios en este día
+                  @if (isEditing()) { · Añade uno para empezar }
+                </p>
+              </div>
+            }
+          </div>
+        </div>
+
+      </div>
+      }
+      } 
+    </div>
+  }
+</div>
