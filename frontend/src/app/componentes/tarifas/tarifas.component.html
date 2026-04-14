@@ -1,0 +1,58 @@
+<div class="min-h-screen bg-white">
+
+  
+  <section class="tarifas-hero">
+    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+      <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">Precios</p>
+      <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
+        style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
+        Nuestras <span class="italic text-[#0B2118]">tarifas.</span>
+      </h1>
+      <p class="text-[15px] lg:text-[17px] font-light text-gray-500 leading-relaxed max-w-lg">
+        Sin permanencia ni cuotas ocultas. Reserva la pista que quieras, paga solo cuando juegas.
+      </p>
+    </div>
+  </section>
+
+  
+  <section class="pb-24">
+    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+      <div class="flex flex-col">
+        @for (tarifa of tarifas; track tarifa.title) {
+          <div class="tarifa-row">
+            <div class="tarifa-row__left">
+              <div class="tarifa-row__image">
+                <img [src]="tarifa.image" [alt]="tarifa.title" class="tarifa-row__img" referrerpolicy="no-referrer">
+                <span class="tarifa-row__badge">{{ tarifa.badge }}</span>
+              </div>
+            </div>
+            <div class="tarifa-row__center">
+              <p class="tarifa-row__label">{{ tarifa.sportLabel }}</p>
+              <h3 class="tarifa-row__title">{{ tarifa.title }}</h3>
+              <ul class="tarifa-row__features">
+                @for (feat of tarifa.features; track feat) {
+                  <li>
+                    <svg class="w-4.5 h-4.5 text-emerald-800 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span>{{ feat }}</span>
+                  </li>
+                }
+              </ul>
+            </div>
+            <div class="tarifa-row__right">
+              <div class="tarifa-row__price">
+                <span class="tarifa-row__amount">{{ tarifa.amount }}</span>
+                <span class="tarifa-row__unit">{{ tarifa.unit }}</span>
+              </div>
+              @if (!(authStore.isLoggedIn() && tarifa.badge === 'Socio')) {
+                <a [routerLink]="tarifa.ctaRoute" class="tarifa-row__cta">{{ tarifa.ctaText }}</a>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+</div>
