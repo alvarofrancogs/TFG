@@ -1,0 +1,15 @@
+@if (facility(); as f) {
+<div class="min-h-screen bg-white">
+
+  <section class="facility-hero">
+    <div class="facility-hero__content">
+      <div class="facility-hero__copy">
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">{{ f.sportLabel }}</p>
+        <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
+          style="font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 6vw, 5.5rem);">
+          {{ f.heroTitle }}<br>
+          <span class="italic text-[#0B2118]">{{ f.heroAccentText }}</span>
+        </h1>
+        <p class="text-[15px] lg:text-[16px] font-light text-gray-500 leading-relaxed mb-6 max-w-sm">
+          {{ f.heroDescription }}
+        </p>
