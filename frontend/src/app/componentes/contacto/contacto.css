@@ -1,0 +1,38 @@
+
+
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.contact-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+
+.contact-input {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  padding: 0.875rem 1rem;
+  font-size: 14px;
+  font-weight: 300;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+  appearance: none;
+}
+
+.contact-input::placeholder {
+  color: #d1d5db;
+}
+
+.contact-input:focus {
+  border-color: #0B2118;
+  box-shadow: 0 0 0 3px rgba(11, 33, 24, 0.06);
+}
