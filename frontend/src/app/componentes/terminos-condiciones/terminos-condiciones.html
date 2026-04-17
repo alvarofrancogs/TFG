@@ -1,0 +1,124 @@
+<div class="min-h-screen bg-white pt-24">
+
+  
+  <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20 border-b border-gray-100">
+    <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">Legal</p>
+    <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
+      style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
+      Términos y <span class="italic text-[#0B2118]">Condiciones.</span>
+    </h1>
+    <p class="text-[14px] font-light text-gray-600">Última actualización: 1 de junio de 2026</p>
+  </section>
+
+  
+  <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 pb-24">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-16">
+
+      
+      <aside class="hidden lg:block lg:col-span-1">
+        <div class="sticky top-28">
+          <p class="text-[10px] font-bold tracking-[0.25em] uppercase text-gray-600 mb-5">En este documento</p>
+          <nav class="space-y-3">
+            <a (click)="scrollTo('objeto')" class="legal-nav-item">1. Objeto</a>
+            <a (click)="scrollTo('acceso')" class="legal-nav-item">2. Acceso y registro</a>
+            <a (click)="scrollTo('reservas')" class="legal-nav-item">3. Reservas</a>
+            <a (click)="scrollTo('pagos')" class="legal-nav-item">4. Precios y pagos</a>
+            <a (click)="scrollTo('cancelacion')" class="legal-nav-item">5. Cancelaciones</a>
+            <a (click)="scrollTo('uso')" class="legal-nav-item">6. Normas de uso</a>
+            <a (click)="scrollTo('responsabilidad')" class="legal-nav-item">7. Responsabilidad</a>
+            <a (click)="scrollTo('propiedad')" class="legal-nav-item">8. Propiedad intelectual</a>
+            <a (click)="scrollTo('legislacion')" class="legal-nav-item">9. Legislación aplicable</a>
+          </nav>
+        </div>
+      </aside>
+
+      
+      <div class="lg:col-span-3 legal-content">
+
+        <section id="objeto" class="legal-section">
+          <h2 class="legal-h2">1. Objeto</h2>
+          <p>Los presentes Términos y Condiciones regulan el acceso y uso de la plataforma digital de <strong>Oasis Club S.L.</strong> (en adelante, "el Club"), así como la contratación de los servicios ofrecidos a través de ella. El uso de la plataforma implica la aceptación íntegra de estos términos.</p>
+        </section>
+
+        <section id="acceso" class="legal-section">
+          <h2 class="legal-h2">2. Acceso y registro</h2>
+          <p>Para acceder a determinados servicios es necesario registrarse como usuario. Al hacerlo, el usuario declara que:</p>
+          <ul class="legal-list">
+            <li>Es mayor de 18 años o cuenta con el consentimiento de su tutor legal.</li>
+            <li>Los datos proporcionados son verídicos, actuales y completos.</li>
+            <li>Es responsable de mantener la confidencialidad de sus credenciales de acceso.</li>
+            <li>Notificará al Club de inmediato ante cualquier uso no autorizado de su cuenta.</li>
+          </ul>
+        </section>
+
+        <section id="reservas" class="legal-section">
+          <h2 class="legal-h2">3. Reservas de instalaciones</h2>
+          <p>Las reservas se realizan a través de la plataforma online y están sujetas a disponibilidad. Una reserva se considera confirmada únicamente cuando se recibe la confirmación de pago por parte de Stripe.</p>
+          <ul class="legal-list">
+
+            <li>La duración de cada sesión es la indicada en la tarifa correspondiente (generalmente 60 minutos).</li>
+            <li>No está permitida la cesión o reventa de reservas a terceros.</li>
+          </ul>
+        </section>
+
+        <section id="pagos" class="legal-section">
+          <h2 class="legal-h2">4. Precios y pagos</h2>
+          <p>Los precios indicados en la plataforma incluyen el IVA vigente. El pago se realiza en el momento de la reserva a través de <strong>Stripe</strong>, una pasarela de pago segura conforme a las normativas PCI-DSS. El Club no almacena datos de tarjetas bancarias.</p>
+          <div class="legal-card mt-2">
+            <div class="legal-card__row"><span class="legal-card__label">Pádel</span><span>50 € / pista · 90 min</span></div>
+            <div class="legal-card__row"><span class="legal-card__label">Fútbol indoor</span><span>100 € / campo · 90 min</span></div>
+            <div class="legal-card__row"><span class="legal-card__label">Gimnasio</span><span>35 € / mes · acceso ilimitado</span></div>
+          </div>
+        </section>
+
+        <section id="cancelacion" class="legal-section">
+          <h2 class="legal-h2">5. Política de cancelación</h2>
+          <p>El Club establece la siguiente política de cancelación y reembolso:</p>
+          <ul class="legal-list">
+            <li><strong>Más de 24 horas antes:</strong> reembolso completo del importe abonado.</li>
+            <li><strong>Entre 12 y 24 horas antes:</strong> reembolso del 50% del importe.</li>
+            <li><strong>Menos de 12 horas antes:</strong> no se realizará ningún reembolso.</li>
+            <li>Las cancelaciones realizadas por el Club por causas de fuerza mayor darán derecho a reembolso total o a crédito para futuras reservas.</li>
+          </ul>
+        </section>
+
+        <section id="uso" class="legal-section">
+          <h2 class="legal-h2">6. Normas de uso de las instalaciones</h2>
+          <p>El acceso y uso de las instalaciones está condicionado al cumplimiento de las siguientes normas:</p>
+          <ul class="legal-list">
+            <li>Presentar la confirmación de reserva a la llegada al club.</li>
+            <li>Utilizar indumentaria y calzado deportivo adecuados.</li>
+            <li>Respetar los horarios de inicio y fin de la sesión.</li>
+            <li>Mantener el respeto hacia otros usuarios y el personal del club.</li>
+            <li>Queda prohibido el acceso bajo los efectos del alcohol u otras sustancias.</li>
+            <li>El Club se reserva el derecho de admisión y de cancelar reservas ante incumplimientos reiterados.</li>
+          </ul>
+        </section>
+
+        <section id="responsabilidad" class="legal-section">
+          <h2 class="legal-h2">7. Limitación de responsabilidad</h2>
+          <p>El Club no se responsabiliza de:</p>
+          <ul class="legal-list">
+            <li>Lesiones derivadas del uso inadecuado de las instalaciones.</li>
+            <li>Pérdida o robo de objetos personales en las instalaciones.</li>
+            <li>Interrupciones del servicio digital por causas ajenas al Club (fallos de red, terceros, etc.).</li>
+            <li>Daños indirectos, consecuentes o lucro cesante derivados del uso de la plataforma.</li>
+          </ul>
+        </section>
+
+        <section id="propiedad" class="legal-section">
+          <h2 class="legal-h2">8. Propiedad intelectual</h2>
+          <p>Todos los contenidos de la plataforma (textos, imágenes, logotipos, diseño, código) son propiedad de Oasis Club S.L. o de sus licenciantes, y están protegidos por la legislación de propiedad intelectual e industrial. Queda prohibida su reproducción, distribución o uso sin autorización expresa.</p>
+        </section>
+
+        <section id="legislacion" class="legal-section">
+          <h2 class="legal-h2">9. Legislación aplicable y jurisdicción</h2>
+          <p>Estos términos se rigen por la legislación española. Para cualquier controversia derivada de su interpretación o cumplimiento, las partes se someten a los Juzgados y Tribunales de la ciudad de <strong>Murcia</strong>, renunciando expresamente a cualquier otro fuero que pudiera corresponderles.</p>
+          <p>Para cualquier duda o consulta sobre estos términos, puedes contactarnos en <strong>oasisclubmurcia&#64;gmail.com</strong>.</p>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+</div>
