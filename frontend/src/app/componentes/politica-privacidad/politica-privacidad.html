@@ -1,0 +1,155 @@
+<div class="min-h-screen bg-white pt-24">
+
+  
+  <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20 border-b border-gray-100">
+    <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">Legal</p>
+    <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
+      style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
+      Política de <span class="italic text-[#0B2118]">Privacidad.</span>
+    </h1>
+    <p class="text-[14px] font-light text-gray-600">Última actualización: 1 de junio de 2026</p>
+  </section>
+
+  
+  <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 pb-24">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-16">
+
+      
+      <aside class="hidden lg:block lg:col-span-1">
+        <div class="sticky top-28">
+          <p class="text-[10px] font-bold tracking-[0.25em] uppercase text-gray-600 mb-5">En este documento</p>
+          <nav class="space-y-3">
+            <a (click)="scrollTo('responsable')" class="legal-nav-item">1. Responsable del tratamiento</a>
+            <a (click)="scrollTo('datos')" class="legal-nav-item">2. Datos que recopilamos</a>
+            <a (click)="scrollTo('finalidad')" class="legal-nav-item">3. Finalidad del tratamiento</a>
+            <a (click)="scrollTo('base-legal')" class="legal-nav-item">4. Base legal</a>
+            <a (click)="scrollTo('conservacion')" class="legal-nav-item">5. Conservación de datos</a>
+            <a (click)="scrollTo('terceros')" class="legal-nav-item">6. Cesión a terceros</a>
+            <a (click)="scrollTo('derechos')" class="legal-nav-item">7. Tus derechos</a>
+            <a (click)="scrollTo('cookies')" class="legal-nav-item">8. Cookies</a>
+            <a (click)="scrollTo('cambios')" class="legal-nav-item">9. Cambios en la política</a>
+          </nav>
+        </div>
+      </aside>
+
+      
+      <div class="lg:col-span-3 legal-content">
+
+        <section id="responsable" class="legal-section">
+          <h2 class="legal-h2">1. Responsable del tratamiento</h2>
+          <p>En cumplimiento del Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD), te informamos que el responsable del tratamiento de tus datos personales es:</p>
+          <div class="legal-card">
+            <div class="legal-card__row"><span class="legal-card__label">Denominación</span><span>Oasis Club S.L.</span></div>
+            <div class="legal-card__row"><span class="legal-card__label">NIF</span><span>B-12345678</span></div>
+            <div class="legal-card__row"><span class="legal-card__label">Domicilio</span><span>Av. Juan Carlos I, s/n – 30008 Murcia</span></div>
+            <div class="legal-card__row"><span class="legal-card__label">Correo</span><span>oasisclubmurcia&#64;gmail.com</span></div>
+          </div>
+        </section>
+
+        <section id="datos" class="legal-section">
+          <h2 class="legal-h2">2. Datos que recopilamos</h2>
+          <p>Recopilamos los siguientes datos personales cuando interactúas con nuestra plataforma:</p>
+          <ul class="legal-list">
+            <li><strong>Datos de registro:</strong> nombre, apellidos, correo electrónico y contraseña cifrada.</li>
+            <li><strong>Datos de reservas:</strong> instalación, fecha, hora y registro de pagos.</li>
+            <li><strong>Datos de navegación:</strong> dirección IP, tipo de dispositivo y páginas visitadas.</li>
+            <li><strong>Comunicaciones:</strong> mensajes enviados a través del formulario de contacto.</li>
+          </ul>
+        </section>
+
+        <section id="finalidad" class="legal-section">
+          <h2 class="legal-h2">3. Finalidad del tratamiento</h2>
+          <p>Tus datos se tratan para las siguientes finalidades:</p>
+          <ul class="legal-list">
+            <li>Gestionar tu cuenta de usuario y acceso a la plataforma.</li>
+            <li>Procesar y confirmar reservas de instalaciones deportivas.</li>
+            <li>Gestionar pagos de forma segura a través de Stripe.</li>
+            <li>Enviarte comunicaciones relacionadas con tu actividad en el club (si lo has solicitado).</li>
+            <li>Mejorar nuestros servicios mediante el análisis del uso de la plataforma.</li>
+          </ul>
+        </section>
+
+        <section id="base-legal" class="legal-section">
+          <h2 class="legal-h2">4. Base legal del tratamiento</h2>
+          <p>El tratamiento de tus datos se basa en:</p>
+          <ul class="legal-list">
+            <li><strong>Ejecución del contrato</strong> (art. 6.1.b RGPD): para gestionar tu cuenta y reservas.</li>
+            <li><strong>Consentimiento</strong> (art. 6.1.a RGPD): para el envío de comunicaciones comerciales.</li>
+            <li><strong>Interés legítimo</strong> (art. 6.1.f RGPD): para mejorar la seguridad y el rendimiento de la plataforma.</li>
+          </ul>
+        </section>
+
+        <section id="conservacion" class="legal-section">
+          <h2 class="legal-h2">5. Conservación de datos</h2>
+          <p>Conservamos tus datos mientras mantengas una cuenta activa en Oasis Club. Una vez elimines tu cuenta, los datos se suprimirán en un plazo máximo de <strong>30 días</strong>, salvo que exista obligación legal de conservarlos (p. ej., datos fiscales durante 5 años).</p>
+        </section>
+
+        <section id="terceros" class="legal-section">
+          <h2 class="legal-h2">6. Cesión a terceros</h2>
+          <p>No cedemos tus datos a terceros, salvo en los siguientes casos:</p>
+          <ul class="legal-list">
+            <li><strong>Stripe Inc.</strong> — procesador de pagos. Consulta su política en stripe.com/privacy.</li>
+            <li><strong>Proveedores de hosting</strong> — almacenamiento de datos en servidores dentro de la UE.</li>
+            <li><strong>Autoridades competentes</strong> — cuando exista obligación legal.</li>
+          </ul>
+        </section>
+
+        <section id="derechos" class="legal-section">
+          <h2 class="legal-h2">7. Tus derechos</h2>
+          <p>Puedes ejercer en cualquier momento los siguientes derechos:</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div class="legal-right-card">
+              <div class="legal-right-card__icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </div>
+              <span><strong>Acceso</strong> — Consultar qué datos tenemos sobre ti.</span>
+            </div>
+            <div class="legal-right-card">
+              <div class="legal-right-card__icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              </div>
+              <span><strong>Rectificación</strong> — Corregir datos incorrectos.</span>
+            </div>
+            <div class="legal-right-card">
+              <div class="legal-right-card__icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </div>
+              <span><strong>Supresión</strong> — Eliminar tus datos (derecho al olvido).</span>
+            </div>
+            <div class="legal-right-card">
+              <div class="legal-right-card__icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <span><strong>Limitación</strong> — Restringir el tratamiento de tus datos.</span>
+            </div>
+            <div class="legal-right-card">
+              <div class="legal-right-card__icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              </div>
+              <span><strong>Portabilidad</strong> — Recibir tus datos en formato estructurado.</span>
+            </div>
+            <div class="legal-right-card">
+              <div class="legal-right-card__icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+              </div>
+              <span><strong>Oposición</strong> — Oponerte al tratamiento basado en interés legítimo.</span>
+            </div>
+          </div>
+          <p class="mt-6">Para ejercer estos derechos, escríbenos a <strong>oasisclubmurcia&#64;gmail.com</strong> adjuntando una copia de tu documento de identidad. También tienes derecho a presentar una reclamación ante la <a href="https://www.aepd.es" target="_blank" class="text-emerald-800 underline underline-offset-2 hover:text-emerald-600 transition-colors">Agencia Española de Protección de Datos (aepd.es)</a>.</p>
+        </section>
+
+        <section id="cookies" class="legal-section">
+          <h2 class="legal-h2">8. Cookies</h2>
+          <p>Utilizamos cookies técnicas necesarias para el funcionamiento de la plataforma (sesión, autenticación). No utilizamos cookies de seguimiento de terceros con fines publicitarios. Para más información, puedes contactarnos en <strong>oasisclubmurcia&#64;gmail.com</strong>.</p>
+        </section>
+
+        <section id="cambios" class="legal-section">
+          <h2 class="legal-h2">9. Cambios en esta política</h2>
+          <p>Oasis Club se reserva el derecho a actualizar esta política. Te notificaremos cualquier cambio relevante mediante un aviso en la plataforma o por correo electrónico a <strong>oasisclubmurcia&#64;gmail.com</strong>.</p>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+</div>
