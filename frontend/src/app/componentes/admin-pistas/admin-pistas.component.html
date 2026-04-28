@@ -1,0 +1,134 @@
+<div class="min-h-screen bg-white">
+
+  <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+    <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">Panel Admin</p>
+    <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
+      style="font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.5rem);">
+      Gestión de <span class="italic text-[#0B2118]">pistas.</span>
+    </h1>
+    <p class="text-[15px] font-light text-gray-500 leading-relaxed max-w-lg">
+      Añade o elimina instalaciones deportivas.
+    </p>
+  </section>
+
+  <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 pb-24">
+    <div class="w-full h-px bg-gray-100 mb-10"></div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+      <div>
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-1">Nueva instalación</p>
+        <h2 class="text-xl font-light text-gray-900 mb-8"
+          style="font-family: 'Playfair Display', serif;">
+          Añadir pista
+        </h2>
+
+        <form (submit)="addCourt($event)" class="space-y-6" novalidate>
+          <div class="ap-field">
+            <label for="new-court-name" class="ap-label">Nombre de la Pista</label>
+            <input id="new-court-name" type="text" [(ngModel)]="newCourt.name" name="name" required
+              placeholder="Ej: Pista Cristal Central" class="ap-input">
+          </div>
+
+          <div class="ap-field">
+            <span class="ap-label">Deporte</span>
+            <div class="flex gap-2 mt-1">
+              <button type="button"
+                (click)="newCourt.sport = 'PADEL'"
+                [class]="newCourt.sport === 'PADEL' ? 'ap-filter ap-filter--active flex-1' : 'ap-filter flex-1'">
+                Pádel
+              </button>
+              <button type="button"
+                (click)="newCourt.sport = 'FUTBOL'"
+                [class]="newCourt.sport === 'FUTBOL' ? 'ap-filter ap-filter--active flex-1' : 'ap-filter flex-1'">
+                Fútbol
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-green-outline w-full justify-center">
+            <span class="ap-btn__dash">—</span>
+            Registrar Pista
+          </button>
+        </form>
+      </div>
+
+      <div class="lg:col-span-2">
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+          <div>
+            <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-1">Instalaciones</p>
+            <h2 class="text-xl font-light text-gray-900"
+              style="font-family: 'Playfair Display', serif;">
+              Pistas existentes
+            </h2>
+          </div>
+          <div class="flex gap-2">
+            <button (click)="filterBySport(null)"
+              [class]="selectedSport() === null ? 'ap-filter ap-filter--active' : 'ap-filter'">
+              Todas
+            </button>
+            <button (click)="filterBySport('PADEL')"
+              [class]="selectedSport() === 'PADEL' ? 'ap-filter ap-filter--active' : 'ap-filter'">
+              Pádel
+            </button>
+            <button (click)="filterBySport('FUTBOL')"
+              [class]="selectedSport() === 'FUTBOL' ? 'ap-filter ap-filter--active' : 'ap-filter'">
+              Fútbol
+            </button>
+          </div>
+        </div>
+
+        <div class="w-full h-px bg-gray-100 mb-2"></div>
+
+        <div class="space-y-0" role="list" aria-label="Listado de pistas">
+          @for (court of courts(); track court.id) {
+            <article class="ap-court-row group" role="listitem">
+              <div class="ap-court-row__body">
+                <span class="ap-sport-tag"
+                  [class.ap-sport-tag--padel]="court.sport === 'PADEL'"
+                  [class.ap-sport-tag--futbol]="court.sport === 'FUTBOL'">
+                  {{ court.sport === 'PADEL' ? 'Pádel' : 'Fútbol' }}
+                </span>
+                <h3 class="ap-court-row__name">{{ court.name }}</h3>
+                <p class="ap-court-row__date">
+                  Incorporada el {{ court.createdAt | slice:0:10 | date:'longDate' }}
+                </p>
+              </div>
+
+              <div class="ap-court-row__action">
+                @if (confirmingDeleteId() === court.id) {
+                  <div class="flex items-center gap-3 flex-wrap">
+                    <span class="text-[11px] font-bold text-red-600 uppercase tracking-widest">¿Eliminar?</span>
+                    <button (click)="confirmDelete(court.id)" class="btn-danger-solid">
+                      <span class="ap-btn__dash">—</span>
+                      Confirmar
+                    </button>
+                    <button (click)="cancelDelete()" class="btn-green-outline">
+                      <span class="ap-btn__dash">—</span>
+                      No
+                    </button>
+                  </div>
+                } @else {
+                  <button (click)="requestDelete(court.id)" class="btn-danger-outline"
+                    [attr.aria-label]="'Eliminar pista ' + court.name">
+                    <span class="ap-btn__dash">—</span>
+                    Eliminar Pista
+                  </button>
+                }
+              </div>
+            </article>
+          }
+
+          @if (courts().length === 0) {
+            <div class="py-20 text-center">
+              <p class="text-[13px] font-light text-gray-600 uppercase tracking-widest">
+                No hay pistas registradas{{ selectedSport() ? ' para este deporte' : '' }}
+              </p>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
