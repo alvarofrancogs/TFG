@@ -13,3 +13,159 @@
 
   <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 pb-4">
     <div class="flex gap-3 flex-wrap">
+      <button (click)="setFilter('TODOS')"
+        [class]="activeFilter() === 'TODOS' ? 'event-filter event-filter--active' : 'event-filter'">
+        Todos
+      </button>
+      <button (click)="setFilter('TORNEO')"
+        [class]="activeFilter() === 'TORNEO' ? 'event-filter event-filter--active' : 'event-filter'">
+        Torneos
+      </button>
+      <button (click)="setFilter('LIGA')"
+        [class]="activeFilter() === 'LIGA' ? 'event-filter event-filter--active' : 'event-filter'">
+        Ligas
+      </button>
+      <button (click)="setFilter('MASTERCLASS')"
+        [class]="activeFilter() === 'MASTERCLASS' ? 'event-filter event-filter--active' : 'event-filter'">
+        Masterclasses
+      </button>
+      <button (click)="setFilter('SOCIAL')"
+        [class]="activeFilter() === 'SOCIAL' ? 'event-filter event-filter--active' : 'event-filter'">
+        Sociales
+      </button>
+    </div>
+    <div class="w-full h-px bg-gray-100 mt-6"></div>
+  </section>
+
+  <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-12 pb-24">
+
+    @if (actionError()) {
+      <div class="mb-6 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-[13px]">
+        {{ actionError() }}
+      </div>
+    }
+
+    @if (loading()) {
+      <div class="space-y-0">
+        @for (_ of [1,2,3]; track $index) {
+          <div class="event-row animate-pulse">
+            <div class="w-10 h-14 bg-gray-100 rounded"></div>
+            <div class="flex-1 space-y-2 py-1">
+              <div class="h-3 bg-gray-100 rounded w-1/4"></div>
+              <div class="h-4 bg-gray-100 rounded w-1/2"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else if (filteredEvents().length === 0) {
+      <div class="py-20 text-center">
+        <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">No hay eventos disponibles</p>
+      </div>
+    } @else {
+      <div class="space-y-0">
+        @for (event of filteredEvents(); track event.id) {
+          <article class="event-row group">
+            <div class="event-row__date">
+              <span class="event-row__day">{{ formatDate(event.eventDate).day }}</span>
+              <span class="event-row__month">{{ formatDate(event.eventDate).month }}</span>
+            </div>
+            <div class="event-row__divider"></div>
+            <div class="event-row__body">
+              <div class="event-row__tags">
+                <span [class]="'event-row__tag event-row__tag--' + event.category.toLowerCase()">
+                  {{ categoryLabel(event.category) }}
+                </span>
+                @if (event.sport === 'PADEL') {
+                  <span class="event-row__tag event-row__tag--padel">Pádel</span>
+                } @else if (event.sport === 'FUTBOL') {
+                  <span class="event-row__tag event-row__tag--futbol">Fútbol</span>
+                }
+                @if (event.courtNames) {
+                  <span class="event-row__tag event-row__tag--court">
+                    <svg class="inline w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    {{ event.courtNames }}
+                  </span>
+                }
+              </div>
+              <h2 class="event-row__title">{{ event.title }}</h2>
+              <p class="event-row__desc">{{ event.description }}</p>
+            </div>
+            <div class="event-row__meta">
+              <span class="event-row__time">{{ event.startTime.substring(0,5) }} – {{ event.endTime.substring(0,5) }}</span>
+              @if (spotsLeft(event) > 0) {
+                <span class="event-row__spots">{{ spotsLeft(event) }} plazas libres</span>
+              } @else {
+                <span class="event-row__spots text-red-500">Completo</span>
+              }
+            </div>
+            <div class="event-row__action">
+              @if (isLoggedIn()) {
+                @if (event.isRegistered) {
+                  <button (click)="unregister(event.id)" class="event-btn event-btn--registered">
+                    Ya inscrito
+                  </button>
+                } @else if (spotsLeft(event) <= 0) {
+                  <button class="event-btn event-btn--disabled" disabled>Completo</button>
+                } @else {
+                  <button (click)="register(event.id)" class="event-btn">Inscribirse</button>
+                }
+              }
+            </div>
+          </article>
+        }
+      </div>
+    }
+
+  </section>
+
+  <div class="bg-[#0B2118] text-white">
+    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+      <div>
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-emerald-400 mb-3">Novedades</p>
+        <h2 class="text-2xl font-light leading-snug max-w-sm">
+          Sé el primero en enterarte de nuevos eventos.
+        </h2>
+      </div>
+
+      <div class="w-full max-w-md">
+        @if (subscribeSuccess()) {
+          <p class="text-emerald-400 text-[13px] font-light tracking-wide py-4">
+            ✓ Suscripción confirmada. Recibirás un correo de confirmación.
+          </p>
+        } @else {
+          @if (isLoggedIn()) {
+            <div class="flex flex-col gap-2">
+              <p class="text-white/50 text-[12px] font-light">
+                Se usará el correo de tu cuenta: <span class="text-white/80">{{ session()?.email }}</span>
+              </p>
+              <button
+                (click)="subscribe()"
+                [disabled]="subscribeLoading()"
+                class="bg-white text-[#0B2118] px-6 py-3.5 text-[11px] font-bold tracking-[0.15em] uppercase hover:bg-emerald-50 transition-colors disabled:opacity-50 self-start">
+                {{ subscribeLoading() ? 'Enviando...' : 'Suscribirse' }}
+              </button>
+            </div>
+          } @else {
+            <div class="flex w-full">
+              <input
+                type="email"
+                placeholder="Tu correo electrónico"
+                [(ngModel)]="newsletterEmail"
+                class="flex-1 bg-white/10 border border-white/20 text-white placeholder-white/40 px-5 py-3.5 text-[14px] font-light outline-none focus:bg-white/15 transition-colors" />
+              <button
+                (click)="subscribe()"
+                [disabled]="subscribeLoading() || !newsletterEmail()"
+                class="bg-white text-[#0B2118] px-6 py-3.5 text-[11px] font-bold tracking-[0.15em] uppercase hover:bg-emerald-50 transition-colors shrink-0 disabled:opacity-50">
+                {{ subscribeLoading() ? '...' : 'Suscribirse' }}
+              </button>
+            </div>
+          }
+          @if (subscribeError()) {
+            <p class="text-red-400 text-[12px] font-light mt-2">{{ subscribeError() }}</p>
+          }
+        }
+      </div>
+    </div>
+  </div>
+
+</div>
