@@ -1,0 +1,15 @@
+<div class="min-h-screen bg-white pt-24">
+
+  @if (!auth.isLoggedIn()) {
+    <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+      <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">Acceso</p>
+      <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
+        style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
+        Reserva tu <span class="italic text-[#0B2118]">pista.</span>
+      </h1>
+      <p class="text-[15px] lg:text-[17px] font-light text-gray-500 leading-relaxed max-w-lg mb-10">
+        Para reservar pistas y ver la disponibilidad en tiempo real, necesitas iniciar sesión en tu cuenta de socio.
+      </p>
+      <a routerLink="/login" class="res-btn">
+        <span class="res-btn__dash">—</span>
+        Iniciar Sesión
