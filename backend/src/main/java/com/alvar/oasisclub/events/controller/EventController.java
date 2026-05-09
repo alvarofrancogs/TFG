@@ -25,4 +25,90 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/events")
 @AllArgsConstructor
 public class EventController {
+
+  private final EventService eventService;
+  private final AccessControlService accessControl;
+
+  @GetMapping
+  public List<EventResponse> getActiveEvents(Authentication authentication) {
+    UUID clientId = extractClientId(authentication);
+    return eventService.getActiveEvents(clientId);
+  }
+
+  @GetMapping("/all")
+  public List<EventResponse> getAllEvents(Authentication authentication) {
+    accessControl.requireAdmin(authentication);
+    return eventService.getAllEvents();
+  }
+
+  @PostMapping
+  public ResponseEntity<EventResponse> createEvent(
+      @Valid @RequestBody CreateEventRequest request,
+      Authentication authentication
+  ) {
+    accessControl.requireAdmin(authentication);
+    EventResponse response = eventService.createEvent(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteEvent(
+      @PathVariable UUID id,
+      Authentication authentication
+  ) {
+    accessControl.requireAdmin(authentication);
+    eventService.deleteEvent(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/{id}/registrations")
+  public List<EventRegistrationResponse> getRegistrations(
+      @PathVariable UUID id,
+      Authentication authentication
+  ) {
+    accessControl.requireAdmin(authentication);
+    return eventService.getRegistrations(id);
+  }
+
+  @DeleteMapping("/{id}/registrations/{regId}")
+  public ResponseEntity<Void> removeRegistration(
+      @PathVariable UUID id,
+      @PathVariable UUID regId,
+      Authentication authentication
+  ) {
+    accessControl.requireAdmin(authentication);
+    eventService.adminRemoveRegistration(id, regId);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/{id}/register")
+  public ResponseEntity<Void> register(
+      @PathVariable UUID id,
+      Authentication authentication
+  ) {
+    AuthenticatedUser user = accessControl.requireUser(authentication);
+    eventService.register(id, user.clientId());
+    return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  @DeleteMapping("/{id}/register")
+  public ResponseEntity<Void> unregister(
+      @PathVariable UUID id,
+      Authentication authentication
+  ) {
+    AuthenticatedUser user = accessControl.requireUser(authentication);
+    eventService.unregister(id, user.clientId());
+    return ResponseEntity.noContent().build();
+  }
+
+  private UUID extractClientId(Authentication authentication) {
+    if (authentication == null || !authentication.isAuthenticated()) {
+      return null;
+    }
+    try {
+      return accessControl.requireUser(authentication).clientId();
+    } catch (Exception e) {
+      return null;
+    }
+  }
 }
