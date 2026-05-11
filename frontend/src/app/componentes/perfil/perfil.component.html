@@ -13,3 +13,119 @@
       <a routerLink="/login" class="btn-green-outline">
         <span class="pf-btn__dash">—</span>
         Iniciar Sesión
+      </a>
+    </section>
+  } @else {
+
+    <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+      <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">Socio</p>
+      <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
+        style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
+        Mi <span class="italic text-[#0B2118]">área.</span>
+      </h1>
+      <p class="text-[15px] lg:text-[17px] font-light text-gray-500 leading-relaxed max-w-lg">
+        {{ auth.session()?.name }}
+      </p>
+    </section>
+
+    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 pb-24">
+      <div class="w-full h-px bg-gray-100 mb-10"></div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+        <div>
+          <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-1">Historial</p>
+          <h2 class="text-xl font-light text-gray-900 mb-8"
+            style="font-family: 'Playfair Display', serif;">
+            Mis reservas
+          </h2>
+
+          @if (myReservations().length === 0) {
+            <div class="py-16 text-center">
+              <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">No tienes reservas guardadas</p>
+            </div>
+          } @else {
+            <div class="space-y-0">
+              @for (reservation of myReservations(); track reservation.id) {
+                <article class="pf-reservation-row group">
+                  <div class="pf-reservation-row__date">
+                    <span class="pf-reservation-row__day">{{ reservation.date.split('-')[2] }}</span>
+                    <span class="pf-reservation-row__month">{{ monthAbbr(reservation.date) }}</span>
+                  </div>
+                  <div class="pf-reservation-row__divider"></div>
+                  <div class="pf-reservation-row__body">
+                    <span class="pf-sport-tag">{{ reservation.sport }}</span>
+                    <h3 class="pf-reservation-row__title">{{ reservation.court }}</h3>
+                    <p class="pf-reservation-row__meta">{{ reservation.time }} · {{ statusLabel(reservation.status) }}</p>
+                  </div>
+                  <div class="pf-reservation-row__action">
+                    <button type="button" (click)="deleteReservation(reservation.id)" class="btn-danger-outline">
+                      <span class="pf-btn__dash">—</span>
+                      Eliminar
+                    </button>
+                  </div>
+                </article>
+              }
+            </div>
+          }
+        </div>
+
+        <div>
+          <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-1">Entrenamiento</p>
+          <h2 class="text-xl font-light text-gray-900 mb-8"
+            style="font-family: 'Playfair Display', serif;">
+            Mi rutina
+          </h2>
+
+          @if (myRoutine().length === 0) {
+            <div class="py-16 text-center">
+              <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">No tienes rutina guardada</p>
+            </div>
+          } @else {
+            <div class="space-y-0">
+              @for (day of myRoutine(); track day.dayOrder) {
+                <article class="pf-day-row">
+                  <div class="pf-day-row__header">
+                    <div>
+                      <span class="pf-day-tag">Día {{ day.dayOrder }}</span>
+                      <h3 class="pf-day-row__title">{{ day.name || 'Sin nombre' }}</h3>
+                    </div>
+                    <button type="button" (click)="deleteDay(day.dayOrder)" class="btn-danger-outline">
+                      <span class="pf-btn__dash">—</span>
+                      Eliminar día
+                    </button>
+                  </div>
+
+                  @if (day.exercises.length === 0) {
+                    <p class="text-[13px] font-light text-gray-400 mt-3">No hay ejercicios.</p>
+                  } @else {
+                    <div class="mt-4 space-y-0">
+                      @for (exercise of day.exercises; track exercise.id ?? (exercise.name + '-' + $index); let i = $index) {
+                        <div class="pf-exercise-row">
+                          <span class="pf-exercise-row__num">{{ (i + 1).toString().padStart(2, '0') }}</span>
+                          <div class="pf-exercise-row__body">
+                            <span class="pf-exercise-row__name">{{ exercise.name || 'Sin nombre' }}</span>
+                            <span class="pf-exercise-row__details">{{ exercise.sets }} × {{ exercise.reps }} · {{ exercise.rest }}</span>
+                          </div>
+                          @if (exercise.id) {
+                            <button type="button" (click)="deleteExercise(day.dayOrder, exercise.id)"
+                              class="pf-exercise-remove">
+                              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/>
+                              </svg>
+                            </button>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                </article>
+              }
+            </div>
+          }
+        </div>
+
+      </div>
+    </div>
+  }
+</div>
