@@ -1,0 +1,15 @@
+FROM maven:3.9.11-eclipse-temurin-21
+WORKDIR /app
+
+# Copiar pom.xml primero para cachear dependencias
+COPY pom.xml ./
+COPY .mvn .mvn
+COPY mvnw ./
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw
+RUN ./mvnw -DskipTests dependency:go-offline -q
+
+# El código fuente se monta como volumen, no se copia aquí
+EXPOSE 8080
+
+# Usa spring-boot:run con devtools activos para hot reload
+ENTRYPOINT ["./mvnw", "spring-boot:run", "-Dspring-boot.run.jvmArguments=-Dspring.devtools.restart.enabled=true"]
