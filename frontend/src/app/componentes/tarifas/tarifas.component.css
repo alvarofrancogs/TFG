@@ -1,0 +1,205 @@
+.tarifas-hero {
+  padding: 9rem 0 4rem;
+  background: #ffffff;
+}
+
+/* ============================
+   PRICING ROWS
+   ============================ */
+
+.tarifa-row {
+  display: grid;
+  grid-template-columns: 280px 1fr auto;
+  align-items: center;
+  gap: 0;
+  border-top: 1px solid #f3f4f6;
+  transition: background 0.2s;
+}
+
+.tarifa-row:last-child {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.tarifa-row:hover {
+  background: #fafafa;
+}
+
+/* Left: image */
+.tarifa-row__left {
+  padding: 2rem 2.5rem 2rem 0;
+}
+
+.tarifa-row__image {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.tarifa-row__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.tarifa-row:hover .tarifa-row__img {
+  transform: scale(1.04);
+}
+
+.tarifa-row__badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background: rgba(11, 33, 24, 0.85);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.65rem;
+  backdrop-filter: blur(4px);
+}
+
+/* Center: info */
+.tarifa-row__center {
+  padding: 2rem 3rem 2rem 0;
+  flex: 1;
+}
+
+.tarifa-row__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 0.75rem;
+}
+
+.tarifa-row__title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+  font-weight: 400;
+  color: #111827;
+  line-height: 1.25;
+  margin-bottom: 1.25rem;
+}
+
+.tarifa-row__features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.tarifa-row__features li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 13px;
+  font-weight: 300;
+  color: #6b7280;
+}
+
+/* Right: price + CTA */
+.tarifa-row__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1.25rem;
+  padding: 2rem 0 2rem 3rem;
+  border-left: 1px solid #f3f4f6;
+  min-width: 200px;
+}
+
+.tarifa-row__price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.tarifa-row__amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.75rem;
+  font-weight: 400;
+  color: #0B2118;
+  line-height: 1;
+}
+
+.tarifa-row__unit {
+  font-size: 11px;
+  font-weight: 300;
+  color: #9ca3af;
+  text-align: right;
+  line-height: 1.4;
+}
+
+.tarifa-row__cta {
+  display: inline-block;
+  background: #0B2118;
+  color: #ffffff;
+  padding: 0.85rem 1.75rem;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color 0.25s;
+  white-space: nowrap;
+}
+
+.tarifa-row__cta:hover {
+  background: #134e30;
+}
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+
+@media (max-width: 1024px) {
+  .tarifa-row {
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .tarifa-row__right {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-left: none;
+    border-top: 1px solid #f3f4f6;
+    padding: 1.5rem 0;
+  }
+
+  .tarifa-row__price {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .tarifa-row {
+    grid-template-columns: 1fr;
+  }
+
+  .tarifa-row__left {
+    padding: 1.5rem 0 1rem;
+  }
+
+  .tarifa-row__center {
+    padding: 0 0 1rem;
+  }
+
+  .tarifa-row__right {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .tarifa-row__cta {
+    width: 100%;
+    text-align: center;
+  }
+}
