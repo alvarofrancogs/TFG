@@ -1,0 +1,112 @@
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.admin-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+
+.admin-input {
+  border: 1px solid #e5e7eb;
+  padding: 0.625rem 0.875rem;
+  font-size: 13px;
+  font-weight: 300;
+  color: #111827;
+  background: white;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.admin-input:focus {
+  border-color: #0B2118;
+}
+
+.ae-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.875rem 2.5rem;
+  background-color: #0B2118;
+  background-image: none;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.ae-btn-primary:hover {
+  background-color: #1a4034;
+}
+
+.ae-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  background-color: #dc2626;
+  background-image: none;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.ae-btn-danger:hover {
+  background-color: #b91c1c;
+}
+
+.ae-btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  background-color: transparent;
+  background-image: none;
+  color: #6b7280;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.ae-btn-cancel:hover {
+  background-color: #f3f4f6;
+}
+
+.ae-btn-outline-danger {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  background-image: none;
+  color: #dc2626;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid #dc2626;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.ae-btn-outline-danger:hover {
+  background-color: #dc2626;
+  background-image: none;
+  color: #fff;
+  border-color: #dc2626;
+}
