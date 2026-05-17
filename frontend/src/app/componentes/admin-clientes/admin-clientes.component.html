@@ -13,3 +13,165 @@
 
   <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 pb-24">
     <div class="w-full h-px bg-gray-100 mb-10"></div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+      <div>
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-1">Nuevo socio</p>
+        <h2 class="text-xl font-light text-gray-900 mb-8"
+          style="font-family: 'Playfair Display', serif;">
+          Registrar socio
+        </h2>
+
+        @if (successMsg()) {
+          <div class="mb-6 px-4 py-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[13px]">
+            {{ successMsg() }}
+          </div>
+        }
+        @if (errorMsg()) {
+          <div class="mb-6 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-[13px]">
+            {{ errorMsg() }}
+          </div>
+        }
+
+        <form (submit)="addClient($event)" class="space-y-6" novalidate>
+          <div class="ac-field">
+            <label for="new-client-name" class="ac-label">Nombre Completo</label>
+            <input id="new-client-name" type="text" [(ngModel)]="newClient.name" name="name" required
+              autocomplete="name" placeholder="Ej: Ana García" class="ac-input">
+          </div>
+
+          <div class="ac-field">
+            <label for="new-client-email" class="ac-label">Correo Electrónico</label>
+            <input id="new-client-email" type="email" [(ngModel)]="newClient.email" name="email" required
+              autocomplete="email" placeholder="correo@ejemplo.com" class="ac-input">
+          </div>
+
+          <div class="ac-field">
+            <label for="new-client-phone" class="ac-label">Teléfono</label>
+            <input id="new-client-phone" type="tel" [(ngModel)]="newClient.phone" name="phone"
+              autocomplete="tel" placeholder="600 000 000" class="ac-input">
+          </div>
+
+          <div class="ac-field">
+            <label for="new-client-birthdate" class="ac-label">Fecha de Nacimiento</label>
+            <input id="new-client-birthdate" type="date" [(ngModel)]="newClient.birthDate" name="birthDate"
+              class="ac-input">
+          </div>
+
+          <div class="ac-field">
+            <label for="new-client-password" class="ac-label">Contraseña Inicial</label>
+            <input id="new-client-password" type="password" [(ngModel)]="newClient.password" name="password"
+              required autocomplete="new-password" class="ac-input">
+          </div>
+
+          <button type="submit" class="btn-green-outline w-full justify-center">
+            <span class="ac-btn__dash">—</span>
+            Registrar Socio
+          </button>
+        </form>
+      </div>
+
+      <div class="lg:col-span-2">
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+          <div>
+            <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-1">Directorio</p>
+            <h2 class="text-xl font-light text-gray-900"
+              style="font-family: 'Playfair Display', serif;">
+              Socios del club
+            </h2>
+          </div>
+          <p class="text-[12px] font-light text-gray-400">Máximo {{ resultLimit }} resultados</p>
+        </div>
+
+        <form (submit)="applySearch($event)" class="flex gap-3 mb-8" role="search">
+          <label for="search-clients" class="sr-only">Buscar por nombre o email</label>
+          <input id="search-clients" type="search"
+            [ngModel]="search()" (ngModelChange)="search.set($event)" name="search"
+            placeholder="Buscar por nombre o email..."
+            class="flex-1 border-b border-gray-300 pb-2 text-sm text-gray-900 bg-transparent focus:border-[#0B2118] focus:outline-none transition-colors">
+          <button type="submit" class="btn-green-outline">
+            <span class="ac-btn__dash">—</span>
+            Buscar
+          </button>
+        </form>
+
+        <div class="w-full h-px bg-gray-100 mb-2"></div>
+
+        @if (loading()) {
+          <div class="py-20 text-center">
+            <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">Cargando socios...</p>
+          </div>
+        } @else {
+
+          <div class="space-y-0">
+            @for (client of clients(); track client.id) {
+              <article class="ac-client-row group">
+                <div class="ac-client-row__body">
+                  <div class="ac-client-row__name-wrap">
+                    <h3 class="ac-client-row__name">{{ client.name }}</h3>
+                    <span class="ac-role-tag"
+                      [class.ac-role-tag--admin]="client.role === 'ADMIN'">
+                      {{ client.role }}
+                    </span>
+                  </div>
+                  <p class="ac-client-row__email">{{ client.email }}</p>
+                  <div class="ac-client-row__meta">
+                    @if (client.phone) {
+                      <span class="ac-meta-item">
+                        <span class="ac-meta-item__label">Tlf</span>
+                        {{ client.phone }}
+                      </span>
+                    }
+                    @if (client.birthDate) {
+                      <span class="ac-meta-item">
+                        <span class="ac-meta-item__label">Nac</span>
+                        {{ client.birthDate }}
+                      </span>
+                    }
+                    <span class="ac-meta-item">
+                      <span class="ac-meta-item__label">Alta</span>
+                      {{ client.joinDate }}
+                    </span>
+                  </div>
+                </div>
+
+                @if (client.role !== 'ADMIN') {
+                  <div class="ac-client-row__action">
+                    @if (confirmDeleteId() === client.id) {
+                      <div class="flex items-center gap-3 flex-wrap">
+                        <span class="text-[11px] font-bold text-red-600 uppercase tracking-widest">¿Dar de baja?</span>
+                        <button (click)="confirmDelete(client.id)" class="btn-danger-solid">
+                          <span class="ac-btn__dash">—</span>
+                          Confirmar
+                        </button>
+                        <button (click)="cancelDelete()" class="btn-green-outline">
+                          <span class="ac-btn__dash">—</span>
+                          No
+                        </button>
+                      </div>
+                    } @else {
+                      <button (click)="requestDelete(client.id)" class="btn-danger-outline">
+                        <span class="ac-btn__dash">—</span>
+                        Dar de Baja
+                      </button>
+                    }
+                  </div>
+                }
+              </article>
+            }
+          </div>
+
+          @if (clients().length === 0) {
+            <div class="py-20 text-center">
+              <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">
+                No se encontraron socios{{ search() ? ' para "' + search() + '"' : '' }}
+              </p>
+            </div>
+          }
+        }
+      </div>
+
+    </div>
+  </div>
+</div>
