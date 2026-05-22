@@ -28,4 +28,80 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
+
+  @Mock
+  private ClientService clientService;
+
+  @Mock
+  private AuthMapper authMapper;
+
+  @Mock
+  private JwtService jwtService;
+
+  @Mock
+  private PasswordEncoder passwordEncoder;
+
+  @Mock
+  private AppFrontendUrlProperties appFrontendUrlProperties;
+
+  @Mock
+  private PasswordResetTokenRepository passwordResetTokenRepository;
+
+  @Mock
+  private EmailService emailService;
+
+  @InjectMocks
+  private AuthService authService;
+
+  private ClientEntity buildClient() {
+    return ClientEntity.builder()
+        .id(UUID.randomUUID())
+        .name("Test")
+        .email("test@example.com")
+        .joinDate(LocalDate.now())
+        .passwordHash("$2a$10$hashfalso")
+        .role("MEMBER")
+        .build();
+  }
+
+  @Test
+  void loginOk() {
+    LoginRequest request = new LoginRequest();
+    request.setEmail("test@example.com");
+    request.setPassword("oasisclub1234");
+
+    ClientEntity client = buildClient();
+    AuthSessionResponse expected = new AuthSessionResponse();
+    expected.setToken("jwt-token");
+
+    when(clientService.findByEmail("test@example.com")).thenReturn(client);
+    when(passwordEncoder.matches("oasisclub1234", "$2a$10$hashfalso")).thenReturn(true);
+    when(jwtService.generateToken(client.getId(), client.getEmail(), client.getRole())).thenReturn("jwt-token");
+    when(authMapper.toResponse(client, "jwt-token")).thenReturn(expected);
+
+    AuthSessionResponse result = authService.login(request);
+
+    assertEquals("jwt-token", result.getToken());
+  }
+
+  @Test
+  void loginWrongPasswordThrows() {
+    LoginRequest request = new LoginRequest();
+    request.setEmail("test@example.com");
+    request.setPassword("wrong");
+
+    ClientEntity client = buildClient();
+    when(clientService.findByEmail("test@example.com")).thenReturn(client);
+    when(passwordEncoder.matches("wrong", "$2a$10$hashfalso")).thenReturn(false);
+
+    assertThrows(InvalidCredentialsException.class, () -> authService.login(request));
+  }
+
+  @Test
+  void forgotPasswordMissingEmailDoesNothing() {
+    when(clientService.findByEmail("noexiste@example.com")).thenReturn(null);
+
+    assertDoesNotThrow(() -> authService.forgotPassword("noexiste@example.com"));
+    verifyNoInteractions(passwordResetTokenRepository, emailService);
+  }
 }
