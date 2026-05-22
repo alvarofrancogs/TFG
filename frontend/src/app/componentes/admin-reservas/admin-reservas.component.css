@@ -1,0 +1,15 @@
+.ar-filter {
+  padding: 0.5rem 1.25rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border: 1px solid #e5e7eb;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ar-filter:hover {
+  border-color: #0B2118;
