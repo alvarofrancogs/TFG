@@ -13,3 +13,213 @@
 
     <section class="bg-white border border-gray-200 p-6 lg:p-8">
       <h2 class="text-[11px] font-bold tracking-[0.25em] uppercase text-gray-400 mb-6">Crear nuevo evento</h2>
+
+      <form (submit)="submitCreate($event)" class="space-y-5">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div class="admin-field">
+            <label class="admin-label">Título</label>
+            <input type="text" [(ngModel)]="form.title" name="title" required class="admin-input" placeholder="Nombre del evento" />
+          </div>
+          <div class="admin-field">
+            <label class="admin-label">Categoría</label>
+            <select [(ngModel)]="form.category" name="category" class="admin-input">
+              @for (cat of categories; track cat) {
+                <option [value]="cat">{{ categoryLabel(cat) }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-field">
+          <label class="admin-label">Descripción</label>
+          <textarea [(ngModel)]="form.description" name="description" rows="3" class="admin-input resize-none" placeholder="Describe el evento"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div class="admin-field">
+            <label class="admin-label">Fecha</label>
+            <input type="date" [(ngModel)]="form.eventDate" name="eventDate" required class="admin-input" />
+          </div>
+          <div class="admin-field">
+            <label class="admin-label">Hora inicio</label>
+            <select [(ngModel)]="form.startTime" name="startTime" required class="admin-input">
+              <option value="" disabled>Seleccionar</option>
+              @for (slot of scheduleSlots(); track slot) {
+                <option [value]="slot">{{ slot }}</option>
+              }
+            </select>
+          </div>
+          <div class="admin-field">
+            <label class="admin-label">Hora fin</label>
+            <select [(ngModel)]="form.endTime" name="endTime" required class="admin-input">
+              <option value="" disabled>Seleccionar</option>
+              @for (slot of scheduleSlots(); track slot) {
+                <option [value]="slot">{{ slot }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div class="admin-field">
+            <label class="admin-label">Capacidad máxima</label>
+            <input type="number" [(ngModel)]="form.maxCapacity" name="maxCapacity" min="1" required class="admin-input" />
+          </div>
+          <div class="admin-field">
+            <label class="admin-label">Deporte (opcional)</label>
+            <select [ngModel]="selectedSport()" (ngModelChange)="onSportChange($event)" name="sport" class="admin-input">
+              <option value="">Sin deporte asociado</option>
+              <option value="PADEL">Pádel</option>
+              <option value="FUTBOL">Fútbol</option>
+            </select>
+          </div>
+        </div>
+
+        @if (selectedSport() && courtsForSport().length > 0) {
+          <div class="admin-field">
+            <label class="admin-label">Pistas a bloquear durante el evento</label>
+            <div class="flex flex-wrap gap-3 mt-1">
+              @for (court of courtsForSport(); track court.id) {
+                <label class="flex items-center gap-2 cursor-pointer select-none">
+                  <input type="checkbox"
+                    [checked]="isCourtSelected(court.id)"
+                    (change)="toggleCourt(court.id)"
+                    class="w-4 h-4 accent-emerald-900" />
+                  <span class="text-[13px] font-light text-gray-700">{{ court.name }}</span>
+                </label>
+              }
+            </div>
+          </div>
+        }
+
+        @if (createError()) {
+          <p class="text-[13px] text-red-600">{{ createError() }}</p>
+        }
+        @if (createSuccess()) {
+          <p class="text-[13px] text-emerald-700">{{ createSuccess() }}</p>
+        }
+
+        <button type="submit"
+          class="btn-green-outline">
+          Crear evento
+        </button>
+      </form>
+    </section>
+
+    <section class="bg-white border border-gray-200">
+      <div class="px-6 lg:px-8 py-5 border-b border-gray-100">
+        <h2 class="text-[11px] font-bold tracking-[0.25em] uppercase text-gray-400">Todos los eventos</h2>
+      </div>
+
+      @if (events().length === 0) {
+        <div class="px-6 py-12 text-center text-[13px] font-light text-gray-400">No hay eventos creados</div>
+      } @else {
+        <div class="divide-y divide-gray-100">
+          @for (event of events(); track event.id) {
+            <div>
+              <div class="px-6 lg:px-8 py-4 flex items-center gap-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                (click)="toggleExpand(event.id)">
+                <div class="w-16 shrink-0 text-center">
+                  <p class="text-[22px] font-light text-gray-900">{{ formatDate(event.eventDate).split(' ')[0] }}</p>
+                  <p class="text-[9px] font-bold tracking-widest uppercase text-gray-400">{{ formatDate(event.eventDate).split(' ')[1] }}</p>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-0.5 flex-wrap">
+                    <span class="text-[9px] font-bold tracking-widest uppercase text-emerald-800 bg-emerald-50 px-2 py-0.5">
+                      {{ categoryLabel(event.category) }}
+                    </span>
+                    @if (event.sport === 'PADEL') {
+                      <span class="text-[9px] font-bold tracking-widest uppercase text-emerald-700 bg-emerald-50 px-2 py-0.5">Pádel</span>
+                    } @else if (event.sport === 'FUTBOL') {
+                      <span class="text-[9px] font-bold tracking-widest uppercase text-blue-700 bg-blue-50 px-2 py-0.5">Fútbol</span>
+                    }
+                    @if (event.courtNames) {
+                      <span class="text-[9px] font-bold tracking-widest uppercase text-gray-500 bg-gray-100 px-2 py-0.5">
+                        ⌖ {{ event.courtNames }}
+                      </span>
+                    }
+                    @if (!event.isActive) {
+                      <span class="text-[9px] font-bold tracking-widest uppercase text-gray-400 bg-gray-100 px-2 py-0.5">Inactivo</span>
+                    }
+                  </div>
+                  <p class="text-[14px] font-medium text-gray-900 truncate">{{ event.title }}</p>
+                </div>
+                <div class="text-right shrink-0">
+                  <p class="text-[12px] font-medium text-gray-700">{{ event.registeredCount }} / {{ event.maxCapacity }}</p>
+                  <p class="text-[10px] font-light text-gray-400">{{ event.startTime.substring(0,5) }} – {{ event.endTime.substring(0,5) }}</p>
+                </div>
+                <svg class="w-4 h-4 text-gray-400 shrink-0 transition-transform"
+                  [class.rotate-180]="expandedEventId() === event.id"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+
+              @if (expandedEventId() === event.id) {
+                <div class="px-6 lg:px-8 pb-6 bg-gray-50 border-t border-gray-100">
+
+                  <div class="py-4 flex items-center justify-between">
+                    <p class="text-[11px] font-bold tracking-[0.2em] uppercase text-gray-400">
+                      Inscritos ({{ registrations().length }})
+                    </p>
+                    @if (confirmDeleteEventId() === event.id) {
+                      <div class="flex items-center gap-3">
+                        <span class="text-[12px] text-red-600">¿Eliminar evento y todas sus inscripciones?</span>
+                        <button (click)="confirmDeleteEvent(event.id)" class="btn-danger-solid">
+                          Confirmar
+                        </button>
+                        <button (click)="cancelDeleteEvent()" class="btn-green-outline">
+                          Cancelar
+                        </button>
+                      </div>
+                    } @else {
+                      <button (click)="requestDeleteEvent(event.id)" class="btn-danger-outline">
+                        Eliminar evento
+                      </button>
+                    }
+                  </div>
+
+                  @if (loadingRegistrations()) {
+                    <p class="text-[13px] font-light text-gray-400 py-4">Cargando inscritos...</p>
+                  } @else if (registrations().length === 0) {
+                    <p class="text-[13px] font-light text-gray-400 py-4">Sin inscripciones aún.</p>
+                  } @else {
+                    <div class="divide-y divide-gray-200 border border-gray-200 bg-white">
+                      @for (reg of registrations(); track reg.id) {
+                        <div class="px-4 py-3 flex items-center justify-between">
+                          <div>
+                            <p class="text-[13px] font-medium text-gray-900">{{ reg.clientName }}</p>
+                            <p class="text-[12px] font-light text-gray-500">{{ reg.clientEmail }}</p>
+                            <p class="text-[10px] text-gray-400 mt-0.5">{{ formatDateTime(reg.registeredAt) }}</p>
+                          </div>
+                          @if (confirmDeleteRegId() === reg.id) {
+                            <div class="flex items-center gap-2">
+                              <button (click)="confirmDeleteReg(event.id, reg.id)" class="btn-danger-solid">
+                                Confirmar
+                              </button>
+                              <button (click)="cancelDeleteReg()" class="btn-green-outline">
+                                Cancelar
+                              </button>
+                            </div>
+                          } @else {
+                            <button (click)="requestDeleteReg(reg.id)"
+                              class="text-[10px] font-bold tracking-wider uppercase text-red-400 hover:text-red-600 transition-colors">
+                              Quitar
+                            </button>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+
+                </div>
+              }
+
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+  </div>
+</div>
