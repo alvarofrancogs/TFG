@@ -13,3 +13,317 @@
       <div class="mt-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-[13px]">{{ loadError() }}</div>
     }
   </section>
+
+  <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 pb-24">
+    <div class="w-full h-px bg-gray-100 mb-10"></div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+      <div class="lg:col-span-2 space-y-8">
+
+        <div class="flex flex-col sm:flex-row sm:items-center gap-6">
+          <div class="flex items-center gap-4">
+            <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400">Fecha</span>
+            <input
+              id="calendar-date"
+              type="date"
+              [ngModel]="selectedDate()"
+              (ngModelChange)="changeDate($event)"
+              class="border-b border-gray-300 pb-1 text-sm text-gray-900 bg-transparent focus:border-[#0B2118] focus:outline-none transition-colors"
+            >
+          </div>
+
+          <div class="flex gap-2">
+            <button (click)="setSportFilter('TODOS')"
+              [class]="filterSport() === 'TODOS' ? 'ar-filter ar-filter--active' : 'ar-filter'">
+              Todos
+            </button>
+            <button (click)="setSportFilter('PADEL')"
+              [class]="filterSport() === 'PADEL' ? 'ar-filter ar-filter--active' : 'ar-filter'">
+              Pádel
+            </button>
+            <button (click)="setSportFilter('FUTBOL')"
+              [class]="filterSport() === 'FUTBOL' ? 'ar-filter ar-filter--active' : 'ar-filter'">
+              Fútbol
+            </button>
+          </div>
+        </div>
+
+        <div class="w-full h-px bg-gray-100"></div>
+
+        @if (loading()) {
+          <div class="py-20 text-center">
+            <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">Cargando reservas...</p>
+          </div>
+        } @else if (scheduleSlots().length === 0) {
+          <div class="py-20 text-center">
+            <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">No hay franjas horarias configuradas</p>
+          </div>
+        } @else {
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse" aria-label="Ocupación de pistas">
+              <thead>
+                <tr class="border-b border-gray-100">
+                  <th scope="col" class="sticky left-0 z-10 bg-white pb-4 pr-6 text-left min-w-[100px]">
+                    <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-300">Hora</span>
+                  </th>
+                  @for (court of filteredCourts(); track court.id) {
+                    <th scope="col" class="pb-4 px-3 text-center min-w-[130px]">
+                      <span class="block text-[11px] font-bold tracking-[0.15em] text-gray-900 uppercase">{{ court.name }}</span>
+                      <span class="block text-[9px] tracking-widest font-bold uppercase mt-1"
+                        [class.text-emerald-600]="court.sport === 'PADEL'"
+                        [class.text-blue-500]="court.sport === 'FUTBOL'">
+                        {{ court.sport === 'PADEL' ? 'Pádel' : 'Fútbol' }}
+                      </span>
+                    </th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                @for (slot of scheduleSlots(); track slot) {
+                  @let range = slotRange(slot);
+                  <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors group">
+                    <th scope="row" class="sticky left-0 z-10 bg-white group-hover:bg-gray-50 pr-6 py-4 text-left whitespace-nowrap">
+                      <span class="block text-[15px] font-light" style="color:#0B2118">{{ range.start }}</span>
+                      <span class="block text-[9px] font-bold tracking-[0.2em] uppercase text-gray-300 mt-0.5">→ {{ range.end }}</span>
+                    </th>
+
+                    @for (court of filteredCourts(); track court.id) {
+                      @let res = cellReservation(court.id, slot);
+                      <td class="px-3 py-3 text-center align-middle">
+                        @if (!res) {
+                          <span class="inline-block text-[10px] text-gray-200 font-light tracking-widest py-2">—</span>
+                        } @else if (res.status === 'MAINTENANCE') {
+                          <button
+                            (click)="toggleExpand(res.id)"
+                            [attr.aria-expanded]="expandedReservationId() === res.id"
+                            class="ar-cell ar-cell--maintenance">
+                            <span class="ar-cell__label">Mantenim.</span>
+                          </button>
+                        } @else {
+                          <button
+                            (click)="toggleExpand(res.id)"
+                            [attr.aria-expanded]="expandedReservationId() === res.id"
+                            class="ar-cell ar-cell--reserved">
+                            <span class="ar-cell__name">{{ res.userName.split(' ')[0] }}</span>
+                            <span class="ar-cell__status">{{ statusLabel(res.status) }}</span>
+                          </button>
+                        }
+                      </td>
+                    }
+                  </tr>
+
+                  @if (expandedReservationId() && expandedResForSlot(slot)) {
+                    @let activeRes = expandedResForSlot(slot);
+                    @if (activeRes) {
+                      <tr class="border-b border-gray-100">
+                        <td [attr.colspan]="filteredCourts().length + 1" class="px-0 py-0">
+                          <div class="ar-detail-panel">
+                            <div class="ar-detail-panel__info">
+                              <div>
+                                <p class="text-[15px] font-light text-gray-900" style="font-family: 'Playfair Display', serif;">
+                                  {{ activeRes.userName }}
+                                </p>
+                                <p class="text-[12px] font-light text-gray-400 mt-1">
+                                  {{ activeRes.court }} · {{ normalizeTimePublic(activeRes.time) }} · {{ activeRes.sport }}
+                                </p>
+                              </div>
+                              <span class="ar-status-tag"
+                                [class.ar-status-tag--maintenance]="activeRes.status === 'MAINTENANCE'"
+                                [class.ar-status-tag--reserved]="activeRes.status !== 'MAINTENANCE'">
+                                {{ statusLabel(activeRes.status) }}
+                              </span>
+                            </div>
+
+                            <div class="ar-detail-panel__actions">
+                              @if (activeRes.status === 'MAINTENANCE') {
+                                <button (click)="removeMaintenance(activeRes.id)" class="btn-green-outline">
+                                  <span class="ar-action-btn__dash">—</span>
+                                  Habilitar franja
+                                </button>
+                              } @else {
+                                @if (confirmCancelId() === activeRes.id) {
+                                  <span class="text-[11px] font-bold text-red-600 uppercase tracking-widest">¿Cancelar reserva?</span>
+                                  <button (click)="cancelReservation(activeRes.id)" class="btn-danger-solid">
+                                    <span class="ar-action-btn__dash">—</span>
+                                    Confirmar
+                                  </button>
+                                  <button (click)="cancelConfirmation()" class="btn-green-outline">
+                                    <span class="ar-action-btn__dash">—</span>
+                                    No
+                                  </button>
+                                } @else {
+                                  <button (click)="requestCancel(activeRes.id)" class="btn-danger-outline">
+                                    <span class="ar-action-btn__dash">—</span>
+                                    Cancelar reserva
+                                  </button>
+                                }
+                              }
+                              <button (click)="expandedReservationId.set(null); confirmCancelId.set(null)"
+                                class="ar-close-btn" aria-label="Cerrar">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  }
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="flex items-center gap-8 pt-2">
+            <div class="flex items-center gap-2">
+              <span class="ar-legend ar-legend--reserved"></span>
+              <span class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Reservado</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="ar-legend ar-legend--maintenance"></span>
+              <span class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Mantenimiento</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-gray-200 font-light">—</span>
+              <span class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Libre</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="space-y-10">
+
+        <div>
+          <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-1">Configuración</p>
+          <h2 class="text-xl font-light text-gray-900 mb-6" style="font-family: 'Playfair Display', serif;">
+            Franjas horarias
+          </h2>
+
+          @if (scheduleError()) {
+            <div class="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-[13px]">{{ scheduleError() }}</div>
+          }
+          @if (scheduleSuccess()) {
+            <div class="mb-4 px-4 py-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[13px]">{{ scheduleSuccess() }}</div>
+          }
+
+          <div class="flex flex-wrap gap-2 mb-6">
+            @for (slot of scheduleSlots(); track slot) {
+              <div class="ar-slot-chip">
+                <span class="ar-slot-chip__time">{{ slot }}</span>
+                <button (click)="removeSlot(slot)" class="ar-slot-chip__remove" [attr.aria-label]="'Eliminar ' + slot">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+            }
+            @if (scheduleSlots().length === 0) {
+              <p class="text-[13px] font-light text-gray-400">No hay horarios configurados.</p>
+            }
+          </div>
+
+          <div class="flex gap-2">
+            <label for="new-slot-time" class="sr-only">Nueva franja horaria</label>
+            <select id="new-slot-time" [(ngModel)]="newSlotTime"
+              class="flex-1 border-b border-gray-300 pb-1 text-sm text-gray-900 bg-transparent focus:border-[#0B2118] focus:outline-none transition-colors">
+              <option value="" disabled selected>Seleccionar hora</option>
+              @for (slot of halfHourSlots; track slot) {
+                <option [value]="slot">{{ slot }}</option>
+              }
+            </select>
+            <button (click)="addSlot()" class="btn-green-outline">
+              <span class="ar-action-btn__dash">—</span>
+              Añadir
+            </button>
+          </div>
+        </div>
+
+        <div class="w-full h-px bg-gray-100"></div>
+
+        <div>
+          <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-1">Mantenimiento</p>
+          <h2 class="text-xl font-light text-gray-900 mb-6" style="font-family: 'Playfair Display', serif;">
+            Bloquear pista
+          </h2>
+          <p class="text-[13px] font-light text-gray-400 mb-6">Inhabilita una pista por labores de limpieza o reparación.</p>
+
+          @if (blockError()) {
+            <div class="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-[13px]">{{ blockError() }}</div>
+          }
+          @if (blockSuccess()) {
+            <div class="mb-4 px-4 py-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[13px]">{{ blockSuccess() }}</div>
+          }
+
+          <form (submit)="blockCourt($event)" class="space-y-6" novalidate>
+
+            <div>
+              <span class="block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-3">Deporte</span>
+              <div class="flex gap-2">
+                <button type="button" (click)="onBlockSportChange('PADEL')"
+                  [class]="blockForm.sport === 'PADEL' ? 'ar-filter ar-filter--active flex-1' : 'ar-filter flex-1'">
+                  Pádel
+                </button>
+                <button type="button" (click)="onBlockSportChange('FUTBOL')"
+                  [class]="blockForm.sport === 'FUTBOL' ? 'ar-filter ar-filter--active flex-1' : 'ar-filter flex-1'">
+                  Fútbol
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <span class="block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-3">Pista</span>
+              @if (courtsForBlock().length === 0) {
+                <p class="text-[13px] font-light text-gray-400">Sin pistas disponibles.</p>
+              } @else {
+                <div class="space-y-0">
+                  @for (court of courtsForBlock(); track court.id) {
+                    <button type="button" (click)="blockForm.courtId = court.id"
+                      class="ar-court-select-row"
+                      [class.ar-court-select-row--active]="blockForm.courtId === court.id">
+                      <span>{{ court.name }}</span>
+                      @if (blockForm.courtId === court.id) {
+                        <span class="text-[10px] font-bold tracking-widest uppercase text-[#0B2118]">Seleccionada</span>
+                      }
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+
+            <div>
+              <label for="block-date" class="block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-3">Fecha</label>
+              <input id="block-date" type="date" [(ngModel)]="blockForm.date" name="date"
+                class="w-full border-b border-gray-300 pb-1 text-sm text-gray-900 bg-transparent focus:border-[#0B2118] focus:outline-none transition-colors">
+            </div>
+
+            <div>
+              <span class="block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-3">Hora</span>
+              @if (scheduleSlots().length === 0) {
+                <p class="text-[13px] font-light text-gray-400">No hay franjas configuradas.</p>
+              } @else {
+                <div class="grid grid-cols-3 gap-2">
+                  @for (slot of scheduleSlots(); track slot) {
+                    @let range = slotRange(slot);
+                    <button type="button" (click)="blockForm.time = slot"
+                      [class]="blockForm.time === slot ? 'ar-time-btn ar-time-btn--active' : 'ar-time-btn'">
+                      <span class="ar-time-btn__hour">{{ range.start }}</span>
+                      <span class="ar-time-btn__end">→ {{ range.end }}</span>
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+
+            <button type="submit" class="btn-danger-solid w-full justify-center">
+              <span class="ar-action-btn__dash">—</span>
+              Bloquear Pista
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
