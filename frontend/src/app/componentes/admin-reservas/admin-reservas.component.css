@@ -13,3 +13,338 @@
 
 .ar-filter:hover {
   border-color: #0B2118;
+  color: #0B2118;
+}
+
+.ar-filter--active {
+  background: rgba(11, 33, 24, 0.07);
+  background-image: none;
+  border-color: #0B2118;
+  color: #0B2118;
+  font-weight: 800;
+}
+
+.ar-cell {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0.5rem 0.25rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 10px;
+}
+
+.ar-cell--reserved {
+  background: #0B2118;
+  border-color: #0B2118;
+  color: #fff;
+}
+
+.ar-cell--reserved:hover {
+  background: #1a4034;
+}
+
+.ar-cell--maintenance {
+  background: #7f1d1d;
+  border-color: #7f1d1d;
+  color: #fff;
+}
+
+.ar-cell--maintenance:hover {
+  background: #991b1b;
+}
+
+.ar-cell__name {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-align: center;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ar-cell__label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.ar-cell__status {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.ar-detail-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1.25rem 1.5rem;
+  background: #fafafa;
+  border-left: 2px solid #0B2118;
+  flex-wrap: wrap;
+}
+
+.ar-detail-panel__info {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.ar-detail-panel__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.ar-status-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+}
+
+.ar-status-tag--reserved {
+  color: #0B2118;
+  background: rgba(11, 33, 24, 0.07);
+}
+
+.ar-status-tag--maintenance {
+  color: #7f1d1d;
+  background: rgba(127, 29, 29, 0.07);
+}
+
+.ar-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border: 1px solid #0B2118;
+  background: transparent;
+  color: #0B2118;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.ar-action-btn:hover {
+  background: #0B2118;
+  color: #fff;
+}
+
+.ar-action-btn__dash {
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0;
+  opacity: 0.5;
+}
+
+.ar-action-btn--solid {
+  background: #0B2118;
+  color: #fff;
+  border-color: #0B2118;
+}
+
+.ar-action-btn--solid:hover {
+  background: #1a4034;
+  border-color: #1a4034;
+}
+
+.ar-action-btn--outline {
+  background: transparent;
+  color: #0B2118;
+  border-color: #0B2118;
+}
+
+.ar-action-btn--outline:hover {
+  background: #0B2118;
+  color: #fff;
+}
+
+.ar-action-btn--danger {
+  background: #7f1d1d;
+  border-color: #7f1d1d;
+  color: #fff;
+}
+
+.ar-action-btn--danger:hover {
+  background: #991b1b;
+  border-color: #991b1b;
+}
+
+.ar-action-btn--danger-outline {
+  background: transparent;
+  background-image: none;
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+.ar-action-btn--danger-outline:hover {
+  background-color: #dc2626;
+  background-image: none;
+  color: #fff;
+  border-color: #dc2626;
+}
+
+.ar-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  color: #9ca3af;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.ar-close-btn:hover {
+  color: #374151;
+}
+
+.ar-slot-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.75rem;
+  background: transparent;
+  background-image: none;
+  color: #0B2118;
+  border: 1px solid #0B2118;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.ar-slot-chip:hover {
+  background-color: #0B2118;
+  background-image: none;
+  color: #fff;
+}
+
+.ar-slot-chip:hover .ar-slot-chip__remove {
+  color: rgba(255,255,255,0.6);
+}
+
+.ar-slot-chip__time {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.ar-slot-chip__remove {
+  display: flex;
+  align-items: center;
+  color: rgba(11,33,24,0.4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.ar-slot-chip__remove:hover {
+  color: #dc2626;
+}
+
+.ar-court-select-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 13px;
+  font-weight: 400;
+  color: #374151;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.2s;
+}
+
+.ar-court-select-row:first-of-type {
+  border-top: 1px solid #f3f4f6;
+}
+
+.ar-court-select-row:hover {
+  color: #0B2118;
+}
+
+.ar-court-select-row--active {
+  color: #0B2118;
+  font-weight: 600;
+}
+
+.ar-time-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.625rem 0.25rem;
+  border: 1px solid #e5e7eb;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  gap: 2px;
+}
+
+.ar-time-btn:hover {
+  border-color: #0B2118;
+}
+
+.ar-time-btn--active {
+  background: #0B2118;
+  border-color: #0B2118;
+  color: #fff;
+}
+
+.ar-time-btn--active .ar-time-btn__end {
+  color: rgba(255,255,255,0.6);
+}
+
+.ar-time-btn__hour {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.ar-time-btn__end {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+
+.ar-legend {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+}
+
+.ar-legend--reserved {
+  background: #0B2118;
+}
+
+.ar-legend--maintenance {
+  background: #7f1d1d;
+}
