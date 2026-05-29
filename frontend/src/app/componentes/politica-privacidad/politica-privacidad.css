@@ -1,0 +1,129 @@
+/* ============================
+   LEGAL SHARED STYLES (Privacy & Terms)
+   ============================ */
+
+.legal-nav-item {
+  display: block;
+  font-size: 12px;
+  font-weight: 300;
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 0.2s;
+  line-height: 1.6;
+  cursor: pointer;
+  user-select: none;
+}
+
+.legal-nav-item:hover {
+  color: #0B2118;
+}
+
+/* Content sections */
+.legal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.legal-section {
+  padding-bottom: 3rem;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.legal-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.legal-h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #111827;
+  scroll-margin-top: 7rem;
+}
+
+.legal-content p {
+  font-size: 14px;
+  font-weight: 300;
+  color: #4b5563;
+  line-height: 1.8;
+}
+
+.legal-content strong {
+  font-weight: 600;
+  color: #374151;
+}
+
+.legal-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.legal-list li {
+  font-size: 14px;
+  font-weight: 300;
+  color: #4b5563;
+  line-height: 1.7;
+  padding-left: 1.25rem;
+  position: relative;
+}
+
+.legal-list li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: #0B2118;
+  font-weight: 400;
+}
+
+.legal-card {
+  border: 1px solid #e5e7eb;
+  background: #FAFAFA;
+}
+
+.legal-card__row {
+  display: flex;
+  gap: 2rem;
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 13px;
+}
+
+.legal-card__row:last-child {
+  border-bottom: none;
+}
+
+.legal-card__label {
+  font-weight: 700;
+  color: #374151;
+  min-width: 8rem;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  align-self: center;
+}
+
+.legal-right-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+  font-weight: 300;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.legal-right-card__icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
