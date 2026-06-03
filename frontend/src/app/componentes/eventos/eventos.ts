@@ -27,7 +27,8 @@ export class Eventos implements OnInit {
   loading = signal(true);
   actionError = signal('');
 
-  newsletterEmail = signal('');
+  // Newsletter state
+  isSubscribed = signal(false);
   subscribeLoading = signal(false);
   subscribeSuccess = signal(false);
   subscribeError = signal('');
@@ -46,6 +47,14 @@ export class Eventos implements OnInit {
       },
       error: () => this.loading.set(false),
     });
+
+    // Si el usuario está logueado, comprobar si ya está suscrito
+    if (this.isLoggedIn()) {
+      this.newsletterService.checkStatus().subscribe({
+        next: (status) => this.isSubscribed.set(status),
+        error: () => {}, // silencioso
+      });
+    }
   }
 
   setFilter(filter: EventCategory | 'TODOS') {
@@ -106,25 +115,39 @@ export class Eventos implements OnInit {
   }
 
   subscribe() {
-    const email = this.isLoggedIn()
-      ? (this.session()?.email ?? '')
-      : this.newsletterEmail();
-
-    if (!email) return;
+    if (!this.isLoggedIn() || !this.session()?.email) return;
 
     this.subscribeLoading.set(true);
     this.subscribeError.set('');
-    this.subscribeSuccess.set(false);
 
-    this.newsletterService.subscribe(email).subscribe({
+    this.newsletterService.subscribe(this.session()!.email).subscribe({
       next: () => {
         this.subscribeLoading.set(false);
         this.subscribeSuccess.set(true);
-        this.newsletterEmail.set('');
+        this.isSubscribed.set(true);
       },
-      error: () => {
+      error: (err) => {
         this.subscribeLoading.set(false);
-        this.subscribeError.set('Error al suscribirse. Inténtalo de nuevo.');
+        this.subscribeError.set(err?.error?.message || 'Error al suscribirse. Inténtalo de nuevo.');
+      },
+    });
+  }
+
+  unsubscribeNewsletter() {
+    if (!this.isLoggedIn() || !this.session()?.email) return;
+
+    this.subscribeLoading.set(true);
+    this.subscribeError.set('');
+
+    this.newsletterService.unsubscribe(this.session()!.email).subscribe({
+      next: () => {
+        this.subscribeLoading.set(false);
+        this.subscribeSuccess.set(false);
+        this.isSubscribed.set(false);
+      },
+      error: (err) => {
+        this.subscribeLoading.set(false);
+        this.subscribeError.set(err?.error?.message || 'Error al desuscribirse. Inténtalo de nuevo.');
       },
     });
   }

@@ -19,49 +19,78 @@
       <!-- Formulario (3/5) -->
       <div class="lg:col-span-3">
         <h2 class="text-[11px] font-bold tracking-[0.25em] uppercase text-gray-400 mb-8">Envíanos un mensaje</h2>
-        <form class="space-y-6" (submit)="$event.preventDefault()">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div class="contact-field">
-              <label class="contact-label">Nombre</label>
-              <input type="text" placeholder="Tu nombre" class="contact-input" />
+
+        @if (success()) {
+          <!-- Estado de éxito -->
+          <div class="py-16 flex flex-col items-start gap-4">
+            <div class="w-12 h-12 bg-[#0B2118] flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <h3 class="text-[22px] font-light text-gray-900" style="font-family: 'Playfair Display', serif;">
+              Mensaje enviado.
+            </h3>
+            <p class="text-[15px] font-light text-gray-500 leading-relaxed max-w-md">
+              Gracias por contactarnos. Te hemos enviado una confirmación a <strong class="text-gray-700">{{ email() }}</strong> y te responderemos en menos de 24 horas.
+            </p>
+          </div>
+
+        } @else {
+          <!-- Formulario -->
+          <form class="space-y-6" (submit)="$event.preventDefault(); submit()">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div class="contact-field">
+                <label class="contact-label">Nombre</label>
+                <input type="text" placeholder="Tu nombre" class="contact-input"
+                  [ngModel]="nombre()" (ngModelChange)="nombre.set($event)" name="nombre" />
+              </div>
+              <div class="contact-field">
+                <label class="contact-label">Apellidos</label>
+                <input type="text" placeholder="Tus apellidos" class="contact-input"
+                  [ngModel]="apellidos()" (ngModelChange)="apellidos.set($event)" name="apellidos" />
+              </div>
             </div>
             <div class="contact-field">
-              <label class="contact-label">Apellidos</label>
-              <input type="text" placeholder="Tus apellidos" class="contact-input" />
+              <label class="contact-label">Correo electrónico</label>
+              <input type="email" placeholder="correo@ejemplo.com" class="contact-input"
+                [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" />
             </div>
-          </div>
-          <div class="contact-field">
-            <label class="contact-label">Correo electrónico</label>
-            <input type="email" placeholder="correo@ejemplo.com" class="contact-input" />
-          </div>
-          <div class="contact-field">
-            <label class="contact-label">Asunto</label>
-            <select class="contact-input">
-              <option value="" disabled selected>Selecciona un asunto</option>
-              <option>Información sobre instalaciones</option>
-              <option>Reservas y disponibilidad</option>
-              <option>Membresías y tarifas</option>
-              <option>Incidencia técnica</option>
-              <option>Otro</option>
-            </select>
-          </div>
-          <div class="contact-field">
-            <label class="contact-label">Mensaje</label>
-            <textarea rows="5" placeholder="Cuéntanos en qué podemos ayudarte..." class="contact-input resize-none"></textarea>
-          </div>
-          <div class="flex items-start gap-3 pt-1">
-            <input type="checkbox" id="privacidad" class="mt-0.5 w-4 h-4 accent-emerald-900" />
-            <label for="privacidad" class="text-[13px] font-light text-gray-500 leading-relaxed">
-              He leído y acepto la
-              <a routerLink="/politica-privacidad" class="text-emerald-900 underline underline-offset-2 hover:text-emerald-700 transition-colors">Política de Privacidad</a>
-              de Oasis Club.
-            </label>
-          </div>
-          <button type="submit"
-            class="bg-[#0B2118] text-white px-10 py-4 text-[12px] font-medium tracking-[0.1em] uppercase hover:bg-emerald-800 transition-all duration-300 cursor-pointer">
-            Enviar mensaje
-          </button>
-        </form>
+            <div class="contact-field">
+              <label class="contact-label">Asunto</label>
+              <app-dropdown
+                [options]="asuntoOptions"
+                placeholder="Selecciona un asunto"
+                [value]="asunto()"
+                (valueChange)="asunto.set($event)">
+              </app-dropdown>
+            </div>
+            <div class="contact-field">
+              <label class="contact-label">Mensaje</label>
+              <textarea rows="5" placeholder="Cuéntanos en qué podemos ayudarte..." class="contact-input resize-none"
+                [ngModel]="mensaje()" (ngModelChange)="mensaje.set($event)" name="mensaje"></textarea>
+            </div>
+            <div class="flex items-start gap-3 pt-1">
+              <input type="checkbox" id="privacidad" class="mt-0.5 w-4 h-4 accent-emerald-900"
+                [ngModel]="privacidad()" (ngModelChange)="privacidad.set($event)" name="privacidad" />
+              <label for="privacidad" class="text-[13px] font-light text-gray-500 leading-relaxed">
+                He leído y acepto la
+                <a routerLink="/politica-privacidad" class="text-emerald-900 underline underline-offset-2 hover:text-emerald-700 transition-colors">Política de Privacidad</a>
+                de Oasis Club.
+              </label>
+            </div>
+
+            @if (error()) {
+              <p class="text-red-600 text-[13px] font-light">{{ error() }}</p>
+            }
+
+            <button type="submit"
+              [disabled]="!canSubmit"
+              class="bg-[#0B2118] text-white px-10 py-4 text-[12px] font-medium tracking-[0.1em] uppercase hover:bg-emerald-800 transition-all duration-300 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+              {{ loading() ? 'Enviando...' : 'Enviar mensaje' }}
+            </button>
+          </form>
+        }
       </div>
 
       <!-- Info de contacto (2/5) -->
@@ -100,7 +129,7 @@
               </div>
               <div>
                 <p class="text-[11px] font-bold tracking-[0.2em] uppercase text-gray-400 mb-1">Email</p>
-                <p class="text-[14px] font-light text-gray-700">club&#64;oasis.es</p>
+                <p class="text-[14px] font-light text-gray-700">oasisclubmurcia&#64;gmail.com</p>
               </div>
             </div>
             <div class="flex gap-4">

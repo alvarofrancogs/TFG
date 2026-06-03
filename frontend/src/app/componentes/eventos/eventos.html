@@ -128,41 +128,53 @@
       </div>
 
       <div class="w-full max-w-md">
-        @if (subscribeSuccess()) {
-          <p class="text-emerald-400 text-[13px] font-light tracking-wide py-4">
-            ✓ Suscripción confirmada. Recibirás un correo de confirmación.
+        @if (!isLoggedIn()) {
+          <!-- No logueado: invitar a iniciar sesión -->
+          <p class="text-white/60 text-[14px] font-light leading-relaxed mb-4">
+            Inicia sesión para suscribirte y ser el primero en enterarte de nuevos eventos.
           </p>
-        } @else {
-          @if (isLoggedIn()) {
-            <div class="flex flex-col gap-2">
-              <p class="text-white/50 text-[12px] font-light">
-                Se usará el correo de tu cuenta: <span class="text-white/80">{{ session()?.email }}</span>
-              </p>
-              <button
-                (click)="subscribe()"
-                [disabled]="subscribeLoading()"
-                class="bg-white text-[#0B2118] px-6 py-3.5 text-[11px] font-bold tracking-[0.15em] uppercase hover:bg-emerald-50 transition-colors disabled:opacity-50 self-start">
-                {{ subscribeLoading() ? 'Enviando...' : 'Suscribirse' }}
-              </button>
-            </div>
-          } @else {
-            <div class="flex w-full">
-              <input
-                type="email"
-                placeholder="Tu correo electrónico"
-                [(ngModel)]="newsletterEmail"
-                class="flex-1 bg-white/10 border border-white/20 text-white placeholder-white/40 px-5 py-3.5 text-[14px] font-light outline-none focus:bg-white/15 transition-colors" />
-              <button
-                (click)="subscribe()"
-                [disabled]="subscribeLoading() || !newsletterEmail()"
-                class="bg-white text-[#0B2118] px-6 py-3.5 text-[11px] font-bold tracking-[0.15em] uppercase hover:bg-emerald-50 transition-colors shrink-0 disabled:opacity-50">
-                {{ subscribeLoading() ? '...' : 'Suscribirse' }}
-              </button>
-            </div>
-          }
+          <a routerLink="/login"
+            class="inline-block bg-white text-[#0B2118] px-6 py-3.5 text-[11px] font-bold tracking-[0.15em] uppercase hover:bg-emerald-50 transition-colors">
+            Iniciar sesión
+          </a>
+
+        } @else if (isSubscribed()) {
+          <!-- Ya suscrito -->
+          <p class="text-emerald-400 text-[13px] font-light tracking-wide py-2 mb-3">
+            ✓ Ya estás suscrito. Recibirás todas las novedades de Oasis Club.
+          </p>
+          <button
+            (click)="unsubscribeNewsletter()"
+            [disabled]="subscribeLoading()"
+            class="text-white/50 text-[11px] font-light tracking-wide underline underline-offset-4 hover:text-white/80 transition-colors disabled:opacity-40">
+            {{ subscribeLoading() ? 'Procesando...' : 'Cancelar suscripción' }}
+          </button>
           @if (subscribeError()) {
             <p class="text-red-400 text-[12px] font-light mt-2">{{ subscribeError() }}</p>
           }
+
+        } @else if (subscribeSuccess()) {
+          <!-- Recién suscrito -->
+          <p class="text-emerald-400 text-[13px] font-light tracking-wide py-4">
+            ✓ Suscripción confirmada. Recibirás un correo de confirmación.
+          </p>
+
+        } @else {
+          <!-- No suscrito, logueado -->
+          <div class="flex flex-col gap-2">
+            <p class="text-white/50 text-[12px] font-light">
+              Se usará el correo de tu cuenta: <span class="text-white/80">{{ session()?.email }}</span>
+            </p>
+            <button
+              (click)="subscribe()"
+              [disabled]="subscribeLoading()"
+              class="bg-white text-[#0B2118] px-6 py-3.5 text-[11px] font-bold tracking-[0.15em] uppercase hover:bg-emerald-50 transition-colors disabled:opacity-50 self-start">
+              {{ subscribeLoading() ? 'Enviando...' : 'Suscribirse' }}
+            </button>
+            @if (subscribeError()) {
+              <p class="text-red-400 text-[12px] font-light">{{ subscribeError() }}</p>
+            }
+          </div>
         }
       </div>
     </div>
