@@ -211,11 +211,26 @@ public class EventService {
 
   @Transactional
   public void unregister(UUID eventId, UUID clientId) {
-    requireEvent(eventId);
+    EventEntity event = requireEvent(eventId);
     if (!registrationRepository.existsByEventIdAndClientId(eventId, clientId)) {
       throw new IllegalArgumentException("No estás inscrito en este evento");
     }
     registrationRepository.deleteByEventIdAndClientId(eventId, clientId);
+
+    try {
+      ClientEntity client = clientService.getEntityById(clientId);
+      emailService.sendEventUnregistrationEmail(
+          client.getEmail(),
+          client.getName(),
+          event.getTitle(),
+          event.getEventDate(),
+          event.getStartTime(),
+          event.getEndTime()
+      );
+    } catch (Exception ex) {
+      log.warn("Could not send unregistration email for event {} client {}: {}",
+          eventId, clientId, ex.getMessage());
+    }
   }
 
   @Transactional

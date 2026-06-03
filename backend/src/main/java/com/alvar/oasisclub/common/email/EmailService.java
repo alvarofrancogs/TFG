@@ -110,6 +110,41 @@ public class EmailService {
         """;
     sendEmail(toEmail, subject, plainText, wrapEmailLayout(htmlContent), "newsletter-subscription");
   }
+
+  @Async
+  public void sendNewsletterUnsubscribeEmail(String toEmail) {
+    String subject = "Oasis Club | Baja del newsletter";
+    String plainText = """
+        OASIS CLUB
+
+        Baja del newsletter
+
+        Has cancelado tu suscripción a las novedades de Oasis Club.
+        Lamentamos verte marchar. Si cambias de opinión, puedes volverte a suscribir cuando quieras.
+
+        El equipo de Oasis Club.
+        """;
+    String htmlContent = """
+        <div style="text-align: center;">
+          <h2 style="margin: 0 0 16px; font-size: 24px; font-weight: 300; letter-spacing: -0.02em; color: #18181b;">
+            Baja confirmada
+          </h2>
+          <p style="margin: 0 0 20px; color: #52525b; font-size: 15px; line-height: 1.7; font-weight: 300;">
+            Has cancelado tu suscripción al newsletter de <strong>Oasis Club</strong>.
+          </p>
+          <p style="margin: 0 0 36px; color: #52525b; font-size: 15px; line-height: 1.7; font-weight: 300;">
+            Lamentamos verte marchar. Si cambias de opinión, puedes volverte a suscribir en cualquier momento desde la sección de Eventos.
+          </p>
+          <div style="margin: 36px 0;">
+            <span style="display: inline-block; border: 1px solid #a1a1aa; color: #52525b; padding: 16px 40px; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">
+              Suscripción Cancelada
+            </span>
+          </div>
+        </div>
+        """;
+    sendEmail(toEmail, subject, plainText, wrapEmailLayout(htmlContent), "newsletter-unsubscription");
+  }
+
   @Async
   public void sendEventRegistrationEmail(
       String toEmail,
@@ -123,6 +158,108 @@ public class EmailService {
     String plainText = buildEventRegistrationEmailText(userName, eventTitle, eventDate, startTime, endTime);
     String htmlText = buildEventRegistrationEmailHtml(userName, eventTitle, eventDate, startTime, endTime);
     sendEmail(toEmail, subject, plainText, htmlText, "event-registration");
+  }
+
+  @Async
+  public void sendContactFormToClub(
+      String nombre,
+      String apellidos,
+      String email,
+      String asunto,
+      String mensaje
+  ) {
+    String subject = "Oasis Club | Nuevo mensaje de contacto: " + asunto;
+    String plainText = """
+        NUEVO MENSAJE DE CONTACTO
+        
+        De: %s %s <%s>
+        Asunto: %s
+        
+        %s
+        """.formatted(nombre, apellidos, email, asunto, mensaje);
+
+    String content = """
+        <div style="text-align: left;">
+          <h2 style="margin: 0 0 16px; font-size: 24px; font-weight: 300; letter-spacing: -0.02em; color: #18181b;">
+            Nuevo mensaje de contacto
+          </h2>
+          <div style="background-color: #f9fafb; border: 1px solid #f4f4f5; padding: 24px; margin: 0 0 28px;">
+            <table width="100%%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td style="padding: 10px 0; color: #71717a; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; border-bottom: 1px solid #e4e4e7; width: 30%%;">
+                  Nombre
+                </td>
+                <td style="padding: 10px 0; color: #022c22; font-size: 14px; font-weight: 600; border-bottom: 1px solid #e4e4e7;">
+                  %s %s
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; color: #71717a; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; border-bottom: 1px solid #e4e4e7;">
+                  Correo
+                </td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #e4e4e7;">
+                  <a href="mailto:%s" style="color: #022c22; font-size: 14px; font-weight: 600; text-decoration: underline;">%s</a>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; color: #71717a; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; border-bottom: 1px solid #e4e4e7;">
+                  Asunto
+                </td>
+                <td style="padding: 10px 0; color: #022c22; font-size: 14px; font-weight: 600; border-bottom: 1px solid #e4e4e7;">
+                  %s
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div style="margin-bottom: 12px;">
+            <p style="color: #71717a; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 8px;">Mensaje</p>
+            <div style="background-color: #f9fafb; border: 1px solid #f4f4f5; padding: 20px; color: #18181b; font-size: 14px; font-weight: 300; line-height: 1.7; white-space: pre-wrap;">%s</div>
+          </div>
+        </div>
+        """.formatted(
+        escapeHtml(nombre), escapeHtml(apellidos),
+        escapeHtml(email), escapeHtml(email),
+        escapeHtml(asunto),
+        escapeHtml(mensaje)
+    );
+    // Para el correo al club, enviar directamente a oasisclubmurcia@gmail.com ignorando el override
+    sendEmailDirect("oasisclubmurcia@gmail.com", subject, plainText, wrapEmailLayout(content), "contact-form");
+  }
+
+  @Async
+  public void sendContactConfirmationToUser(String toEmail, String nombre) {
+    String subject = "Oasis Club | Hemos recibido tu mensaje";
+    String plainText = """
+        OASIS CLUB
+        
+        Hemos recibido tu mensaje
+        
+        Hola, %s.
+        
+        Gracias por ponerte en contacto con Oasis Club. Hemos recibido tu mensaje correctamente y nuestro equipo te responderá en menos de 24 horas.
+        
+        El equipo de Oasis Club.
+        """.formatted(nombre);
+
+    String content = """
+        <div style="text-align: center;">
+          <h2 style="margin: 0 0 16px; font-size: 24px; font-weight: 300; letter-spacing: -0.02em; color: #18181b;">
+            Mensaje recibido
+          </h2>
+          <p style="margin: 0 0 20px; color: #52525b; font-size: 15px; line-height: 1.7; font-weight: 300;">
+            Hola, <strong>%s</strong>. Gracias por ponerte en contacto con <strong>Oasis Club</strong>.
+          </p>
+          <p style="margin: 0 0 36px; color: #52525b; font-size: 15px; line-height: 1.7; font-weight: 300;">
+            Hemos recibido tu mensaje correctamente. Nuestro equipo te responderá en un plazo máximo de <strong>24 horas</strong>.
+          </p>
+          <div style="margin: 36px 0;">
+            <span style="display: inline-block; border: 1px solid #022c22; color: #022c22; padding: 16px 40px; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">
+              Mensaje Enviado
+            </span>
+          </div>
+        </div>
+        """.formatted(escapeHtml(nombre));
+    sendEmail(toEmail, subject, plainText, wrapEmailLayout(content), "contact-confirmation");
   }
 
   private void sendEmail(String toEmail, String subject, String plainText, String htmlText, String type) {
@@ -149,6 +286,24 @@ public class EmailService {
       return overrideTo.trim();
     }
     return requestedRecipient;
+  }
+
+  /** Sends to the exact recipient, bypassing the override-to setting. */
+  private void sendEmailDirect(String toEmail, String subject, String plainText, String htmlText, String type) {
+    try {
+      MimeMessage message = mailSender.createMimeMessage();
+      MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+      helper.setFrom(mailSenderProperties.getFromEmail());
+      helper.setTo(toEmail);
+      helper.setSubject(subject);
+      helper.setText(plainText, htmlText);
+
+      mailSender.send(message);
+      log.info("{} email sent directly to {}", type, toEmail);
+    } catch (Exception e) {
+      log.error("Error sending {} email to {}: {}", type, toEmail, e.getMessage(), e);
+    }
   }
 
   private String buildResetEmailText(String resetLink) {
@@ -432,7 +587,7 @@ public class EmailService {
                         <p style="margin: 0; color: #52525b; font-size: 13px; font-weight: 400; line-height: 1.6;">
                           ¿Tienes alguna duda o necesitas ayuda?<br>
                           Contacta con nuestro equipo de soporte en<br>
-                          <a href="mailto:soporte@oasisclub.com" style="color: #022c22; text-decoration: underline; font-weight: 600;">soporte@oasisclub.com</a>
+                          <a href="mailto:oasisclubmurcia@gmail.com" style="color: #022c22; text-decoration: underline; font-weight: 600;">oasisclubmurcia@gmail.com</a>
                         </p>
                       </div>
                     </td>
@@ -539,6 +694,70 @@ public class EmailService {
     );
     return wrapEmailLayout(content);
   }
-}
 
+  @Async
+  public void sendEventUnregistrationEmail(
+      String toEmail,
+      String userName,
+      String eventTitle,
+      LocalDate eventDate,
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
+    String subject = "Oasis Club | Baja de evento confirmada";
+    String plainText = """
+        OASIS CLUB
+        
+        Baja de evento
+        
+        Hola, %s.
+        
+        Te confirmamos que has cancelado tu inscripción al siguiente evento:
+        
+        Evento: %s
+        Fecha: %s
+        Horario: %s – %s
+        
+        Esperamos verte en próximos eventos.
+        """.formatted(
+        userName,
+        eventTitle,
+        formatReservationDate(eventDate),
+        formatReservationTime(startTime),
+        formatReservationTime(endTime)
+    );
+
+    String content = """
+        <div style="text-align: center;">
+          <h2 style="margin: 0 0 16px; font-size: 24px; font-weight: 300; letter-spacing: -0.02em; color: #18181b;">
+            Baja de evento confirmada
+          </h2>
+          <p style="margin: 0 0 28px; color: #52525b; font-size: 15px; line-height: 1.7; font-weight: 300;">
+            Hola, <strong>%s</strong>. Te confirmamos que has cancelado tu inscripción al evento.
+          </p>
+          <div style="background-color: #f9fafb; border: 1px solid #f4f4f5; padding: 24px; text-align: left; margin: 0 0 28px;">
+            <table width="100%%" border="0" cellspacing="0" cellpadding="0">
+              %s
+              %s
+              %s
+            </table>
+          </div>
+          <div style="margin: 36px 0;">
+            <span style="display: inline-block; border: 1px solid #a1a1aa; color: #52525b; padding: 16px 40px; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">
+              Inscripción Cancelada
+            </span>
+          </div>
+          <p style="margin: 0; color: #a1a1aa; font-size: 13px; line-height: 1.6;">
+            Puedes consultar próximos eventos desde la sección de Agenda.
+          </p>
+        </div>
+        """.formatted(
+        escapeHtml(userName),
+        buildReservationDetailRow("Evento", eventTitle),
+        buildReservationDetailRow("Fecha", formatReservationDate(eventDate)),
+        buildReservationDetailRow("Horario", formatReservationTime(startTime) + " – " + formatReservationTime(endTime))
+    );
+    sendEmail(toEmail, subject, plainText, wrapEmailLayout(content), "event-unregistration");
+  }
+}
 
