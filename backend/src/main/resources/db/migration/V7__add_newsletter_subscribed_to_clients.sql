@@ -1,0 +1,2 @@
+ALTER TABLE clients
+    ADD COLUMN IF NOT EXISTS newsletter_subscribed BOOLEAN NOT NULL DEFAULT FALSE;

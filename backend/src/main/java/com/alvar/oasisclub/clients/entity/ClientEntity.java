@@ -47,4 +47,8 @@ public class ClientEntity {
 
   @Column(name = "birth_date")
   private LocalDate birthDate;
+
+  @Column(name = "newsletter_subscribed", nullable = false)
+  @Builder.Default
+  private Boolean newsletterSubscribed = false;
 }
