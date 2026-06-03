@@ -45,7 +45,9 @@
                 <span class="tarifa-row__amount">{{ tarifa.amount }}</span>
                 <span class="tarifa-row__unit">{{ tarifa.unit }}</span>
               </div>
-              <a [routerLink]="tarifa.ctaRoute" class="tarifa-row__cta">{{ tarifa.ctaText }}</a>
+              @if (!(authStore.isLoggedIn() && tarifa.badge === 'Socio')) {
+                <a [routerLink]="tarifa.ctaRoute" class="tarifa-row__cta">{{ tarifa.ctaText }}</a>
+              }
             </div>
           </div>
         }

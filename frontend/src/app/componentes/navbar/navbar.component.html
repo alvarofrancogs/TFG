@@ -19,6 +19,10 @@
           class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
           Eventos
         </a>
+        <a routerLink="/contacto" routerLinkActive="text-emerald-950 font-medium"
+          class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
+          Contacto
+        </a>
         @if (auth.isLoggedIn()) {
           <a routerLink="/reservar" routerLinkActive="text-emerald-950 font-medium"
             class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
@@ -81,6 +85,8 @@
       class="text-sm font-light text-gray-500 hover:text-emerald-950">Quiénes Somos</a>
     <a routerLink="/eventos" (click)="isMobileMenuOpen.set(false)"
       class="text-sm font-light text-gray-500 hover:text-emerald-950">Eventos</a>
+    <a routerLink="/contacto" (click)="isMobileMenuOpen.set(false)"
+      class="text-sm font-light text-gray-500 hover:text-emerald-950">Contacto</a>
     @if (auth.isLoggedIn()) {
       <a routerLink="/reservar" (click)="isMobileMenuOpen.set(false)"
         class="text-sm font-light text-gray-500 hover:text-emerald-950">Reservar</a>

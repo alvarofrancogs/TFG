@@ -1,13 +1,13 @@
-<div class="min-h-screen bg-white pt-24">
+<div class="min-h-screen bg-white gym-page">
 
   @if (!auth.isLoggedIn()) {
-    <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
-      <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">Acceso</p>
+    <section class="gym-hero">
+      <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-4 lg:mb-6">Acceso</p>
       <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
-        style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
+        style="font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 4.5rem);">
         Tu <span class="italic text-[#0B2118]">gimnasio.</span>
       </h1>
-      <p class="text-[15px] lg:text-[17px] font-light text-gray-500 leading-relaxed max-w-lg mb-10">
+      <p class="text-[14px] lg:text-[17px] font-light text-gray-500 leading-relaxed max-w-lg mb-8 lg:mb-10">
         Para ver tu rutina personalizada y gestionar tu gimnasio, inicia sesión en tu cuenta de socio.
       </p>
       <a routerLink="/login" class="btn-green-outline">
@@ -17,24 +17,26 @@
     </section>
   } @else {
 
-    <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
-      <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">Entrenamiento</p>
-      <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
-        style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
+    <!-- Hero -->
+    <section class="gym-hero">
+      <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-4 lg:mb-6">Entrenamiento</p>
+      <h1 class="leading-[1.1] font-normal text-gray-900 mb-3"
+        style="font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 4.5rem);">
         Tu <span class="italic text-[#0B2118]">rutina.</span>
       </h1>
-      <p class="text-[15px] lg:text-[17px] font-light text-gray-500 leading-relaxed max-w-lg">
+      <p class="text-[14px] lg:text-[17px] font-light text-gray-500 leading-relaxed max-w-lg">
         Planifica y personaliza tus días de entrenamiento en Oasis Club.
       </p>
     </section>
 
-    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 pb-24">
-      <div class="w-full h-px bg-gray-100 mb-10"></div>
+    <div class="gym-body">
+      <div class="w-full h-px bg-gray-100 mb-6 lg:mb-10"></div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div class="gym-layout">
 
-        <div class="lg:col-span-3">
-          <div class="flex items-center justify-between mb-6">
+        <!-- ═══ SIDEBAR: Días ═══ -->
+        <div class="gym-sidebar">
+          <div class="gym-sidebar__header">
             <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400">Días</p>
             @if (isEditing()) {
               <div class="flex items-center gap-2">
@@ -45,7 +47,8 @@
             }
           </div>
 
-          <div class="space-y-0">
+          <!-- Scroll horizontal en móvil, vertical en desktop -->
+          <div class="gym-days-list">
             @for (day of routineDays(); track day.dayOrder) {
               <button
                 (click)="selectDay(day.dayOrder)"
@@ -60,10 +63,12 @@
           </div>
         </div>
 
-        <div class="lg:col-span-9">
-          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-10">
-            <div>
-              <h2 class="text-2xl font-light text-gray-900 mb-2"
+        <!-- ═══ MAIN: Ejercicios ═══ -->
+        <div class="gym-main">
+          <!-- Header del día -->
+          <div class="gym-main__header">
+            <div class="gym-main__title-block">
+              <h2 class="text-xl lg:text-2xl font-light text-gray-900 mb-1"
                 style="font-family: 'Playfair Display', serif;">
                 Día {{ selectedDayId() }}
               </h2>
@@ -73,13 +78,14 @@
                   [ngModel]="currentDay()?.name"
                   (ngModelChange)="updateDayName($event)"
                   placeholder="Ej: Pecho y Tríceps"
-                  class="text-[15px] font-light text-gray-400 border-b border-gray-200 focus:border-[#0B2118] focus:outline-none bg-transparent py-1 w-56 transition-colors placeholder-gray-300">
+                  class="gym-day-name-input">
               } @else {
-                <p class="text-[15px] font-light text-gray-400">{{ currentDay()?.name || 'Sin nombre' }}</p>
+                <p class="text-[14px] font-light text-gray-400">{{ currentDay()?.name || 'Sin nombre' }}</p>
               }
             </div>
 
-            <div class="flex items-center gap-3">
+            <!-- Botones de acción -->
+            <div class="gym-main__actions">
               @if (isEditing()) {
                 <button (click)="addExercise()" class="btn-green-outline">
                   <span class="gym-btn__dash">—</span>
@@ -104,6 +110,7 @@
 
           <div class="w-full h-px bg-gray-100 mb-2"></div>
 
+          <!-- Lista de ejercicios -->
           <div class="space-y-0">
             @for (exercise of currentDay()?.exercises; track exercise.id ?? exercise.tempKey ?? i; let i = $index) {
               <div class="gym-exercise-row group">
@@ -161,7 +168,7 @@
             }
 
             @if (currentDay()?.exercises?.length === 0) {
-              <div class="py-20 text-center">
+              <div class="py-14 lg:py-20 text-center">
                 <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">
                   No hay ejercicios en este día
                   @if (isEditing()) { · Añade uno para empezar }

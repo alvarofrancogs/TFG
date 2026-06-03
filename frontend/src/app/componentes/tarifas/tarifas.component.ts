@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthStore } from '../../auth.store';
 
 interface Tarifa {
   badge: string;
@@ -21,6 +22,8 @@ interface Tarifa {
   styleUrl: './tarifas.component.css',
 })
 export class TarifasComponent {
+  readonly authStore = inject(AuthStore);
+
   tarifas: Tarifa[] = [
     {
       badge: 'Pistas',
