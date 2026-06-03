@@ -7,10 +7,12 @@ import { CourtApiService } from '../../servicios/court-api.service';
 import { EventsApiService } from '../../servicios/events-api.service';
 import { ScheduleApiService } from '../../servicios/schedule-api.service';
 
+import { DropdownComponent, DropdownOption } from '../dropdown/dropdown.component';
+
 @Component({
   selector: 'app-admin-eventos',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, DropdownComponent],
   templateUrl: './admin-eventos.component.html',
   styleUrl: './admin-eventos.component.css',
 })
@@ -55,6 +57,17 @@ export class AdminEventosComponent implements OnInit {
 
   readonly categories: EventCategory[] = ['TORNEO', 'LIGA', 'MASTERCLASS', 'SOCIAL'];
 
+  categoryOptions: DropdownOption[] = this.categories.map(c => ({ label: this.categoryLabel(c), value: c }));
+  sportOptions: DropdownOption[] = [
+    { label: 'Fútbol', value: 'FUTBOL' },
+    { label: 'Pádel', value: 'PADEL' }
+  ];
+  sportOptionsWithEmpty: DropdownOption[] = [
+    { label: 'Sin deporte asociado', value: '' },
+    ...this.sportOptions
+  ];
+  slotOptions = computed<DropdownOption[]>(() => this.scheduleSlots().map(s => ({ label: s, value: s })));
+
   ngOnInit() {
     this.loadEvents();
     this.loadCourts();
@@ -84,6 +97,10 @@ export class AdminEventosComponent implements OnInit {
     this.selectedCourtIds.set([]);
     this.form.sport = sport as any || undefined;
     this.form.courtIds = [];
+  }
+
+  onCategoryChange(cat: string) {
+    this.form.category = cat as EventCategory;
   }
 
   toggleCourt(id: string) {

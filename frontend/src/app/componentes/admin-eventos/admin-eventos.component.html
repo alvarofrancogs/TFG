@@ -22,11 +22,12 @@
           </div>
           <div class="admin-field">
             <label class="admin-label">Categoría</label>
-            <select [(ngModel)]="form.category" name="category" class="admin-input">
-              @for (cat of categories; track cat) {
-                <option [value]="cat">{{ categoryLabel(cat) }}</option>
-              }
-            </select>
+            <app-dropdown
+              [options]="categoryOptions"
+              placeholder="Seleccionar"
+              [value]="form.category"
+              (valueChange)="onCategoryChange($event)">
+            </app-dropdown>
           </div>
         </div>
 
@@ -42,21 +43,21 @@
           </div>
           <div class="admin-field">
             <label class="admin-label">Hora inicio</label>
-            <select [(ngModel)]="form.startTime" name="startTime" required class="admin-input">
-              <option value="" disabled>Seleccionar</option>
-              @for (slot of scheduleSlots(); track slot) {
-                <option [value]="slot">{{ slot }}</option>
-              }
-            </select>
+            <app-dropdown
+              [options]="slotOptions()"
+              placeholder="Seleccionar"
+              [value]="form.startTime"
+              (valueChange)="form.startTime = $event">
+            </app-dropdown>
           </div>
           <div class="admin-field">
             <label class="admin-label">Hora fin</label>
-            <select [(ngModel)]="form.endTime" name="endTime" required class="admin-input">
-              <option value="" disabled>Seleccionar</option>
-              @for (slot of scheduleSlots(); track slot) {
-                <option [value]="slot">{{ slot }}</option>
-              }
-            </select>
+            <app-dropdown
+              [options]="slotOptions()"
+              placeholder="Seleccionar"
+              [value]="form.endTime"
+              (valueChange)="form.endTime = $event">
+            </app-dropdown>
           </div>
         </div>
 
@@ -67,11 +68,12 @@
           </div>
           <div class="admin-field">
             <label class="admin-label">Deporte (opcional)</label>
-            <select [ngModel]="selectedSport()" (ngModelChange)="onSportChange($event)" name="sport" class="admin-input">
-              <option value="">Sin deporte asociado</option>
-              <option value="PADEL">Pádel</option>
-              <option value="FUTBOL">Fútbol</option>
-            </select>
+            <app-dropdown
+              [options]="sportOptionsWithEmpty"
+              placeholder="Seleccionar"
+              [value]="selectedSport()"
+              (valueChange)="onSportChange($event)">
+            </app-dropdown>
           </div>
         </div>
 
@@ -134,8 +136,12 @@
                       <span class="text-[9px] font-bold tracking-widest uppercase text-blue-700 bg-blue-50 px-2 py-0.5">Fútbol</span>
                     }
                     @if (event.courtNames) {
-                      <span class="text-[9px] font-bold tracking-widest uppercase text-gray-500 bg-gray-100 px-2 py-0.5">
-                        ⌖ {{ event.courtNames }}
+                      <span class="text-[9px] font-bold tracking-widest uppercase text-gray-500 bg-gray-100 px-2 py-0.5 flex items-center">
+                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        {{ event.courtNames }}
                       </span>
                     }
                     @if (!event.isActive) {

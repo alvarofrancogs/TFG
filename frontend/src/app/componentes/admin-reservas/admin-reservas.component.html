@@ -226,13 +226,14 @@
 
           <div class="flex gap-2">
             <label for="new-slot-time" class="sr-only">Nueva franja horaria</label>
-            <select id="new-slot-time" [(ngModel)]="newSlotTime"
-              class="flex-1 border-b border-gray-300 pb-1 text-sm text-gray-900 bg-transparent focus:border-[#0B2118] focus:outline-none transition-colors">
-              <option value="" disabled selected>Seleccionar hora</option>
-              @for (slot of halfHourSlots; track slot) {
-                <option [value]="slot">{{ slot }}</option>
-              }
-            </select>
+            <div class="flex-1">
+              <app-dropdown
+                [options]="halfHourDropdownOptions"
+                placeholder="Seleccionar hora"
+                [value]="newSlotTime"
+                (valueChange)="newSlotTime = $event">
+              </app-dropdown>
+            </div>
             <button (click)="addSlot()" class="btn-green-outline">
               <span class="ar-action-btn__dash">—</span>
               Añadir

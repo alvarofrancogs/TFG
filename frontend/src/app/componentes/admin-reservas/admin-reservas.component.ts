@@ -7,10 +7,12 @@ import { CourtApiService } from '../../servicios/court-api.service';
 import { ReservationsApiService } from '../../servicios/reservations-api.service';
 import { ScheduleApiService } from '../../servicios/schedule-api.service';
 
+import { DropdownComponent, DropdownOption } from '../dropdown/dropdown.component';
+
 @Component({
   selector: 'app-admin-reservas',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, DropdownComponent],
   templateUrl: './admin-reservas.component.html',
   styleUrl: './admin-reservas.component.css',
 })
@@ -41,6 +43,8 @@ export class AdminReservasComponent implements OnInit {
     }
     return slots;
   })();
+  readonly halfHourDropdownOptions: DropdownOption[] = this.halfHourSlots.map(s => ({ label: s, value: s }));
+  
   loadError = signal('');
 
   courtsForBlock = signal<CourtResponse[]>([]);
