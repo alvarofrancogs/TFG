@@ -63,51 +63,116 @@
         }
 
         <button (click)="isMobileMenuOpen.set(!isMobileMenuOpen())"
-          class="md:hidden p-2 ml-4 text-emerald-950 focus:outline-none"
+          class="md:hidden p-2 ml-4 text-emerald-950 relative w-10 h-10 flex items-center justify-center"
           aria-controls="mobile-menu"
           [attr.aria-expanded]="isMobileMenuOpen()"
-          aria-label="Alternar menú">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            @if (isMobileMenuOpen()) {
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path>
-            } @else {
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path>
-            }
-          </svg>
+          [attr.aria-label]="isMobileMenuOpen() ? 'Cerrar menú' : 'Abrir menú'">
+          <span class="hamburger" [class.hamburger--open]="isMobileMenuOpen()" aria-hidden="true">
+            <span class="hamburger__line"></span>
+            <span class="hamburger__line"></span>
+            <span class="hamburger__line"></span>
+          </span>
         </button>
       </div>
     </div>
   </div>
+</nav>
 
-  <div id="mobile-menu"
-    class="md:hidden bg-white border-t border-gray-100 px-6 py-8 flex flex-col space-y-6 shadow-xl absolute w-full left-0 top-full"
-    [class.hidden]="!isMobileMenuOpen()">
+
+<div class="mobile-overlay md:hidden"
+  [class.mobile-overlay--visible]="isMobileMenuOpen()"
+  (click)="isMobileMenuOpen.set(false)"
+  aria-hidden="true"></div>
+
+<aside id="mobile-menu"
+  class="mobile-panel md:hidden"
+  [class.mobile-panel--open]="isMobileMenuOpen()"
+  [attr.aria-hidden]="!isMobileMenuOpen()">
+
+  <div class="mobile-panel__header">
+    <a routerLink="/" (click)="isMobileMenuOpen.set(false)" class="text-lg tracking-tighter text-emerald-950">
+      OASIS<span class="font-bold">CLUB</span>
+    </a>
+    <button (click)="isMobileMenuOpen.set(false)" class="mobile-panel__close" aria-label="Cerrar menú">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+
+  <nav class="mobile-panel__nav">
+    <p class="mobile-panel__label">Navegación</p>
+
     <a routerLink="/" (click)="isMobileMenuOpen.set(false)"
-      class="text-sm font-light text-gray-500 hover:text-emerald-950">Inicio</a>
+      routerLinkActive="mobile-link--active" [routerLinkActiveOptions]="{exact: true}"
+      class="mobile-link">
+      <span>Inicio</span>
+      <svg class="mobile-link__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+      </svg>
+    </a>
     <a routerLink="/quienes-somos" (click)="isMobileMenuOpen.set(false)"
-      class="text-sm font-light text-gray-500 hover:text-emerald-950">Quiénes Somos</a>
+      routerLinkActive="mobile-link--active" class="mobile-link">
+      <span>Quiénes Somos</span>
+      <svg class="mobile-link__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+      </svg>
+    </a>
     <a routerLink="/eventos" (click)="isMobileMenuOpen.set(false)"
-      class="text-sm font-light text-gray-500 hover:text-emerald-950">Eventos</a>
+      routerLinkActive="mobile-link--active" class="mobile-link">
+      <span>Eventos</span>
+      <svg class="mobile-link__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+      </svg>
+    </a>
     <a routerLink="/contacto" (click)="isMobileMenuOpen.set(false)"
-      class="text-sm font-light text-gray-500 hover:text-emerald-950">Contacto</a>
+      routerLinkActive="mobile-link--active" class="mobile-link">
+      <span>Contacto</span>
+      <svg class="mobile-link__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+      </svg>
+    </a>
+
     @if (auth.isLoggedIn()) {
+      <p class="mobile-panel__label mobile-panel__label--spaced">Mi cuenta</p>
       <a routerLink="/reservar" (click)="isMobileMenuOpen.set(false)"
-        class="text-sm font-light text-gray-500 hover:text-emerald-950">Reservar</a>
+        routerLinkActive="mobile-link--active" class="mobile-link">
+        <span>Reservar</span>
+        <svg class="mobile-link__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
       <a routerLink="/gimnasio" (click)="isMobileMenuOpen.set(false)"
-        class="text-sm font-light text-gray-500 hover:text-emerald-950">Gimnasio</a>
+        routerLinkActive="mobile-link--active" class="mobile-link">
+        <span>Gimnasio</span>
+        <svg class="mobile-link__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
       <a routerLink="/perfil" (click)="isMobileMenuOpen.set(false)"
-        class="text-sm font-light text-gray-500 hover:text-emerald-950">Mi Área</a>
-      <hr class="border-gray-100">
-      <a routerLink="/perfil" (click)="isMobileMenuOpen.set(false)"
-        class="text-sm font-medium text-emerald-950">Perfil</a>
-      <button (click)="logout()"
-        class="text-left text-sm font-light text-gray-500 hover:text-emerald-950">Salir</button>
+        routerLinkActive="mobile-link--active" class="mobile-link">
+        <span>Mi Área</span>
+        <svg class="mobile-link__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
+    }
+  </nav>
+
+  <div class="mobile-panel__footer">
+    @if (auth.isLoggedIn()) {
+      <button (click)="logout()" class="mobile-panel__btn mobile-panel__btn--outline">
+        Cerrar sesión
+      </button>
     } @else {
-      <hr class="border-gray-100">
       <a routerLink="/login" (click)="isMobileMenuOpen.set(false)"
-        class="text-sm font-medium text-emerald-950">Acceder</a>
+        class="mobile-panel__btn mobile-panel__btn--outline">
+        Acceder
+      </a>
       <a routerLink="/registro" (click)="isMobileMenuOpen.set(false)"
-        class="text-sm font-medium text-[#0B2118]">Hazte socio</a>
+        class="mobile-panel__btn mobile-panel__btn--primary">
+        Hazte socio
+      </a>
     }
   </div>
-</nav>
+</aside>
