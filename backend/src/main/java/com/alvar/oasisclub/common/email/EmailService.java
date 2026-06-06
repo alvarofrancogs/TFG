@@ -70,6 +70,76 @@ public class EmailService {
   }
 
   @Async
+  public void sendMaintenanceCancellationEmail(
+      String toEmail,
+      String userName,
+      String sport,
+      String courtName,
+      LocalDate date,
+      LocalTime time,
+      boolean refunded
+  ) {
+    String subject = "Oasis Club | Reserva cancelada por mantenimiento";
+    String refundNote = refunded
+        ? "El importe de tu reserva será reembolsado automáticamente en los próximos 5-10 días hábiles."
+        : "";
+    String plainText = """
+        OASIS CLUB
+
+        Reserva cancelada por mantenimiento
+
+        Hola, %s.
+
+        Lamentamos informarte de que tu reserva ha sido cancelada debido a labores de mantenimiento programadas en la pista.
+
+        Deporte: %s
+        Pista: %s
+        Fecha: %s
+        Hora: %s
+
+        %s
+
+        Disculpa las molestias. Puedes reservar otra pista u horario desde tu perfil.
+
+        El equipo de Oasis Club.
+        """.formatted(userName, sport, courtName, formatReservationDate(date), formatReservationTime(time), refundNote);
+
+    String refundHtml = refunded
+        ? """
+          <p style="margin: 20px 0 0; color: #059669; font-size: 14px; font-weight: 500; line-height: 1.6;">
+            ✓ El importe de tu reserva será reembolsado automáticamente en los próximos 5-10 días hábiles.
+          </p>
+          """
+        : "";
+
+    String content = """
+        <div style="text-align: center;">
+          <h2 style="margin: 0 0 16px; font-size: 24px; font-weight: 300; letter-spacing: -0.02em; color: #18181b;">
+            Reserva cancelada por mantenimiento
+          </h2>
+          <p style="margin: 0 0 28px; color: #52525b; font-size: 15px; line-height: 1.7; font-weight: 300;">
+            Hola, <strong>%s</strong>. Lamentamos informarte de que tu reserva ha sido cancelada debido a labores de <strong>mantenimiento programadas</strong> en la pista.
+          </p>
+          %s
+          %s
+          <div style="margin: 36px 0;">
+            <span style="display: inline-block; border: 1px solid #d97706; color: #d97706; padding: 16px 40px; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">
+              Mantenimiento
+            </span>
+          </div>
+          <p style="margin: 0; color: #a1a1aa; font-size: 13px; line-height: 1.6;">
+            Disculpa las molestias. Puedes reservar otra pista u horario desde tu perfil.
+          </p>
+        </div>
+        """.formatted(
+            escapeHtml(userName),
+            buildReservationDetailsHtml(sport, courtName, date, time),
+            refundHtml
+        );
+    sendEmail(toEmail, subject, plainText, wrapEmailLayout(content), "maintenance-cancellation");
+  }
+
+  @Async
   public void sendNewsletterConfirmationEmail(String toEmail) {
     String subject = "Oasis Club | Suscripción a novedades";
     String plainText = """

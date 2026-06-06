@@ -156,7 +156,11 @@ public class ReservationService {
       } else if (existing.getStatus() == ReservationStatus.PENDING && existing.getStripeSessionId() != null && !existing.getStripeSessionId().isBlank()) {
         try { stripeCheckoutClient.expireSession(existing.getStripeSessionId()); } catch (Exception ignored) {}
       }
-      sendReservationCancelledEmail(existing);
+
+      boolean refunded = existing.getStatus() == ReservationStatus.CONFIRMED
+          && existing.getStripeSessionId() != null
+          && !existing.getStripeSessionId().isBlank();
+      sendMaintenanceCancellationEmail(existing, refunded);
 
       existing.setClientId(null);
       existing.setUserName("Mantenimiento");
@@ -346,6 +350,23 @@ public class ReservationService {
         reservation.getCourt().getName(),
         reservation.getReservationDate(),
         reservation.getReservationTime()
+    );
+  }
+
+  private void sendMaintenanceCancellationEmail(ReservationEntity reservation, boolean refunded) {
+    ClientEntity client = clientForNotification(reservation);
+    if (client == null) {
+      return;
+    }
+
+    emailService.sendMaintenanceCancellationEmail(
+        client.getEmail(),
+        client.getName(),
+        sportLabel(reservation.getSport()),
+        reservation.getCourt().getName(),
+        reservation.getReservationDate(),
+        reservation.getReservationTime(),
+        refunded
     );
   }
 
