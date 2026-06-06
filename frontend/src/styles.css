@@ -117,9 +117,10 @@ input[type="date"] {
   min-height: 44px;
 }
 
-button, a, [role="button"] {
-  min-height: 44px;
-  min-width: 44px;
+@media (hover: none) and (pointer: coarse) {
+  button {
+    min-height: 44px;
+  }
 }
 
 img {
