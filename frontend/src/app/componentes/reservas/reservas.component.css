@@ -128,6 +128,7 @@
 .sport-card {
   display: block;
   position: relative;
+  width: 100%;
   height: 60vh;
   min-height: 320px;
   overflow: hidden;
@@ -135,6 +136,13 @@
   padding: 0;
   cursor: pointer;
   text-align: left;
+  background: #0B2118;
+}
+
+.sport-card__inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .sport-card__inner {

@@ -5,12 +5,17 @@ import com.alvar.oasisclub.auth.exception.InvalidCredentialsException;
 import com.alvar.oasisclub.auth.exception.PasswordResetTokenInvalidException;
 import com.alvar.oasisclub.clients.exception.ClientEmailAlreadyExistsException;
 import com.alvar.oasisclub.clients.exception.ClientNotFoundException;
+import com.alvar.oasisclub.courts.exception.CourtNotFoundException;
+import com.alvar.oasisclub.events.exception.EventNotFoundException;
 import com.alvar.oasisclub.reservations.exception.ReservationNotFoundException;
+import com.stripe.exception.StripeException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -21,6 +26,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+  private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ApiErrorResponse> handleValidation(
@@ -78,7 +85,9 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler({
       ClientNotFoundException.class,
-      ReservationNotFoundException.class
+      CourtNotFoundException.class,
+      ReservationNotFoundException.class,
+      EventNotFoundException.class
   })
   public ResponseEntity<ApiErrorResponse> handleNotFound(
       RuntimeException ex,
@@ -202,23 +211,45 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
   }
 
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<ApiErrorResponse> handleGeneric(
+  
+  @ExceptionHandler({StripeOperationFailedException.class, StripeException.class})
+  public ResponseEntity<ApiErrorResponse> handleStripeOperationFailed(
       Exception ex,
       HttpServletRequest request
   ) {
     ApiErrorResponse body = ApiErrorResponse.builder()
         .timestamp(LocalDateTime.now())
+        .status(HttpStatus.BAD_GATEWAY.value())
+        .error(HttpStatus.BAD_GATEWAY.getReasonPhrase())
+        .message(ex.getMessage())
+        .path(request.getRequestURI())
+        .details(List.of())
+        .build();
+
+    return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(body);
+  }
+
+  
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ApiErrorResponse> handleGeneric(
+      Exception ex,
+      HttpServletRequest request
+  ) {
+    
+    log.error("Unexpected error processing {} {}", request.getMethod(), request.getRequestURI(), ex);
+
+    
+    ApiErrorResponse body = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
         .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
         .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-        .message("Error inesperado del servidor")
+        .message("Se ha producido un error inesperado. Por favor, inténtalo de nuevo más tarde.")
         .path(request.getRequestURI())
-        .details(List.of(ex.getMessage()))
+        .details(List.of())
         .build();
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
   }
-
 
   private String formatFieldError(FieldError error) {
     String friendly = friendlyFieldName(error.getField());
@@ -244,6 +275,7 @@ public class GlobalExceptionHandler {
         yield friendly + " debe tener entre " + mn + " y " + mx + " caracteres";
       }
       case "email"           -> friendly + " debe ser un correo electrónico válido";
+      case "pattern"         -> friendly + ": " + translateConstraintMessage(error.getDefaultMessage());
       case "past"            -> friendly + " debe ser una fecha pasada";
       case "future",
            "futureorpresent" -> friendly + " debe ser una fecha futura o presente";
@@ -274,6 +306,7 @@ public class GlobalExceptionHandler {
       case "userName"    -> "El nombre de usuario";
       case "token"       -> "El token";
       case "sessionId"   -> "La sesión";
+      case "birthDate"   -> "La fecha de nacimiento";
       default            -> "El campo '" + field + "'";
     };
   }

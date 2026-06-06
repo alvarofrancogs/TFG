@@ -1,17 +1,13 @@
 package com.alvar.oasisclub.common.email;
 
-import com.alvar.oasisclub.common.config.MailSenderProperties;
-import jakarta.mail.internet.MimeMessage;
+import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Year;
-import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +21,7 @@ public class EmailService {
   private static final DateTimeFormatter RESERVATION_TIME_FORMATTER =
       DateTimeFormatter.ofPattern("HH:mm");
 
-  private final JavaMailSender mailSender;
-  private final MailSenderProperties mailSenderProperties;
+  private final EmailDeliveryService emailDeliveryService;
 
   @Async
   public void sendPasswordResetEmail(String toEmail, String resetLink) {
@@ -222,7 +217,7 @@ public class EmailService {
         escapeHtml(asunto),
         escapeHtml(mensaje)
     );
-    // Para el correo al club, enviar directamente a oasisclubmurcia@gmail.com ignorando el override
+    
     sendEmailDirect("oasisclubmurcia@gmail.com", subject, plainText, wrapEmailLayout(content), "contact-form");
   }
 
@@ -264,45 +259,18 @@ public class EmailService {
 
   private void sendEmail(String toEmail, String subject, String plainText, String htmlText, String type) {
     try {
-      MimeMessage message = mailSender.createMimeMessage();
-      MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-      String finalRecipient = resolveRecipient(toEmail);
-
-      helper.setFrom(mailSenderProperties.getFromEmail());
-      helper.setTo(finalRecipient);
-      helper.setSubject(subject);
-      helper.setText(plainText, htmlText);
-
-      mailSender.send(message);
-      log.info("{} email sent to {} (requested for {})", type, finalRecipient, toEmail);
+      emailDeliveryService.deliver(toEmail, subject, plainText, htmlText, type, false);
     } catch (Exception e) {
-      log.error("Error sending {} email to {}: {}", type, toEmail, e.getMessage(), e);
+      log.error("Email delivery failed to {} for type {}: {}", toEmail, type, e.getMessage());
     }
   }
 
-  private String resolveRecipient(String requestedRecipient) {
-    String overrideTo = mailSenderProperties.getOverrideTo();
-    if (overrideTo != null && !overrideTo.isBlank()) {
-      return overrideTo.trim();
-    }
-    return requestedRecipient;
-  }
-
-  /** Sends to the exact recipient, bypassing the override-to setting. */
+  
   private void sendEmailDirect(String toEmail, String subject, String plainText, String htmlText, String type) {
     try {
-      MimeMessage message = mailSender.createMimeMessage();
-      MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-      helper.setFrom(mailSenderProperties.getFromEmail());
-      helper.setTo(toEmail);
-      helper.setSubject(subject);
-      helper.setText(plainText, htmlText);
-
-      mailSender.send(message);
-      log.info("{} email sent directly to {}", type, toEmail);
+      emailDeliveryService.deliver(toEmail, subject, plainText, htmlText, type, true);
     } catch (Exception e) {
-      log.error("Error sending {} email to {}: {}", type, toEmail, e.getMessage(), e);
+      log.error("Direct email delivery failed to {} for type {}: {}", toEmail, type, e.getMessage());
     }
   }
 

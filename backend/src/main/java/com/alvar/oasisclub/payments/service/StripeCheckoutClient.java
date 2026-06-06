@@ -14,7 +14,23 @@ public interface StripeCheckoutClient {
       String cancelUrl
   ) throws StripeException;
 
-  void expireSession(String stripeSessionId) throws StripeException;
+  
+  void expireSession(String stripeSessionId, String idempotencyKey) throws StripeException;
 
-  void refundBySessionId(String stripeSessionId) throws StripeException;
+  
+  void refundBySessionId(String stripeSessionId, String idempotencyKey) throws StripeException;
+
+  
+
+  
+  @Deprecated
+  default void expireSession(String stripeSessionId) throws StripeException {
+    expireSession(stripeSessionId, null);
+  }
+
+  
+  @Deprecated
+  default void refundBySessionId(String stripeSessionId) throws StripeException {
+    refundBySessionId(stripeSessionId, null);
+  }
 }

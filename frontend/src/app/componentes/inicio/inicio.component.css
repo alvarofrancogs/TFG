@@ -1,19 +1,15 @@
-/* ═══════════════════════════════════════════
-   HERO — Mobile first
-   ═══════════════════════════════════════════ */
+
 .home-hero {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding-top: 4rem; /* navbar height */
   background: #ffffff;
 }
 
-/* ── Imagen hero ── */
 .home-hero__media {
   position: relative;
   width: 100%;
-  height: 52vw;       /* proporcional al ancho */
+  height: 52vw;       
   min-height: 220px;
   max-height: 340px;
   overflow: hidden;
@@ -28,7 +24,6 @@
   filter: contrast(1.05) saturate(0.9);
 }
 
-/* Overlay de texto encima de la imagen solo en móvil */
 .home-hero__mobile-overlay {
   position: absolute;
   inset: 0;
@@ -50,12 +45,10 @@
   font-style: italic;
 }
 
-/* Ocultar título desktop en móvil */
 .home-hero__desktop-title {
   display: none;
 }
 
-/* ── Copy (párrafo + botón) ── */
 .home-hero__content {
   padding: 1.5rem 1.25rem 2.5rem;
 }
@@ -64,9 +57,6 @@
   max-width: 34rem;
 }
 
-/* ═══════════════════════════════════════════
-   SECCIÓN "ELIGE TU DEPORTE" — Mobile first
-   ═══════════════════════════════════════════ */
 .sports-section {
   padding: 2.5rem 0 3rem;
 }
@@ -75,7 +65,6 @@
   margin-bottom: 1.75rem;
 }
 
-/* Cards: scroll horizontal en móvil */
 .sports-cards-wrapper {
   position: relative;
 }
@@ -87,12 +76,11 @@
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 0.5rem;
-  /* Scroll sin scrollbar visible */
+  
   scrollbar-width: none;
 }
 .sports-cards::-webkit-scrollbar { display: none; }
 
-/* Indicador de scroll solo en móvil */
 .sports-scroll-hint {
   font-size: 11px;
   color: #9ca3af;
@@ -102,12 +90,13 @@
   padding-right: 0.25rem;
 }
 
-/* Card individual */
 .sport-card {
+  display: block; 
   position: relative;
-  flex: 0 0 72vw;        /* cada card ocupa el 72% del ancho */
+  flex: 0 0 72vw;
   max-width: 280px;
-  aspect-ratio: 3 / 4;
+  height: 96vw;          
+  max-height: 374px;     
   overflow: hidden;
   cursor: pointer;
   background: #fff;
@@ -154,13 +143,12 @@
   transition: opacity 0.3s;
 }
 
-/* ═══════════════════════════════════════════
-   TABLET  ≥ 640px
-   ═══════════════════════════════════════════ */
 @media (min-width: 640px) {
   .sport-card {
     flex: 0 0 46%;
     max-width: 320px;
+    height: 427px;   
+    max-height: none;
   }
 
   .sports-scroll-hint {
@@ -168,20 +156,16 @@
   }
 }
 
-/* ═══════════════════════════════════════════
-   DESKTOP  ≥ 1024px
-   ═══════════════════════════════════════════ */
 @media (min-width: 1024px) {
-  /* Hero recupera diseño split */
+  
   .home-hero {
     display: grid;
     grid-template-columns: minmax(31rem, 39vw) minmax(0, 1fr);
     align-items: stretch;
-    padding-top: 6rem;
-    /* Invertir columnas: texto izq, imagen der */
+    
   }
 
-  /* En desktop el grid tiene texto primero (DOM order natural) */
+  
   .home-hero__content {
     order: 1;
     padding: 0 3rem 0 clamp(4rem, 6vw, 7rem);
@@ -196,11 +180,11 @@
     min-height: unset;
   }
 
-  /* Ocultar overlay móvil, mostrar título desktop */
+  
   .home-hero__mobile-overlay { display: none; }
   .home-hero__desktop-title  { display: block; }
 
-  /* Sección deportes */
+  
   .sports-section {
     padding: 5rem 0 6rem;
   }
@@ -210,7 +194,7 @@
     padding-top: 1rem;
   }
 
-  /* Volver a layout de grid en desktop */
+  
   .sports-cards-wrapper {
     overflow: visible;
   }
@@ -225,15 +209,17 @@
 
   .sport-card {
     flex: unset;
+    width: 100%;
     max-width: unset;
-    aspect-ratio: 3 / 4;
+    height: 0;
+    padding-bottom: 133%;  
+    max-height: none;
     scroll-snap-align: unset;
   }
 
   .sports-scroll-hint { display: none; }
 }
 
-/* Layout combinado header + cards en desktop */
 @media (min-width: 1024px) {
   .sports-layout {
     display: grid;

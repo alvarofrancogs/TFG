@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-white">
 
   <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
-    <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">Panel Admin</p>
+    <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">Panel Admin</p>
     <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
       style="font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.5rem);">
       Gestión de <span class="italic text-[#0B2118]">clientes.</span>
@@ -17,7 +17,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
       <div>
-        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-1">Nuevo socio</p>
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-1">Nuevo socio</p>
         <h2 class="text-xl font-light text-gray-900 mb-8"
           style="font-family: 'Playfair Display', serif;">
           Registrar socio
@@ -75,13 +75,13 @@
       <div class="lg:col-span-2">
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
-            <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-1">Directorio</p>
+            <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-1">Directorio</p>
             <h2 class="text-xl font-light text-gray-900"
               style="font-family: 'Playfair Display', serif;">
               Socios del club
             </h2>
           </div>
-          <p class="text-[12px] font-light text-gray-400">Máximo {{ resultLimit }} resultados</p>
+          <p class="text-[12px] font-light text-gray-600">Máximo {{ resultLimit }} resultados</p>
         </div>
 
         <form (submit)="applySearch($event)" class="flex gap-3 mb-8" role="search">
@@ -99,8 +99,22 @@
         <div class="w-full h-px bg-gray-100 mb-2"></div>
 
         @if (loading()) {
-          <div class="py-20 text-center">
-            <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">Cargando socios...</p>
+          <div class="space-y-0 animate-pulse">
+            @for (_ of [1,2,3,4,5]; track $index) {
+              <div class="ac-client-row">
+                <div class="ac-client-row__body space-y-2">
+                  <div class="flex items-center gap-3">
+                    <div class="h-4 bg-gray-100 rounded w-40"></div>
+                    <div class="h-4 bg-gray-100 rounded w-14"></div>
+                  </div>
+                  <div class="h-3 bg-gray-100 rounded w-56"></div>
+                  <div class="flex gap-4">
+                    <div class="h-3 bg-gray-100 rounded w-20"></div>
+                    <div class="h-3 bg-gray-100 rounded w-24"></div>
+                  </div>
+                </div>
+              </div>
+            }
           </div>
         } @else {
 
@@ -164,7 +178,7 @@
 
           @if (clients().length === 0) {
             <div class="py-20 text-center">
-              <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">
+              <p class="text-[13px] font-light text-gray-600 uppercase tracking-widest">
                 No se encontraron socios{{ search() ? ' para "' + search() + '"' : '' }}
               </p>
             </div>

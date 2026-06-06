@@ -3,6 +3,7 @@ package com.alvar.oasisclub.clients.mapper;
 import com.alvar.oasisclub.clients.dto.ClientResponse;
 import com.alvar.oasisclub.clients.dto.CreateClientRequest;
 import com.alvar.oasisclub.clients.entity.ClientEntity;
+import com.alvar.oasisclub.clients.service.ClientService;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +34,7 @@ public class ClientMapper {
         .joinDate(LocalDate.now())
         .passwordHash(passwordEncoder.encode(request.getPassword()))
         .role("MEMBER")
-        .phone(request.getPhone().trim())
+        .phone(ClientService.normalizePhone(request.getPhone()))
         .birthDate(request.getBirthDate())
         .build();
   }

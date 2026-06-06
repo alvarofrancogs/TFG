@@ -3,6 +3,8 @@
 !.env.example
 
 frontend/dist
+frontend/public/images/optimized/
+frontend/public/images/image-manifest.json
 /tmp
 /out-tsc
 /bazel-out
@@ -57,3 +59,7 @@ frontend/proxy.conf.dev.json
 
 MEMORY.md
 .ai_instructions
+
+# Kiro AI
+.kiro/
+design-system/

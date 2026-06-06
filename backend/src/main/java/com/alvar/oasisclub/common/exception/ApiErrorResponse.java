@@ -20,4 +20,3 @@ public class ApiErrorResponse {
   private List<String> details;
 }
 
-

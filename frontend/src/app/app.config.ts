@@ -7,6 +7,7 @@ import {provideRouter, withInMemoryScrolling} from '@angular/router';
 import {routes} from './app.routes';
 import {authInterceptor} from './auth.interceptor';
 import {apiErrorInterceptor} from './api-error.interceptor';
+import {imageProviders} from './image-loader';
 
 registerLocaleData(localeEs, 'es');
 
@@ -16,5 +17,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor, apiErrorInterceptor])),
     provideRouter(routes, withInMemoryScrolling({scrollPositionRestoration: 'top', anchorScrolling: 'enabled'})),
     {provide: LOCALE_ID, useValue: 'es'},
+    ...imageProviders,
   ],
 };

@@ -13,7 +13,7 @@ public class ResetPasswordRequest {
   private String token;
 
   @NotBlank
-  @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
+  @Size(min = 6,   message = "La contraseña debe tener al menos 6 caracteres")
+  @Size(max = 128, message = "La contraseña no puede superar 128 caracteres")
   private String newPassword;
 }
-

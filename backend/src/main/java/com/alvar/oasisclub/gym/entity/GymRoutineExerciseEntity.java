@@ -45,4 +45,3 @@ public class GymRoutineExerciseEntity {
   private String restInterval;
 }
 
-

@@ -1,36 +1,27 @@
-/* ═══════════════════════════════════════════
-   TU RUTINA — Mobile first
-   ═══════════════════════════════════════════ */
 
-/* ── Page wrapper ── */
+
 .gym-page {
   padding-top: 5rem;
 }
 
-/* ── Hero ── */
 .gym-hero {
   padding: 1.5rem 1.25rem 1.75rem;
   max-width: 90rem;
   margin: 0 auto;
 }
 
-/* ── Body ── */
 .gym-body {
   padding: 0 1.25rem 3rem;
   max-width: 90rem;
   margin: 0 auto;
 }
 
-/* ── Layout (sidebar + main) ── */
 .gym-layout {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-/* ═══════════════════════════════════════════
-   SIDEBAR — Días
-   ═══════════════════════════════════════════ */
 .gym-sidebar__header {
   display: flex;
   align-items: center;
@@ -38,7 +29,6 @@
   margin-bottom: 0.75rem;
 }
 
-/* Días en scroll horizontal en móvil */
 .gym-days-list {
   display: flex;
   gap: 0;
@@ -51,7 +41,6 @@
 }
 .gym-days-list::-webkit-scrollbar { display: none; }
 
-/* ── Buttons ── */
 .gym-btn__dash {
   font-size: 14px;
   font-weight: 300;
@@ -78,7 +67,6 @@
   color: #0B2118;
 }
 
-/* ── Day button ── */
 .gym-day-btn {
   flex: 0 0 auto;
   display: flex;
@@ -123,11 +111,6 @@
   opacity: 0.6;
 }
 
-/* ═══════════════════════════════════════════
-   MAIN — Ejercicios
-   ═══════════════════════════════════════════ */
-
-/* Header del día */
 .gym-main__header {
   display: flex;
   flex-direction: column;
@@ -161,7 +144,6 @@
   border-color: #0B2118;
 }
 
-/* Botones apilados en móvil */
 .gym-main__actions {
   display: flex;
   flex-wrap: wrap;
@@ -174,9 +156,6 @@
   padding: 0.5rem 0.75rem;
 }
 
-/* ═══════════════════════════════════════════
-   EJERCICIO — fila
-   ═══════════════════════════════════════════ */
 .gym-exercise-row {
   display: grid;
   grid-template-columns: 2rem 1fr;
@@ -194,7 +173,6 @@
   padding-top: 0.125rem;
 }
 
-/* Ocultar divider en móvil */
 .gym-exercise-row__divider {
   display: none;
 }
@@ -220,17 +198,15 @@
   color: #6b7280;
 }
 
-/* Stats debajo del body en móvil */
 .gym-exercise-row__stats {
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
   gap: 0.625rem;
   flex-wrap: wrap;
-  padding-left: 2.625rem; /* alinear con el body */
+  padding-left: 2.625rem; 
 }
 
-/* ── Inputs ── */
 .gym-exercise-input {
   background: transparent;
   border: none;
@@ -302,9 +278,6 @@
   color: #dc2626;
 }
 
-/* ═══════════════════════════════════════════
-   TABLET  ≥ 640px
-   ═══════════════════════════════════════════ */
 @media (min-width: 640px) {
   .gym-hero {
     padding: 2rem 1.5rem 2rem;
@@ -314,7 +287,7 @@
     padding: 0 1.5rem 4rem;
   }
 
-  /* Header del día horizontal */
+  
   .gym-main__header {
     flex-direction: row;
     align-items: flex-start;
@@ -325,7 +298,7 @@
     flex-wrap: nowrap;
   }
 
-  /* Ejercicio: stats inline */
+  
   .gym-exercise-row {
     grid-template-columns: 2.25rem 1px 1fr auto;
     gap: 0 1.25rem;
@@ -353,9 +326,6 @@
   }
 }
 
-/* ═══════════════════════════════════════════
-   DESKTOP  ≥ 1024px
-   ═══════════════════════════════════════════ */
 @media (min-width: 1024px) {
   .gym-hero {
     padding: 3.5rem 3rem 3rem;
@@ -365,7 +335,7 @@
     padding: 0 3rem 5rem;
   }
 
-  /* Layout sidebar + main lado a lado */
+  
   .gym-layout {
     flex-direction: row;
     gap: 3rem;
@@ -380,7 +350,7 @@
     min-width: 0;
   }
 
-  /* Días en columna vertical */
+  
   .gym-days-list {
     flex-direction: column;
     overflow-x: visible;
@@ -406,7 +376,7 @@
     border-bottom-color: #f3f4f6;
   }
 
-  /* Hover en ejercicios */
+  
   .gym-exercise-row {
     padding: 1.75rem 0;
     transition: background 0.2s;

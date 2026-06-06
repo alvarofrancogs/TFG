@@ -1,13 +1,13 @@
 <div class="min-h-screen flex flex-col">
   <app-navbar></app-navbar>
-  <main class="flex-grow flex flex-col">
+  <main class="flex-grow flex flex-col" style="padding-top: var(--navbar-height)">
     <router-outlet></router-outlet>
   </main>
   @if (showFooter) {
     <footer class="bg-emerald-950 pt-16 pb-8 border-t border-emerald-900 mt-auto text-emerald-50">
       <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          <!-- Brand -->
+          
           <div class="col-span-1 md:col-span-2">
             <h3 class="text-2xl font-semibold mb-4 tracking-tight">Oasis Club</h3>
             <p class="text-emerald-200/70 text-sm leading-relaxed max-w-sm">
@@ -15,7 +15,7 @@
             </p>
           </div>
           
-          <!-- Quick Links -->
+          
           <div>
             <h4 class="font-medium text-white mb-6 uppercase tracking-wider text-sm">Explora</h4>
             <ul class="space-y-4 text-sm text-emerald-200/70">
@@ -27,7 +27,7 @@
             </ul>
           </div>
           
-          <!-- Contact / Legal -->
+          
           <div>
             <h4 class="font-medium text-white mb-6 uppercase tracking-wider text-sm">Soporte</h4>
             <ul class="space-y-4 text-sm text-emerald-200/70">
@@ -45,7 +45,7 @@
           <p class="text-[12px] font-medium text-emerald-200/50 tracking-wider">
             &copy; 2026 OASIS CLUB. TODOS LOS DERECHOS RESERVADOS.
           </p>
-          <!-- Social Icons -->
+          
           <div class="flex gap-4">
             <a href="#" class="text-emerald-200/50 hover:text-white transition-colors duration-200">
               <span class="sr-only">Facebook</span>

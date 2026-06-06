@@ -27,7 +27,7 @@ export class Eventos implements OnInit {
   loading = signal(true);
   actionError = signal('');
 
-  // Newsletter state
+  
   isSubscribed = signal(false);
   subscribeLoading = signal(false);
   subscribeSuccess = signal(false);
@@ -48,11 +48,11 @@ export class Eventos implements OnInit {
       error: () => this.loading.set(false),
     });
 
-    // Si el usuario está logueado, comprobar si ya está suscrito
+    
     if (this.isLoggedIn()) {
       this.newsletterService.checkStatus().subscribe({
         next: (status) => this.isSubscribed.set(status),
-        error: () => {}, // silencioso
+        error: () => {}, 
       });
     }
   }

@@ -28,7 +28,7 @@ public class StripeCheckoutClientImpl implements StripeCheckoutClient {
       String successUrl,
       String cancelUrl
   ) throws StripeException {
-    RequestOptions requestOptions = requestOptions();
+    RequestOptions requestOptions = requestOptions(null);
     String reservationId = reservation.getId().toString();
     String sportName = reservation.getSport().name().equals("FUTBOL") ? "Futbol" : "Padel";
     String description = reservation.getCourt().getName()
@@ -45,6 +45,12 @@ public class StripeCheckoutClientImpl implements StripeCheckoutClient {
         .setCustomerEmail(client.getEmail())
         .putMetadata("reservationId", reservationId)
         .putMetadata("clientId", client.getId().toString())
+        .setPaymentIntentData(
+            SessionCreateParams.PaymentIntentData.builder()
+                .putMetadata("reservationId", reservationId)
+                .putMetadata("clientId", client.getId().toString())
+                .build()
+        )
         .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
         .addLineItem(
             SessionCreateParams.LineItem.builder()
@@ -69,15 +75,19 @@ public class StripeCheckoutClientImpl implements StripeCheckoutClient {
     return new StripeCheckoutSession(session.getId(), session.getUrl());
   }
 
+  
   @Override
-  public void expireSession(String stripeSessionId) throws StripeException {
-    Session session = Session.retrieve(stripeSessionId, requestOptions());
-    session.expire(requestOptions());
+  public void expireSession(String stripeSessionId, String idempotencyKey) throws StripeException {
+    RequestOptions opts = requestOptions(idempotencyKey);
+    Session session = Session.retrieve(stripeSessionId, opts);
+    session.expire(opts);
   }
 
+  
   @Override
-  public void refundBySessionId(String stripeSessionId) throws StripeException {
-    Session session = Session.retrieve(stripeSessionId, requestOptions());
+  public void refundBySessionId(String stripeSessionId, String idempotencyKey) throws StripeException {
+    RequestOptions opts = requestOptions(idempotencyKey);
+    Session session = Session.retrieve(stripeSessionId, opts);
     String paymentIntentId = session.getPaymentIntent();
     if (paymentIntentId == null || paymentIntentId.isBlank()) {
       return;
@@ -85,13 +95,22 @@ public class StripeCheckoutClientImpl implements StripeCheckoutClient {
     RefundCreateParams params = RefundCreateParams.builder()
         .setPaymentIntent(paymentIntentId)
         .build();
-    Refund.create(params, requestOptions());
+    Refund.create(params, opts);
   }
 
-  private RequestOptions requestOptions() {
+  
+  private RequestOptions requestOptions(String idempotencyKey) {
     if (secretKey == null || secretKey.isBlank()) {
       throw new IllegalStateException("STRIPE_SECRET_KEY is not configured");
     }
-    return RequestOptions.builder().setApiKey(secretKey).build();
+    RequestOptions.RequestOptionsBuilder builder = RequestOptions.builder()
+        .setApiKey(secretKey)
+        .setConnectTimeout(5_000)
+        .setReadTimeout(10_000);
+
+    if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+      builder.setIdempotencyKey(idempotencyKey);
+    }
+    return builder.build();
   }
 }

@@ -2,7 +2,7 @@
 
   @if (!auth.isLoggedIn()) {
     <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
-      <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">Acceso</p>
+      <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">Acceso</p>
       <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
         style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
         Reserva tu <span class="italic text-[#0B2118]">pista.</span>
@@ -19,7 +19,7 @@
 
     @if (currentStep() === 1) {
       <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
-        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">01 / Deporte</p>
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">01 / Deporte</p>
         <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
           style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
           Elige tu <span class="italic text-[#0B2118]">deporte.</span>
@@ -35,8 +35,9 @@
 
           <button (click)="selectSport('FUTBOL')" class="sport-card group">
             <div class="sport-card__inner">
-              <img src="images/sport-futbol-ultrareal.png" alt="Fútbol"
-                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+              <img ngSrc="images/sport-futbol-ultrareal.png" alt="Fútbol"
+                class="object-cover transition-transform duration-700 group-hover:scale-105"
+                fill sizes="(min-width: 768px) 50vw, 100vw">
               <div class="absolute inset-0 bg-[#0B2118]/50 transition-opacity duration-500 group-hover:bg-[#0B2118]/65"></div>
               <div class="sport-card__content">
                 <span class="sport-card__tag">Fútbol</span>
@@ -51,8 +52,9 @@
 
           <button (click)="selectSport('PADEL')" class="sport-card group">
             <div class="sport-card__inner">
-              <img src="images/sport-padel-ultrareal.png" alt="Pádel"
-                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+              <img ngSrc="images/sport-padel-ultrareal.png" alt="Pádel"
+                class="object-cover transition-transform duration-700 group-hover:scale-105"
+                fill sizes="(min-width: 768px) 50vw, 100vw">
               <div class="absolute inset-0 bg-[#0B2118]/50 transition-opacity duration-500 group-hover:bg-[#0B2118]/65"></div>
               <div class="sport-card__content">
                 <span class="sport-card__tag">Pádel</span>
@@ -77,7 +79,7 @@
           </svg>
           Volver
         </button>
-        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">02 / Instalación</p>
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">02 / Instalación</p>
         <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
           style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
           Elige tu <span class="italic text-[#0B2118]">pista.</span>
@@ -89,14 +91,33 @@
 
       <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 pb-24">
         <div class="w-full h-px bg-gray-100 mb-12"></div>
-        @if (availableCourts().length === 0) {
+        @if (availableCourts().length === 0 && !errorMessage()) {
+          <div class="space-y-0 animate-pulse">
+            @for (_ of [1,2,3]; track $index) {
+              <div class="court-row">
+                <div class="court-row__body space-y-2">
+                  <div class="h-3 bg-gray-100 rounded w-12"></div>
+                  <div class="h-4 bg-gray-100 rounded w-40"></div>
+                  <div class="h-3 bg-gray-100 rounded w-64"></div>
+                </div>
+                <div class="court-row__action">
+                  <div class="h-10 bg-gray-100 rounded w-28"></div>
+                </div>
+              </div>
+            }
+          </div>
+        } @else if (availableCourts().length === 0) {
           <div class="py-20 text-center">
-            <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">No hay pistas disponibles</p>
+            <p class="text-[13px] font-light text-gray-600 uppercase tracking-widest">No hay pistas disponibles</p>
           </div>
         } @else {
           <div class="space-y-0">
             @for (court of availableCourts(); track court.id) {
-              <article class="court-row group" (click)="selectCourt(court)">
+              <article class="court-row group"
+                tabindex="0"
+                (click)="selectCourt(court)"
+                (keydown.enter)="selectCourt(court)"
+                (keydown.space)="selectCourt(court)">
                 <div class="court-row__body">
                   <span class="court-row__tag">{{ selectedSport() === 'PADEL' ? 'Pádel' : 'Fútbol' }}</span>
                   <h2 class="court-row__title">{{ court.name }}</h2>
@@ -123,7 +144,7 @@
           </svg>
           Volver
         </button>
-        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">03 / Fecha y Horario</p>
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">03 / Fecha y Horario</p>
         <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
           style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
           {{ selectedCourt()?.name }}
@@ -149,10 +170,33 @@
         <div class="w-full h-px bg-gray-100 mb-10"></div>
 
         <div class="space-y-0">
+          @if (availableTimes().length === 0 && !errorMessage()) {
+            <div class="animate-pulse space-y-0">
+              @for (_ of [1,2,3,4,5,6]; track $index) {
+                <div class="time-row">
+                  <div class="time-row__time space-y-1">
+                    <div class="h-6 bg-gray-100 rounded w-12"></div>
+                    <div class="h-2 bg-gray-100 rounded w-16"></div>
+                  </div>
+                  <div class="time-row__divider"></div>
+                  <div class="time-row__body space-y-2">
+                    <div class="h-3 bg-gray-100 rounded w-10"></div>
+                    <div class="h-3 bg-gray-100 rounded w-32"></div>
+                  </div>
+                  <div class="time-row__action">
+                    <div class="h-10 bg-gray-100 rounded w-28"></div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
           @for (slot of availableTimes(); track slot.time) {
             <article
               [class]="!slot.available ? 'time-row time-row--blocked' : selectedTime() === slot.time ? 'time-row time-row--selected' : 'time-row group'"
-              (click)="selectTime(slot.time, slot.available)">
+              [attr.tabindex]="slot.available ? 0 : -1"
+              (click)="selectTime(slot.time, slot.available)"
+              (keydown.enter)="selectTime(slot.time, slot.available)"
+              (keydown.space)="selectTime(slot.time, slot.available)">
               <div class="time-row__time">
                 <span class="time-row__hour">{{ slot.time }}</span>
                 <span class="time-row__label">{{ slot.available ? 'Disponible' : 'Reservado' }}</span>
@@ -181,7 +225,7 @@
           }
           @if (availableTimes().length === 0) {
             <div class="py-20 text-center">
-              <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">No hay disponibilidad para esta fecha</p>
+              <p class="text-[13px] font-light text-gray-600 uppercase tracking-widest">No hay disponibilidad para esta fecha</p>
             </div>
           }
         </div>
@@ -211,7 +255,7 @@
           </svg>
           Volver
         </button>
-        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">04 / Confirmación</p>
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">04 / Confirmación</p>
         <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
           style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
           Confirmar <span class="italic text-[#0B2118]">reserva.</span>

@@ -2,6 +2,7 @@ package com.alvar.oasisclub.events.dto;
 
 import com.alvar.oasisclub.events.entity.EventCategory;
 import com.alvar.oasisclub.reservations.entity.SportType;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -30,6 +31,7 @@ public class CreateEventRequest {
 
   @NotNull
   @Min(1)
+  @Max(10_000)
   private Integer maxCapacity;
 
   @NotNull

@@ -11,41 +11,50 @@ import com.alvar.oasisclub.payments.dto.CreateCheckoutSessionRequest;
 import com.alvar.oasisclub.reservations.dto.CreateReservationRequest;
 import com.alvar.oasisclub.reservations.entity.ReservationEntity;
 import com.alvar.oasisclub.reservations.entity.ReservationStatus;
-import com.alvar.oasisclub.reservations.entity.SportType;
 import com.alvar.oasisclub.reservations.service.ReservationService;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.alvar.oasisclub.reservations.entity.SportType;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import com.stripe.net.Webhook;
-import java.util.UUID;
+import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class PaymentService {
 
   private static final Logger log = LoggerFactory.getLogger(PaymentService.class);
+
+  
+  private static final String EVT_CHECKOUT_COMPLETED  = "checkout.session.completed";
+  private static final String EVT_CHECKOUT_EXPIRED    = "checkout.session.expired";
+  private static final String EVT_CHARGE_REFUNDED     = "charge.refunded";
+  private static final String EVT_PAYMENT_SUCCEEDED   = "payment_intent.succeeded";
+  private static final String EVT_PAYMENT_FAILED      = "payment_intent.payment_failed";
+
   private static final long FUTBOL_PRICE_CENTS = 10000L;
-  private static final long PADEL_PRICE_CENTS = 5000L;
+  private static final long PADEL_PRICE_CENTS  = 5000L;
 
   private final ReservationService reservationService;
   private final ClientService clientService;
   private final StripeCheckoutClient stripeCheckoutClient;
+  private final PaymentWebhookProcessor webhookProcessor;
   private final AppFrontendUrlProperties frontendUrlProperties;
   private final AppCorsProperties corsProperties;
-  private final ObjectMapper objectMapper = new ObjectMapper();
   private final String webhookSecret;
 
   public PaymentService(
       ReservationService reservationService,
       ClientService clientService,
       StripeCheckoutClient stripeCheckoutClient,
+      PaymentWebhookProcessor webhookProcessor,
       AppFrontendUrlProperties frontendUrlProperties,
       AppCorsProperties corsProperties,
       @Value("${app.stripe.webhook-secret:}") String webhookSecret
@@ -53,10 +62,15 @@ public class PaymentService {
     this.reservationService = reservationService;
     this.clientService = clientService;
     this.stripeCheckoutClient = stripeCheckoutClient;
+    this.webhookProcessor = webhookProcessor;
     this.frontendUrlProperties = frontendUrlProperties;
     this.corsProperties = corsProperties;
     this.webhookSecret = webhookSecret;
   }
+
+  
+  
+  
 
   @Transactional
   public CheckoutSessionResponse createCheckoutSession(
@@ -118,27 +132,24 @@ public class PaymentService {
     }
   }
 
+  
   public void handleWebhook(String payload, String signatureHeader) {
+    
     Event event = verifyEvent(payload, signatureHeader);
-    JsonNode sessionNode = readSessionNode(payload);
-    String stripeSessionId = sessionNode.path("id").asText();
+    String eventId   = event.getId();
+    String eventType = event.getType();
+    long   eventTs   = event.getCreated();
 
-    if (stripeSessionId == null || stripeSessionId.isBlank()) {
-      return;
-    }
+    
+    log.info("[WEBHOOK] Received event_id={} type={} timestamp={}", eventId, eventType, eventTs);
 
-    if ("checkout.session.completed".equals(event.getType())) {
-      String paymentStatus = sessionNode.path("payment_status").asText();
-      if ("paid".equals(paymentStatus)) {
-        reservationService.confirmByStripeSessionId(stripeSessionId);
-      }
-      return;
-    }
-
-    if ("checkout.session.expired".equals(event.getType())) {
-      reservationService.releasePendingStripeReservation(stripeSessionId);
-    }
+    
+    webhookProcessor.processWebhookAsync(payload, eventId, eventType, eventTs);
   }
+
+  
+  
+  
 
   private Event verifyEvent(String payload, String signatureHeader) {
     if (webhookSecret == null || webhookSecret.isBlank()) {
@@ -147,22 +158,15 @@ public class PaymentService {
     try {
       return Webhook.constructEvent(payload, signatureHeader, webhookSecret);
     } catch (SignatureVerificationException ex) {
+      
       throw new AccessDeniedException("Invalid Stripe webhook signature", ex);
-    }
-  }
-
-  private JsonNode readSessionNode(String payload) {
-    try {
-      return objectMapper.readTree(payload).path("data").path("object");
-    } catch (Exception ex) {
-      throw new IllegalArgumentException("Invalid Stripe webhook payload");
     }
   }
 
   private long priceFor(SportType sport) {
     return switch (sport) {
       case FUTBOL -> FUTBOL_PRICE_CENTS;
-      case PADEL -> PADEL_PRICE_CENTS;
+      case PADEL  -> PADEL_PRICE_CENTS;
     };
   }
 

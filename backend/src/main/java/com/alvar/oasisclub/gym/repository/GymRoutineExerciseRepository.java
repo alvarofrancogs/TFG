@@ -10,4 +10,3 @@ public interface GymRoutineExerciseRepository extends JpaRepository<GymRoutineEx
   void deleteByRoutineDayIdIn(List<UUID> routineDayIds);
 }
 
-

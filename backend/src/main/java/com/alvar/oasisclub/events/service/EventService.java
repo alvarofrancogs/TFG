@@ -169,7 +169,8 @@ public class EventService {
 
   @Transactional
   public void register(UUID eventId, UUID clientId) {
-    EventEntity event = requireEvent(eventId);
+    EventEntity event = eventRepository.findByIdForUpdate(eventId)
+        .orElseThrow(() -> new com.alvar.oasisclub.events.exception.EventNotFoundException("Evento no encontrado: " + eventId));
 
     if (!event.getIsActive()) {
       throw new IllegalArgumentException("El evento no está activo");
@@ -244,25 +245,53 @@ public class EventService {
     registrationRepository.delete(reg);
   }
 
+  
   @Transactional
   public void deleteEvent(UUID eventId) {
     EventEntity event = requireEvent(eventId);
+
+    
+    if (event.getSport() != null) {
+      int released = releaseMaintenanceBlocks(event);
+      log.info("Event {}: released {} maintenance block(s) before deletion", eventId, released);
+    }
+
     eventRepository.delete(event);
     log.info("Event {} deleted", eventId);
   }
 
+  
   @Transactional
   public void cleanupPastEvents() {
     List<EventEntity> past = eventRepository.findByEventDateBefore(LocalDate.now());
-    if (!past.isEmpty()) {
-      eventRepository.deleteAll(past);
-      log.info("Auto-cleanup: {} past event(s) deleted", past.size());
+    if (past.isEmpty()) {
+      return;
     }
+
+    int totalBlocksReleased = 0;
+    for (EventEntity event : past) {
+      if (event.getSport() != null) {
+        totalBlocksReleased += releaseMaintenanceBlocks(event);
+      }
+    }
+
+    eventRepository.deleteAll(past);
+    log.info("Auto-cleanup: {} past event(s) deleted, {} maintenance block(s) released",
+        past.size(), totalBlocksReleased);
+  }
+
+  
+  private int releaseMaintenanceBlocks(EventEntity event) {
+    return reservationRepository.deleteMaintenanceBlocksByDateAndTimeRange(
+        event.getEventDate(),
+        event.getStartTime(),
+        event.getEndTime()
+    );
   }
 
   private EventEntity requireEvent(UUID eventId) {
     return eventRepository.findById(eventId)
-        .orElseThrow(() -> new IllegalArgumentException("Evento no encontrado: " + eventId));
+        .orElseThrow(() -> new com.alvar.oasisclub.events.exception.EventNotFoundException("Evento no encontrado: " + eventId));
   }
 
   private EventResponse toResponse(EventEntity e, long registeredCount, boolean isRegistered) {
@@ -285,7 +314,7 @@ public class EventService {
     );
   }
 
-  /** Derives court names from MAINTENANCE reservations on the event date/time range. */
+  
   private String resolveCourtsNames(EventEntity e) {
     if (e.getSport() == null) return null;
     if (e.getCourtNames() != null && !e.getCourtNames().isBlank()) return e.getCourtNames();

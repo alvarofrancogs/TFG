@@ -10,4 +10,3 @@ public class AvailabilitySlotResponse {
   private boolean available;
 }
 
-

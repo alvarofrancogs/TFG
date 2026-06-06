@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -64,6 +65,8 @@ public class ReservationEntity {
 
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
+
+  
+  @Column(name = "refunded_at")
+  private Instant refundedAt;
 }
-
-

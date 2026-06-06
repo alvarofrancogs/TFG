@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.alvar.oasisclub.common.config.RateLimitFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -18,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
   private final JwtFilter jwtFilter;
+  private final RateLimitFilter rateLimitFilter;
   private final org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource;
 
   @Bean
@@ -32,11 +34,13 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, "/api/v1/payments/webhook").permitAll()
             .requestMatchers("/api/v1/newsletter/**").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/v1/contact").permitAll()
+            .requestMatchers(HttpMethod.GET, "/health").permitAll()
             .requestMatchers("/swagger-ui/**").permitAll()
             .requestMatchers("/swagger-ui.html").permitAll()
             .requestMatchers("/v3/api-docs/**").permitAll()
             .anyRequest().authenticated()
         )
+        .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();

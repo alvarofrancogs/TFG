@@ -1,6 +1,6 @@
 import {HttpErrorResponse} from '@angular/common/http';
 import {Component, inject, signal} from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, NgForm} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 
 import {AuthStore} from '../../auth.store';
@@ -14,6 +14,12 @@ import {AuthApiService} from '../../servicios/auth-api.service';
   styleUrl: './registro.component.css',
 })
 export class RegistroComponent {
+  readonly minPasswordLength = 6;
+  readonly maxPasswordLength = 128;
+  readonly maxNameLength = 120;
+  readonly maxEmailLength = 180;
+  readonly phonePattern = '^[+]?[0-9\\s\\-().]{7,20}$';
+
   private authApi = inject(AuthApiService);
   private authStore = inject(AuthStore);
   private router = inject(Router);
@@ -21,22 +27,30 @@ export class RegistroComponent {
   name = '';
   email = '';
   password = '';
+  showPassword = false;
   phone = '';
   birthDate = '';
   errorMessage = signal('');
   loading = signal(false);
 
-  submitRegister() {
-    if (this.loading() || !this.name || !this.email || !this.password || !this.phone || !this.birthDate) {
+  get maxBirthDate(): string {
+    
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 14);
+    return d.toISOString().split('T')[0];
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  submitRegister(form: NgForm) {
+    if (this.loading() || form.invalid) {
       return;
     }
 
     if (this.authStore.isLoggedIn()) {
       this.router.navigate(['/']);
-      return;
-    }
-    if (this.password.length < 6) {
-      this.errorMessage.set('La contraseña debe tener al menos 6 caracteres.');
       return;
     }
 

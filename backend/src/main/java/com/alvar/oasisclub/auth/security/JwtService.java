@@ -8,9 +8,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.UUID;
 import javax.crypto.SecretKey;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class JwtService {
@@ -21,7 +21,13 @@ public class JwtService {
   @Value("${app.jwt.expiration-ms}")
   private long expirationMs;
 
-  
+  @PostConstruct
+  public void validateSecret() {
+    if (secret == null || secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+      throw new IllegalStateException("JWT secret debe tener al menos 32 caracteres (256 bits) para HS256");
+    }
+  }
+
   public String generateToken(UUID clientId, String email, String role) {
     Date now = new Date();
     Date expiration = new Date(now.getTime() + expirationMs);
@@ -52,6 +58,10 @@ public class JwtService {
     return UUID.fromString(clientId);
   }
 
+  public Date extractIssuedAt(String token) {
+    return extractClaims(token).getIssuedAt();
+  }
+
   
   public boolean isTokenValid(String token) {
     try {
@@ -75,5 +85,4 @@ public class JwtService {
     return Keys.hmacShaKeyFor(keyBytes);
   }
 }
-
 

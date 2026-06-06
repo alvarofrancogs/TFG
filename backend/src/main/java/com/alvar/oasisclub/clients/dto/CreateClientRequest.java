@@ -3,6 +3,9 @@ package com.alvar.oasisclub.clients.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import lombok.Data;
 
@@ -10,18 +13,27 @@ import lombok.Data;
 public class CreateClientRequest {
 
   @NotBlank
+  @Size(max = 120, message = "El nombre no puede superar 120 caracteres")
   private String name;
 
-  @Email
+  @Email(message = "El correo electrónico no tiene un formato válido")
   @NotBlank
+  @Size(max = 180, message = "El correo no puede superar 180 caracteres")
   private String email;
 
   @NotBlank
+  @Size(min = 6,   message = "La contraseña debe tener al menos 6 caracteres")
+  @Size(max = 128, message = "La contraseña no puede superar 128 caracteres")
   private String password;
 
   @NotBlank
+  @Pattern(
+      regexp = "^[+]?[0-9\\s\\-().]{7,20}$",
+      message = "El teléfono no tiene un formato válido"
+  )
   private String phone;
 
   @NotNull
+  @Past(message = "La fecha de nacimiento debe ser una fecha pasada")
   private LocalDate birthDate;
 }

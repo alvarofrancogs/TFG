@@ -18,6 +18,7 @@ public record ContactRequest(
     String email,
 
     @NotBlank(message = "El asunto es obligatorio")
+    @Size(max = 150, message = "El asunto es demasiado largo")
     String asunto,
 
     @NotBlank(message = "El mensaje es obligatorio")

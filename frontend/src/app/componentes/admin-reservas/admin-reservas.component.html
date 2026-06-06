@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-white">
 
   <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
-    <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">Panel Admin</p>
+    <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">Panel Admin</p>
     <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
       style="font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.5rem);">
       Gestión de <span class="italic text-[#0B2118]">reservas.</span>
@@ -23,7 +23,7 @@
 
         <div class="flex flex-col sm:flex-row sm:items-center gap-6">
           <div class="flex items-center gap-4">
-            <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400">Fecha</span>
+            <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600">Fecha</span>
             <input
               id="calendar-date"
               type="date"
@@ -52,19 +52,34 @@
         <div class="w-full h-px bg-gray-100"></div>
 
         @if (loading()) {
-          <div class="py-20 text-center">
-            <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">Cargando reservas...</p>
+          <div class="animate-pulse space-y-2">
+            <div class="flex gap-4 pb-4 border-b border-gray-100">
+              <div class="h-3 bg-gray-100 rounded w-20"></div>
+              @for (_ of [1,2,3]; track $index) {
+                <div class="h-3 bg-gray-100 rounded w-28"></div>
+              }
+            </div>
+            @for (_ of [1,2,3,4,5,6,7,8,9]; track $index) {
+              <div class="flex gap-4 py-3 border-b border-gray-50">
+                <div class="h-4 bg-gray-100 rounded w-14 shrink-0"></div>
+                @for (__ of [1,2,3]; track $index) {
+                  <div class="flex-1 flex justify-center">
+                    <div class="h-8 bg-gray-100 rounded w-20"></div>
+                  </div>
+                }
+              </div>
+            }
           </div>
         } @else if (scheduleSlots().length === 0) {
           <div class="py-20 text-center">
-            <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">No hay franjas horarias configuradas</p>
+            <p class="text-[13px] font-light text-gray-600 uppercase tracking-widest">No hay franjas horarias configuradas</p>
           </div>
         } @else {
           <div class="overflow-x-auto">
             <table class="w-full border-collapse" aria-label="Ocupación de pistas">
               <thead>
                 <tr class="border-b border-gray-100">
-                  <th scope="col" class="sticky left-0 z-10 bg-white pb-4 pr-6 text-left min-w-[100px]">
+                  <th scope="col" class="sticky left-0 z-20 pb-4 pr-6 text-left min-w-[100px]" style="background-color: #ffffff;">
                     <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-300">Hora</span>
                   </th>
                   @for (court of filteredCourts(); track court.id) {
@@ -83,7 +98,7 @@
                 @for (slot of scheduleSlots(); track slot) {
                   @let range = slotRange(slot);
                   <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors group">
-                    <th scope="row" class="sticky left-0 z-10 bg-white group-hover:bg-gray-50 pr-6 py-4 text-left whitespace-nowrap">
+                    <th scope="row" class="sticky left-0 z-20 pr-6 py-4 text-left whitespace-nowrap" style="background-color: #ffffff;">
                       <span class="block text-[15px] font-light" style="color:#0B2118">{{ range.start }}</span>
                       <span class="block text-[9px] font-bold tracking-[0.2em] uppercase text-gray-300 mt-0.5">→ {{ range.end }}</span>
                     </th>
@@ -124,7 +139,7 @@
                                 <p class="text-[15px] font-light text-gray-900" style="font-family: 'Playfair Display', serif;">
                                   {{ activeRes.userName }}
                                 </p>
-                                <p class="text-[12px] font-light text-gray-400 mt-1">
+                                <p class="text-[12px] font-light text-gray-600 mt-1">
                                   {{ activeRes.court }} · {{ normalizeTimePublic(activeRes.time) }} · {{ activeRes.sport }}
                                 </p>
                               </div>
@@ -179,15 +194,15 @@
           <div class="flex items-center gap-8 pt-2">
             <div class="flex items-center gap-2">
               <span class="ar-legend ar-legend--reserved"></span>
-              <span class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Reservado</span>
+              <span class="text-[10px] font-bold tracking-widest uppercase text-gray-600">Reservado</span>
             </div>
             <div class="flex items-center gap-2">
               <span class="ar-legend ar-legend--maintenance"></span>
-              <span class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Mantenimiento</span>
+              <span class="text-[10px] font-bold tracking-widest uppercase text-gray-600">Mantenimiento</span>
             </div>
             <div class="flex items-center gap-2">
               <span class="text-gray-200 font-light">—</span>
-              <span class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Libre</span>
+              <span class="text-[10px] font-bold tracking-widest uppercase text-gray-600">Libre</span>
             </div>
           </div>
         }
@@ -196,7 +211,7 @@
       <div class="space-y-10">
 
         <div>
-          <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-1">Configuración</p>
+          <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-1">Configuración</p>
           <h2 class="text-xl font-light text-gray-900 mb-6" style="font-family: 'Playfair Display', serif;">
             Franjas horarias
           </h2>
@@ -220,7 +235,7 @@
               </div>
             }
             @if (scheduleSlots().length === 0) {
-              <p class="text-[13px] font-light text-gray-400">No hay horarios configurados.</p>
+              <p class="text-[13px] font-light text-gray-600">No hay horarios configurados.</p>
             }
           </div>
 
@@ -244,11 +259,11 @@
         <div class="w-full h-px bg-gray-100"></div>
 
         <div>
-          <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-1">Mantenimiento</p>
+          <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-1">Mantenimiento</p>
           <h2 class="text-xl font-light text-gray-900 mb-6" style="font-family: 'Playfair Display', serif;">
             Bloquear pista
           </h2>
-          <p class="text-[13px] font-light text-gray-400 mb-6">Inhabilita una pista por labores de limpieza o reparación.</p>
+          <p class="text-[13px] font-light text-gray-600 mb-6">Inhabilita una pista por labores de limpieza o reparación.</p>
 
           @if (blockError()) {
             <div class="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-[13px]">{{ blockError() }}</div>
@@ -260,7 +275,7 @@
           <form (submit)="blockCourt($event)" class="space-y-6" novalidate>
 
             <div>
-              <span class="block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-3">Deporte</span>
+              <span class="block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-3">Deporte</span>
               <div class="flex gap-2">
                 <button type="button" (click)="onBlockSportChange('PADEL')"
                   [class]="blockForm.sport === 'PADEL' ? 'ar-filter ar-filter--active flex-1' : 'ar-filter flex-1'">
@@ -274,9 +289,9 @@
             </div>
 
             <div>
-              <span class="block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-3">Pista</span>
+              <span class="block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-3">Pista</span>
               @if (courtsForBlock().length === 0) {
-                <p class="text-[13px] font-light text-gray-400">Sin pistas disponibles.</p>
+                <p class="text-[13px] font-light text-gray-600">Sin pistas disponibles.</p>
               } @else {
                 <div class="space-y-0">
                   @for (court of courtsForBlock(); track court.id) {
@@ -294,15 +309,15 @@
             </div>
 
             <div>
-              <label for="block-date" class="block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-3">Fecha</label>
+              <label for="block-date" class="block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-3">Fecha</label>
               <input id="block-date" type="date" [(ngModel)]="blockForm.date" name="date"
                 class="w-full border-b border-gray-300 pb-1 text-sm text-gray-900 bg-transparent focus:border-[#0B2118] focus:outline-none transition-colors">
             </div>
 
             <div>
-              <span class="block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-3">Hora</span>
+              <span class="block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-3">Hora</span>
               @if (scheduleSlots().length === 0) {
-                <p class="text-[13px] font-light text-gray-400">No hay franjas configuradas.</p>
+                <p class="text-[13px] font-light text-gray-600">No hay franjas configuradas.</p>
               } @else {
                 <div class="grid grid-cols-3 gap-2">
                   @for (slot of scheduleSlots(); track slot) {

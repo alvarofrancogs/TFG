@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-white pt-24">
 
   <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
-    <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">Agenda</p>
+    <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">Agenda</p>
     <h1 class="leading-[1.1] font-normal text-gray-900 mb-4"
       style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">
       Próximos <span class="italic text-[#0B2118]">eventos.</span>
@@ -59,7 +59,7 @@
       </div>
     } @else if (filteredEvents().length === 0) {
       <div class="py-20 text-center">
-        <p class="text-[13px] font-light text-gray-400 uppercase tracking-widest">No hay eventos disponibles</p>
+        <p class="text-[13px] font-light text-gray-600 uppercase tracking-widest">No hay eventos disponibles</p>
       </div>
     } @else {
       <div class="space-y-0">
@@ -129,7 +129,7 @@
 
       <div class="w-full max-w-md">
         @if (!isLoggedIn()) {
-          <!-- No logueado: invitar a iniciar sesión -->
+          
           <p class="text-white/60 text-[14px] font-light leading-relaxed mb-4">
             Inicia sesión para suscribirte y ser el primero en enterarte de nuevos eventos.
           </p>
@@ -139,7 +139,7 @@
           </a>
 
         } @else if (isSubscribed()) {
-          <!-- Ya suscrito -->
+          
           <p class="text-emerald-400 text-[13px] font-light tracking-wide py-2 mb-3">
             ✓ Ya estás suscrito. Recibirás todas las novedades de Oasis Club.
           </p>
@@ -154,13 +154,13 @@
           }
 
         } @else if (subscribeSuccess()) {
-          <!-- Recién suscrito -->
+          
           <p class="text-emerald-400 text-[13px] font-light tracking-wide py-4">
             ✓ Suscripción confirmada. Recibirás un correo de confirmación.
           </p>
 
         } @else {
-          <!-- No suscrito, logueado -->
+          
           <div class="flex flex-col gap-2">
             <p class="text-white/50 text-[12px] font-light">
               Se usará el correo de tu cuenta: <span class="text-white/80">{{ session()?.email }}</span>

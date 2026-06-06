@@ -65,14 +65,30 @@ public class ScheduleSlotService {
             List.of(ReservationStatus.PENDING, ReservationStatus.CONFIRMED, ReservationStatus.MAINTENANCE)
         );
 
+    int cancelFailures = 0;
     for (ReservationEntity reservation : futureReservations) {
       if (reservation.getStatus() == ReservationStatus.MAINTENANCE) {
         reservationRepository.delete(reservation);
         log.info("Maintenance block {} deleted due to schedule slot removal", reservation.getId());
       } else {
-        reservationService.cancelAndRefund(reservation);
-        log.info("Reservation {} cancelled and refunded due to schedule slot removal", reservation.getId());
+        
+        
+        try {
+          reservationService.cancelAndRefundIsolated(reservation);
+          log.info("Reservation {} cancelled and refunded due to schedule slot removal", reservation.getId());
+        } catch (Exception ex) {
+          cancelFailures++;
+          log.error("Could not cancel reservation {} while removing slot {}: {}",
+              reservation.getId(), time, ex.getMessage());
+        }
       }
+    }
+
+    if (cancelFailures > 0) {
+      
+      throw new IllegalStateException(
+          "No se pudo eliminar el horario: " + cancelFailures
+          + " reserva(s) no se pudieron cancelar/reembolsar. Inténtalo de nuevo más tarde.");
     }
 
     scheduleSlotRepository.deleteBySlotTime(parsed);

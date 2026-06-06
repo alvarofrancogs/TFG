@@ -7,6 +7,7 @@ import com.alvar.oasisclub.auth.dto.RegisterRequest;
 import com.alvar.oasisclub.auth.dto.ResetPasswordRequest;
 import com.alvar.oasisclub.auth.service.AuthService;
 import jakarta.validation.Valid;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,9 +28,12 @@ public class AuthController {
   }
 
   @PostMapping("/forgot-password")
-  public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+  public ResponseEntity<Map<String, String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
     authService.forgotPassword(request.getEmail());
-    return ResponseEntity.ok().build();
+    
+    return ResponseEntity.ok(Map.of(
+        "message", "Si el email está registrado, recibirás instrucciones para restablecer tu contraseña"
+    ));
   }
 
   @PostMapping("/reset-password")

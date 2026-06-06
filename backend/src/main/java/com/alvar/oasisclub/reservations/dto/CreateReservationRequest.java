@@ -28,4 +28,3 @@ public class CreateReservationRequest {
   private LocalTime time;
 }
 
-

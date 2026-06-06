@@ -1,13 +1,13 @@
 <div class="min-h-screen bg-white">
 
-  <!-- ── HERO ── -->
+  
   <section class="home-hero" aria-label="Oasis Club">
-    <!-- Media primero en móvil (orden visual invertido con CSS) -->
+    
     <div class="home-hero__media">
-      <img src="images/home-hero-ultrareal.png" alt="Interior premium de Oasis Club" class="home-hero__image">
-      <!-- Overlay texto sobre imagen solo en móvil -->
+      <img ngSrc="images/home-hero-ultrareal.png" alt="Interior premium de Oasis Club" class="home-hero__image" fill priority>
+      
       <div class="home-hero__mobile-overlay">
-        <h1 class="home-hero__mobile-title">
+        <h1 class="home-hero__mobile-title" aria-hidden="true">
           Vive el <span class="italic">deporte.</span>
         </h1>
       </div>
@@ -33,14 +33,14 @@
     </div>
   </section>
 
-  <!-- ── ELIGE TU DEPORTE ── -->
+  
   <div class="sports-section">
     <div class="max-w-screen-2xl mx-auto px-5 lg:px-12">
       <div class="sports-layout">
 
-      <!-- Cabecera -->
+      
       <div class="sports-header">
-        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-3">Nuestras instalaciones</p>
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-3">Nuestras instalaciones</p>
         <h2 class="text-emerald-950 leading-[1.1] mb-3"
           style="font-family: 'Playfair Display', serif; font-size: clamp(1.75rem, 5vw, 3rem);">
           Elige tu deporte<br>
@@ -52,13 +52,13 @@
         </p>
       </div>
 
-      <!-- Cards: scroll horizontal en móvil / grid en desktop -->
+      
       <div class="sports-cards-wrapper">
         <div class="sports-cards">
 
           <a routerLink="/instalaciones/padel" class="sport-card group">
-            <img src="images/sport-padel-ultrareal.png" alt="Pádel"
-              class="sport-card__img transition-transform duration-500 group-hover:scale-105">
+            <img ngSrc="images/sport-padel-ultrareal.png" alt="Pádel"
+              class="sport-card__img transition-transform duration-500 group-hover:scale-105" fill>
             <div class="sport-card__overlay group-hover:bg-[#0B2118]/20 transition-colors duration-500"></div>
             <div class="sport-card__info">
               <h3 class="text-base font-medium mb-0.5">Pádel</h3>
@@ -73,8 +73,8 @@
           </a>
 
           <a routerLink="/instalaciones/futbol" class="sport-card group">
-            <img src="images/sport-futbol-ultrareal.png" alt="Fútbol"
-              class="sport-card__img transition-transform duration-500 group-hover:scale-105">
+            <img ngSrc="images/sport-futbol-ultrareal.png" alt="Fútbol"
+              class="sport-card__img transition-transform duration-500 group-hover:scale-105" fill>
             <div class="sport-card__overlay group-hover:bg-[#0B2118]/20 transition-colors duration-500"></div>
             <div class="sport-card__info">
               <h3 class="text-base font-medium mb-0.5">Fútbol</h3>
@@ -89,8 +89,8 @@
           </a>
 
           <a routerLink="/instalaciones/gimnasio" class="sport-card group">
-            <img src="images/sport-gimnasio-ultrareal.png" alt="Fitness"
-              class="sport-card__img transition-transform duration-500 group-hover:scale-105">
+            <img ngSrc="images/sport-gimnasio-ultrareal.png" alt="Fitness"
+              class="sport-card__img transition-transform duration-500 group-hover:scale-105" fill>
             <div class="sport-card__overlay group-hover:bg-[#0B2118]/20 transition-colors duration-500"></div>
             <div class="sport-card__info">
               <h3 class="text-base font-medium mb-0.5">Fitness</h3>
@@ -105,11 +105,11 @@
           </a>
 
         </div>
-        <!-- Indicador de scroll en móvil -->
+        
         <p class="sports-scroll-hint">Desliza para ver más →</p>
       </div>
 
-      </div><!-- /sports-layout -->
+      </div>
     </div>
   </div>
 

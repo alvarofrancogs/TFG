@@ -1,6 +1,4 @@
-/* ============================
-   LEGAL SHARED STYLES (Privacy & Terms)
-   ============================ */
+
 
 .legal-nav-item {
   display: block;
@@ -18,7 +16,6 @@
   color: #0B2118;
 }
 
-/* Content sections */
 .legal-content {
   display: flex;
   flex-direction: column;

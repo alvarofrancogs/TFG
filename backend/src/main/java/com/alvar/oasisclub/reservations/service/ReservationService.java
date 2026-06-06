@@ -17,6 +17,8 @@ import com.alvar.oasisclub.reservations.mapper.ReservationMapper;
 import com.alvar.oasisclub.reservations.repository.ReservationRepository;
 import com.alvar.oasisclub.schedule.service.ScheduleSlotService;
 import com.stripe.exception.StripeException;
+import com.alvar.oasisclub.common.exception.StripeOperationFailedException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -172,37 +175,68 @@ public class ReservationService {
     }
   }
 
+  
   @Transactional
   public void deleteReservation(UUID id) {
     ReservationEntity reservation = getEntityById(id);
-    reservationRepository.delete(reservation);
+    cancelAndRefund(reservation);
+  }
+
+  
+  @Transactional
+  public void cancelAndRefund(ReservationEntity reservation) {
+    String sessionId = reservation.getStripeSessionId();
+
+    
+    
+    if (sessionId == null || sessionId.isBlank()
+        || reservation.getStatus() == ReservationStatus.MAINTENANCE) {
+      reservationRepository.delete(reservation);
+      sendReservationCancelledEmail(reservation);
+      return;
+    }
+
+    
+    String idempotencyKey = "cancel-" + reservation.getId().toString();
+
+    
+    try {
+      if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
+        stripeCheckoutClient.refundBySessionId(sessionId, idempotencyKey);
+        log.info("Stripe refund requested for reservation {} sessionId {} idempotencyKey {}",
+            reservation.getId(), sessionId, idempotencyKey);
+      } else if (reservation.getStatus() == ReservationStatus.PENDING) {
+        stripeCheckoutClient.expireSession(sessionId, idempotencyKey);
+        log.info("Stripe session expiration requested for reservation {} sessionId {} idempotencyKey {}",
+            reservation.getId(), sessionId, idempotencyKey);
+      }
+    } catch (StripeException ex) {
+      
+      log.error("Stripe operation failed for reservation {} sessionId {} idempotencyKey {} — cancellation NOT completed: {}",
+          reservation.getId(), sessionId, idempotencyKey, ex.getMessage(), ex);
+      throw new StripeOperationFailedException(
+          "La cancelación no se ha completado porque Stripe no respondió correctamente. Puede reintentarse.", ex);
+    }
+
+    
+    try {
+      reservationRepository.delete(reservation);
+    } catch (Exception ex) {
+      
+      log.error("[COMPENSATION REQUIRED] Stripe operation completed but DB delete FAILED " +
+              "for reservation_id={} stripeSessionId={} idempotencyKey={} — manual intervention needed",
+          reservation.getId(), sessionId, idempotencyKey, ex);
+      throw ex;
+    }
+
+    
     sendReservationCancelledEmail(reservation);
   }
 
-  @Transactional
-  public void cancelAndRefund(ReservationEntity reservation) {
-    if (reservation.getStatus() == ReservationStatus.CONFIRMED
-        && reservation.getStripeSessionId() != null
-        && !reservation.getStripeSessionId().isBlank()) {
-      try {
-        stripeCheckoutClient.refundBySessionId(reservation.getStripeSessionId());
-      } catch (StripeException ex) {
-        log.error("Stripe refund failed for reservation {}: {}", reservation.getId(), ex.getMessage(), ex);
-      }
-    }
-
-    if (reservation.getStatus() == ReservationStatus.PENDING
-        && reservation.getStripeSessionId() != null
-        && !reservation.getStripeSessionId().isBlank()) {
-      try {
-        stripeCheckoutClient.expireSession(reservation.getStripeSessionId());
-      } catch (StripeException ex) {
-        log.warn("Stripe session expire failed for reservation {}: {}", reservation.getId(), ex.getMessage());
-      }
-    }
-
-    reservationRepository.delete(reservation);
-    sendReservationCancelledEmail(reservation);
+  
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public void cancelAndRefundIsolated(ReservationEntity reservation) {
+    cancelAndRefund(reservation);
   }
 
   @Transactional
@@ -227,6 +261,15 @@ public class ReservationService {
     reservationRepository.findByStripeSessionId(stripeSessionId)
         .filter(reservation -> reservation.getStatus() == ReservationStatus.PENDING)
         .ifPresent(reservationRepository::delete);
+  }
+
+  @Transactional
+  public void markRefundedByReservationId(UUID reservationId, Instant refundedAt) {
+    reservationRepository.findById(reservationId)
+        .ifPresent(reservation -> {
+          reservation.setRefundedAt(refundedAt);
+          log.info("Marked reservation {} as refunded at {}", reservation.getId(), refundedAt);
+        });
   }
 
   @Transactional(readOnly = true)

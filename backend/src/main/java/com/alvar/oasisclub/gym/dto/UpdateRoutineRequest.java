@@ -12,4 +12,3 @@ public class UpdateRoutineRequest {
   private List<RoutineDayDto> days = new ArrayList<>();
 }
 
-

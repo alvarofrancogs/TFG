@@ -3,10 +3,6 @@
   background: #ffffff;
 }
 
-/* ============================
-   PRICING ROWS
-   ============================ */
-
 .tarifa-row {
   display: grid;
   grid-template-columns: 280px 1fr auto;
@@ -24,7 +20,6 @@
   background: #fafafa;
 }
 
-/* Left: image */
 .tarifa-row__left {
   padding: 2rem 2.5rem 2rem 0;
 }
@@ -60,7 +55,6 @@
   backdrop-filter: blur(4px);
 }
 
-/* Center: info */
 .tarifa-row__center {
   padding: 2rem 3rem 2rem 0;
   flex: 1;
@@ -102,7 +96,6 @@
   color: #6b7280;
 }
 
-/* Right: price + CTA */
 .tarifa-row__right {
   display: flex;
   flex-direction: column;
@@ -153,10 +146,6 @@
 .tarifa-row__cta:hover {
   background: #134e30;
 }
-
-/* ============================
-   RESPONSIVE
-   ============================ */
 
 @media (max-width: 1024px) {
   .tarifa-row {

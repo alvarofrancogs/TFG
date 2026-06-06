@@ -20,6 +20,9 @@
   position: relative;
   overflow: hidden;
   background: #07120d;
+  aspect-ratio: 16 / 10;
+  width: 100%;
+  min-height: 220px;
 }
 
 .facility-hero__image {

@@ -14,4 +14,3 @@ public class ProfileReservationResponse {
   private String status;
 }
 
-

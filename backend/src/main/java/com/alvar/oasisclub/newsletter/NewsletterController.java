@@ -25,7 +25,7 @@ public class NewsletterController {
       @Valid @RequestBody SubscribeRequest request,
       Authentication authentication
   ) {
-    // Si hay usuario autenticado, usar su email del token (más seguro)
+    
     String email = resolveEmail(authentication, request.email());
     newsletterService.subscribe(email);
     return ResponseEntity.ok().build();

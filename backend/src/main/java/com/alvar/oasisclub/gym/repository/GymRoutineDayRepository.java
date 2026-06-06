@@ -10,4 +10,3 @@ public interface GymRoutineDayRepository extends JpaRepository<GymRoutineDayEnti
   void deleteByClientId(UUID clientId);
 }
 
-

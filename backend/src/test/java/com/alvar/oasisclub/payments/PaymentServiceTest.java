@@ -19,6 +19,7 @@ import com.alvar.oasisclub.payments.dto.CancelCheckoutSessionRequest;
 import com.alvar.oasisclub.payments.dto.CheckoutSessionResponse;
 import com.alvar.oasisclub.payments.dto.CreateCheckoutSessionRequest;
 import com.alvar.oasisclub.payments.service.PaymentService;
+import com.alvar.oasisclub.payments.service.PaymentWebhookProcessor;
 import com.alvar.oasisclub.payments.service.StripeCheckoutClient;
 import com.alvar.oasisclub.payments.service.StripeCheckoutSession;
 import com.alvar.oasisclub.reservations.dto.CreateReservationRequest;
@@ -59,6 +60,9 @@ class PaymentServiceTest {
   private StripeCheckoutClient stripeCheckoutClient;
 
   @Mock
+  private PaymentWebhookProcessor webhookProcessor;
+
+  @Mock
   private AppFrontendUrlProperties frontendUrlProperties;
 
   private AppCorsProperties corsProperties;
@@ -69,11 +73,11 @@ class PaymentServiceTest {
   void setUp() {
     corsProperties = new AppCorsProperties();
     ReflectionTestUtils.setField(corsProperties, "allowedOrigins", java.util.List.of("http://localhost:4300"));
-    ReflectionTestUtils.setField(corsProperties, "allowedOriginPatterns", java.util.List.of("http://localhost:*"));
     paymentService = new PaymentService(
         reservationService,
         clientService,
         stripeCheckoutClient,
+        webhookProcessor,
         frontendUrlProperties,
         corsProperties,
         WEBHOOK_SECRET
@@ -162,25 +166,25 @@ class PaymentServiceTest {
   @Test
   void signedCompletedWebhookConfirmsPaidReservation() throws Exception {
     String payload = """
-        {"id":"evt_test","object":"event","type":"checkout.session.completed","data":{"object":{"id":"cs_test_123","object":"checkout.session","payment_status":"paid"}}}
+        {"id":"evt_test","object":"event","created":1620000000,"type":"checkout.session.completed","data":{"object":{"id":"cs_test_123","object":"checkout.session","payment_status":"paid"}}}
         """.trim();
 
     paymentService.handleWebhook(payload, signatureHeader(payload));
 
-    verify(reservationService).confirmByStripeSessionId("cs_test_123");
+    verify(webhookProcessor).processWebhookAsync(payload, "evt_test", "checkout.session.completed", 1620000000L);
   }
 
   @Test
   void repeatedCompletedWebhookStaysSafe() throws Exception {
     String payload = """
-        {"id":"evt_test","object":"event","type":"checkout.session.completed","data":{"object":{"id":"cs_test_123","object":"checkout.session","payment_status":"paid"}}}
+        {"id":"evt_test","object":"event","created":1620000000,"type":"checkout.session.completed","data":{"object":{"id":"cs_test_123","object":"checkout.session","payment_status":"paid"}}}
         """.trim();
     String signature = signatureHeader(payload);
 
     paymentService.handleWebhook(payload, signature);
     paymentService.handleWebhook(payload, signature);
 
-    verify(reservationService, org.mockito.Mockito.times(2)).confirmByStripeSessionId("cs_test_123");
+    verify(webhookProcessor, org.mockito.Mockito.times(2)).processWebhookAsync(payload, "evt_test", "checkout.session.completed", 1620000000L);
   }
 
   @Test

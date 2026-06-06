@@ -51,4 +51,7 @@ public class ClientEntity {
   @Column(name = "newsletter_subscribed", nullable = false)
   @Builder.Default
   private Boolean newsletterSubscribed = false;
+
+  @Column(name = "password_changed_at")
+  private java.time.Instant passwordChangedAt;
 }

@@ -15,7 +15,7 @@ public class ContactController {
 
   @PostMapping
   public ResponseEntity<Void> sendContact(@Valid @RequestBody ContactRequest request) {
-    // Correo al club con el mensaje del usuario
+    
     emailService.sendContactFormToClub(
         request.nombre(),
         request.apellidos(),
@@ -23,7 +23,7 @@ public class ContactController {
         request.asunto(),
         request.mensaje()
     );
-    // Correo de confirmación al remitente
+    
     emailService.sendContactConfirmationToUser(
         request.email(),
         request.nombre()

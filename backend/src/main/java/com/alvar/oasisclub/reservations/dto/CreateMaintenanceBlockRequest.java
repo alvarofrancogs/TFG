@@ -23,4 +23,3 @@ public class CreateMaintenanceBlockRequest {
   private LocalTime time;
 }
 
-

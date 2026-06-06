@@ -1,5 +1,6 @@
 import {HttpErrorResponse} from '@angular/common/http';
 import {Component, inject, signal} from '@angular/core';
+import {NgOptimizedImage} from '@angular/common';
 import {FormsModule, NgForm} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 

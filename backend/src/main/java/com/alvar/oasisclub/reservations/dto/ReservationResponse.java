@@ -17,4 +17,3 @@ public class ReservationResponse {
   private String stripeSessionId;
 }
 
-

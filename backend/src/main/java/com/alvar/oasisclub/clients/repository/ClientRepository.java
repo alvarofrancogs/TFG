@@ -21,4 +21,3 @@ public interface ClientRepository extends JpaRepository<ClientEntity, UUID> {
   );
 }
 
-

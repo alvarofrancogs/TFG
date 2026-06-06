@@ -25,6 +25,7 @@ export class GimnasioComponent implements OnInit {
   daysCount = signal(1);
   selectedDayId = signal(1);
   routineDays = signal<RoutineDay[]>([]);
+  loading = signal(true);
 
   currentDay = computed(() => this.routineDays().find((d) => d.dayOrder === this.selectedDayId()));
 
@@ -45,7 +46,9 @@ export class GimnasioComponent implements OnInit {
         this.routineDays.set(routineWithKeys);
         this.daysCount.set(routineWithKeys.length);
         this.selectedDayId.set(routineWithKeys[0]?.dayOrder ?? 1);
+        this.loading.set(false);
       },
+      error: () => this.loading.set(false),
     });
   }
 

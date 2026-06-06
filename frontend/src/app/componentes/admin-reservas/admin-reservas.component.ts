@@ -57,7 +57,7 @@ export class AdminReservasComponent implements OnInit {
   blockSuccess = signal('');
   blockError = signal('');
 
-  /** Pistas filtradas por deporte seleccionado */
+  
   filteredCourts = computed(() => {
     const sport = this.filterSport();
     const courts = this.allCourts();
@@ -75,7 +75,6 @@ export class AdminReservasComponent implements OnInit {
     this.loadReservations();
     this.loadBlockCourts();
   }
-
 
   private loadAllCourts() {
     this.courtApi.getCourts().subscribe({
@@ -126,7 +125,6 @@ export class AdminReservasComponent implements OnInit {
     });
   }
 
-
   setSportFilter(sport: 'TODOS' | 'FUTBOL' | 'PADEL') {
     this.filterSport.set(sport);
     this.expandedReservationId.set(null);
@@ -140,8 +138,7 @@ export class AdminReservasComponent implements OnInit {
     this.loadReservations();
   }
 
-
-  /** Reserva en la intersección pista-hora (o null si está libre) */
+  
   cellReservation(courtId: string, time: string): Reservation | null {
     return this.reservations().find(r =>
       r.court === this.allCourts().find(c => c.id === courtId)?.name
@@ -149,7 +146,7 @@ export class AdminReservasComponent implements OnInit {
     ) ?? null;
   }
 
-  /** Reserva expandida perteneciente a una franja horaria (para el panel de detalle) */
+  
   expandedResForSlot(slot: string): Reservation | null {
     const expandedId = this.expandedReservationId();
     if (!expandedId) return null;
@@ -158,7 +155,7 @@ export class AdminReservasComponent implements OnInit {
     return this.normalizeTime(res.time) === slot ? res : null;
   }
 
-  /** Versión pública de normalizeTime para la plantilla */
+  
   normalizeTimePublic(time: string): string {
     return this.normalizeTime(time);
   }
@@ -172,7 +169,6 @@ export class AdminReservasComponent implements OnInit {
       this.confirmCancelId.set(null);
     }
   }
-
 
   requestCancel(id: string) {
     this.confirmCancelId.set(id);
@@ -200,7 +196,6 @@ export class AdminReservasComponent implements OnInit {
       },
     });
   }
-
 
   addSlot() {
     if (!this.newSlotTime) return;
@@ -244,7 +239,6 @@ export class AdminReservasComponent implements OnInit {
     });
   }
 
-
   onBlockSportChange(sport: string) {
     this.blockForm.sport = sport as SportType;
     this.blockForm.courtId = '';
@@ -279,7 +273,6 @@ export class AdminReservasComponent implements OnInit {
     });
   }
 
-
   statusLabel(status: string) {
     if (status === 'PENDING') return 'Pendiente';
     if (status === 'CONFIRMED') return 'Confirmada';
@@ -288,12 +281,7 @@ export class AdminReservasComponent implements OnInit {
     return status;
   }
 
-  /**
-   * Devuelve el rango "HH:mm – HH:mm" de una franja horaria.
-   * La hora de fin es la siguiente franja del array.
-   * Si es la última, suma 1h30min (duración por defecto) o la diferencia
-   * con la anterior si las hay al menos dos.
-   */
+  
   slotRange(slot: string): { start: string; end: string } {
     const slots = this.scheduleSlots();
     const idx = slots.indexOf(slot);

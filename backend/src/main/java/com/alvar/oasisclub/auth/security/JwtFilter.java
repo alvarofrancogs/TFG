@@ -7,19 +7,22 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import com.alvar.oasisclub.clients.repository.ClientRepository;
+import com.alvar.oasisclub.clients.entity.ClientEntity;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 
 @Component
 @AllArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
   private final JwtService jwtService;
+  private final ClientRepository clientRepository;
 
   @Override
   protected void doFilterInternal(
@@ -38,23 +41,31 @@ public class JwtFilter extends OncePerRequestFilter {
     String token = authHeader.substring(7);
 
     if (jwtService.isTokenValid(token)) {
-      String email = jwtService.extractEmail(token);
-      String role = jwtService.extractRole(token);
       UUID clientId = jwtService.extractClientId(token);
-      AuthenticatedUser principal = new AuthenticatedUser(clientId, email, role);
+      String role = jwtService.extractRole(token);
+      String email = jwtService.extractEmail(token);
+      Date issuedAt = jwtService.extractIssuedAt(token);
 
-      UsernamePasswordAuthenticationToken authentication =
-          new UsernamePasswordAuthenticationToken(
-              principal,
-              null,
-              List.of(new SimpleGrantedAuthority("ROLE_" + role))
-          );
+      ClientEntity client = clientRepository.findById(clientId).orElse(null);
 
-      SecurityContextHolder.getContext().setAuthentication(authentication);
+      if (client != null 
+          && client.getRole().equals(role)
+          && (client.getPasswordChangedAt() == null || !issuedAt.before(Date.from(client.getPasswordChangedAt())))) {
+
+        AuthenticatedUser principal = new AuthenticatedUser(clientId, email, role);
+
+        UsernamePasswordAuthenticationToken authentication =
+            new UsernamePasswordAuthenticationToken(
+                principal,
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_" + role))
+            );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+      }
     }
 
     filterChain.doFilter(request, response);
   }
 }
-
 

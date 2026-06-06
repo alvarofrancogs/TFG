@@ -348,3 +348,12 @@
 .ar-legend--maintenance {
   background: #7f1d1d;
 }
+
+table th[scope="row"],
+table th[scope="col"] {
+  background-color: #ffffff;
+}
+
+table tr:hover th[scope="row"] {
+  background-color: #f9fafb; 
+}

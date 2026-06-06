@@ -1,9 +1,9 @@
-<div class="min-h-screen bg-white flex w-full overflow-hidden">
+<main class="min-h-screen bg-white flex w-full overflow-hidden">
   
   <div class="w-full lg:w-[45%] xl:w-[40%] min-h-screen flex flex-col justify-between p-8 lg:p-12 xl:p-16 relative z-10 bg-white">
     
     <div>
-      <a routerLink="/login" class="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.15em] uppercase text-gray-400 hover:text-emerald-950 transition-colors mb-10">
+      <a routerLink="/login" class="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.15em] uppercase text-gray-600 hover:text-emerald-950 transition-colors mb-10">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
         Volver al login
       </a>
@@ -14,7 +14,7 @@
 
     <div class="w-full max-w-sm mx-auto my-auto py-12">
       @if (!sent()) {
-        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">RESTABLECER CONTRASEÑA</p>
+        <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-6">RESTABLECER CONTRASEÑA</p>
         <h1 class="leading-[1.1] font-normal text-gray-900 mb-12" style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 4vw, 3rem);">
           Recuperar tu<br>
           <span class="italic text-[#0B2118]">clave.</span>
@@ -36,7 +36,7 @@
               required
               email
             >
-            <label for="email" class="absolute left-0 -top-3.5 text-[10px] font-semibold tracking-[0.1em] text-gray-400 uppercase transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-placeholder-shown:font-light peer-placeholder-shown:tracking-normal peer-focus:-top-3.5 peer-focus:text-[10px] peer-focus:font-semibold peer-focus:tracking-[0.1em] peer-focus:text-emerald-950">
+            <label for="email" class="absolute left-0 -top-3.5 text-[10px] font-semibold tracking-[0.1em] text-gray-600 uppercase transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-600 peer-placeholder-shown:top-3 peer-placeholder-shown:font-light peer-placeholder-shown:tracking-normal peer-focus:-top-3.5 peer-focus:text-[10px] peer-focus:font-semibold peer-focus:tracking-[0.1em] peer-focus:text-emerald-950">
               Correo electrónico
             </label>
 
@@ -89,10 +89,10 @@
 
   </div>
 
-  <div class="hidden lg:block lg:w-[55%] xl:w-[60%] h-screen relative bg-[#FAFAFA]">
-    <div class="absolute inset-0 z-0">
-      <img src="images/auth-hero-ultrareal.png" alt="Recepción premium de Oasis Club" class="w-full h-full object-cover object-center grayscale-[20%]" referrerpolicy="no-referrer">
-    </div>
+  <div class="hidden lg:block lg:w-[55%] xl:w-[60%] h-screen bg-[#FAFAFA] overflow-hidden">
+    <img src="/images/auth-hero-ultrareal.png" alt="Recepción premium de Oasis Club"
+      class="w-full h-full object-cover object-center grayscale-[20%]"
+      referrerpolicy="no-referrer" loading="eager">
   </div>
 
-</div>
+</main>

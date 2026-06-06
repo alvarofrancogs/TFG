@@ -20,6 +20,9 @@ import com.alvar.oasisclub.reservations.mapper.ReservationMapper;
 import com.alvar.oasisclub.reservations.repository.ReservationRepository;
 import com.alvar.oasisclub.reservations.service.ReservationService;
 import com.alvar.oasisclub.schedule.service.ScheduleSlotService;
+import com.alvar.oasisclub.common.exception.StripeOperationFailedException;
+import com.alvar.oasisclub.payments.service.StripeCheckoutClient;
+import com.stripe.exception.StripeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,6 +34,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ReservationServiceTest {
@@ -52,6 +59,9 @@ class ReservationServiceTest {
 
   @Mock
   private EmailService emailService;
+
+  @Mock
+  private StripeCheckoutClient stripeCheckoutClient;
 
   @InjectMocks
   private ReservationService reservationService;
@@ -187,6 +197,58 @@ class ReservationServiceTest {
 
     assertEquals(ReservationStatus.CONFIRMED, confirmed.getStatus());
   }
-}
 
+  @Test
+  void cancelAndRefundConfirmedRefundsThenDeletes() throws Exception {
+    ReservationEntity confirmed = ReservationEntity.builder()
+        .id(UUID.randomUUID())
+        .clientId(UUID.randomUUID())
+        .stripeSessionId("cs_test_123")
+        .status(ReservationStatus.CONFIRMED)
+        .createdAt(LocalDateTime.now())
+        .build();
+
+    reservationService.cancelAndRefund(confirmed);
+
+    
+    verify(stripeCheckoutClient).refundBySessionId("cs_test_123", "cancel-" + confirmed.getId());
+    verify(reservationRepository).delete(confirmed);
+  }
+
+  @Test
+  void cancelAndRefundKeepsReservationWhenStripeFails() throws Exception {
+    ReservationEntity confirmed = ReservationEntity.builder()
+        .id(UUID.randomUUID())
+        .clientId(UUID.randomUUID())
+        .stripeSessionId("cs_test_123")
+        .status(ReservationStatus.CONFIRMED)
+        .createdAt(LocalDateTime.now())
+        .build();
+
+    doThrow(new StripeException("down", null, null, 502) {})
+        .when(stripeCheckoutClient).refundBySessionId(anyString(), anyString());
+
+    assertThrows(StripeOperationFailedException.class,
+        () -> reservationService.cancelAndRefund(confirmed));
+
+    
+    verify(reservationRepository, never()).delete(confirmed);
+  }
+
+  @Test
+  void cancelAndRefundWithoutStripeSessionDeletesDirectly() throws Exception {
+    ReservationEntity reservation = ReservationEntity.builder()
+        .id(UUID.randomUUID())
+        .clientId(UUID.randomUUID())
+        .status(ReservationStatus.CONFIRMED)
+        .createdAt(LocalDateTime.now())
+        .build();
+
+    reservationService.cancelAndRefund(reservation);
+
+    
+    verify(stripeCheckoutClient, never()).refundBySessionId(anyString(), anyString());
+    verify(reservationRepository).delete(reservation);
+  }
+}
 

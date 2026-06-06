@@ -28,6 +28,8 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
 
   List<ReservationEntity> findByCourt_IdAndReservationDateOrderByReservationTimeAsc(UUID courtId, LocalDate date);
 
+  List<ReservationEntity> findByCourt_Id(UUID courtId);
+
   List<ReservationEntity> findByClientIdOrderByReservationDateDescReservationTimeDesc(UUID clientId);
 
   List<ReservationEntity> findByClientIdAndReservationDateOrderByReservationTimeAsc(UUID clientId, LocalDate date);
@@ -50,6 +52,42 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
       LocalTime startTime,
       LocalTime endTime
   );
-}
 
+  
+  @org.springframework.data.jpa.repository.Query("""
+      SELECT r FROM ReservationEntity r
+      WHERE r.status = com.alvar.oasisclub.reservations.entity.ReservationStatus.PENDING
+        AND r.stripeSessionId IS NOT NULL
+        AND r.stripeSessionId <> ''
+        AND r.createdAt <= :cutoff
+      """)
+  List<ReservationEntity> findStalePendingWithStripeSession(
+      @org.springframework.data.repository.query.Param("cutoff") java.time.LocalDateTime cutoff
+  );
+
+  
+  @org.springframework.data.jpa.repository.Query("""
+      SELECT r FROM ReservationEntity r
+      WHERE r.status = com.alvar.oasisclub.reservations.entity.ReservationStatus.CONFIRMED
+        AND r.stripeSessionId IS NOT NULL
+        AND r.stripeSessionId <> ''
+        AND r.refundedAt IS NULL
+      """)
+  List<ReservationEntity> findConfirmedWithStripeSessionAndNoRefund();
+
+  
+  @org.springframework.data.jpa.repository.Modifying
+  @org.springframework.data.jpa.repository.Query("""
+      DELETE FROM ReservationEntity r
+      WHERE r.status = com.alvar.oasisclub.reservations.entity.ReservationStatus.MAINTENANCE
+        AND r.reservationDate = :date
+        AND r.reservationTime >= :startTime
+        AND r.reservationTime < :endTime
+      """)
+  int deleteMaintenanceBlocksByDateAndTimeRange(
+      @org.springframework.data.repository.query.Param("date") LocalDate date,
+      @org.springframework.data.repository.query.Param("startTime") LocalTime startTime,
+      @org.springframework.data.repository.query.Param("endTime") LocalTime endTime
+  );
+}
 

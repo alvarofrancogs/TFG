@@ -18,6 +18,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Builder.Default;
 
 @Getter
 @Setter
@@ -61,6 +62,7 @@ public class EventEntity {
   @Column(name = "court_names", columnDefinition = "TEXT")
   private String courtNames;
 
+  @Builder.Default
   @Column(name = "is_active", nullable = false)
   private Boolean isActive = true;
 

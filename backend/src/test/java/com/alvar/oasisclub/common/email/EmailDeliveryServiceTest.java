@@ -19,9 +19,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
+import com.alvar.oasisclub.common.email.repository.EmailFailureRepository;
 
 @ExtendWith(MockitoExtension.class)
-class EmailServiceTest {
+class EmailDeliveryServiceTest {
 
   @Mock
   private JavaMailSender mailSender;
@@ -29,18 +30,21 @@ class EmailServiceTest {
   @Mock
   private MailSenderProperties mailSenderProperties;
 
+  @Mock
+  private EmailFailureRepository emailFailureRepository;
+
   @InjectMocks
-  private EmailService emailService;
+  private EmailDeliveryService emailDeliveryService;
 
   @Test
-  void resetEmailUsesOriginalRecipientWhenNoOverride() throws Exception {
+  void deliverUsesOriginalRecipientWhenNoOverride() throws Exception {
     MimeMessage mimeMessage = createMimeMessage();
 
     when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
     when(mailSenderProperties.getFromEmail()).thenReturn("club@oasis.com");
     when(mailSenderProperties.getOverrideTo()).thenReturn("");
 
-    emailService.sendPasswordResetEmail("client@example.com", "https://frontend/reset-password?token=abc");
+    emailDeliveryService.deliver("client@example.com", "Oasis Club | Reset Password", "text", "html", "PasswordReset", false);
 
     ArgumentCaptor<MimeMessage> messageCaptor = ArgumentCaptor.forClass(MimeMessage.class);
     verify(mailSender).send(messageCaptor.capture());
@@ -52,14 +56,14 @@ class EmailServiceTest {
   }
 
   @Test
-  void welcomeEmailUsesOverrideRecipient() throws Exception {
+  void deliverUsesOverrideRecipient() throws Exception {
     MimeMessage mimeMessage = createMimeMessage();
 
     when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
     when(mailSenderProperties.getFromEmail()).thenReturn("club@oasis.com");
     when(mailSenderProperties.getOverrideTo()).thenReturn("qa@example.com");
 
-    emailService.sendWelcomeEmail("client@example.com", "Client");
+    emailDeliveryService.deliver("client@example.com", "Welcome", "text", "html", "Welcome", false);
 
     ArgumentCaptor<MimeMessage> messageCaptor = ArgumentCaptor.forClass(MimeMessage.class);
     verify(mailSender).send(messageCaptor.capture());
@@ -69,15 +73,24 @@ class EmailServiceTest {
   }
 
   @Test
-  void welcomeEmailFailureIsHandled() {
-    when(mailSender.createMimeMessage()).thenThrow(new RuntimeException("smtp down"));
+  void deliverDirectBypassesOverride() throws Exception {
+    MimeMessage mimeMessage = createMimeMessage();
 
-    assertDoesNotThrow(() -> emailService.sendWelcomeEmail("client@example.com", "Client"));
-    verify(mailSender, never()).send(any(MimeMessage.class));
+    when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
+    when(mailSenderProperties.getFromEmail()).thenReturn("club@oasis.com");
+    
+    
+
+    emailDeliveryService.deliver("client@example.com", "Direct", "text", "html", "Direct", true);
+
+    ArgumentCaptor<MimeMessage> messageCaptor = ArgumentCaptor.forClass(MimeMessage.class);
+    verify(mailSender).send(messageCaptor.capture());
+    MimeMessage sent = messageCaptor.getValue();
+
+    assertEquals("client@example.com", ((InternetAddress) sent.getAllRecipients()[0]).getAddress());
   }
 
   private MimeMessage createMimeMessage() {
     return new MimeMessage(Session.getInstance(new Properties()));
   }
 }
-

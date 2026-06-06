@@ -12,4 +12,3 @@ public class RoutineDayDto {
   private List<RoutineExerciseDto> exercises = new ArrayList<>();
 }
 
-
