@@ -1,4 +1,7 @@
-<nav class="fixed w-full z-50 bg-white border-b border-gray-100" [class.hidden]="isAdmin">
+<nav class="fixed w-full z-50 bg-white border-b border-gray-100 transition-opacity duration-200"
+  [class.hidden]="isAdmin"
+  [class.opacity-0]="isMobileMenuOpen()"
+  [class.pointer-events-none]="isMobileMenuOpen()">
   <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
     <div class="flex justify-between items-center h-20 md:h-24">
       <a routerLink="/" class="text-xl md:text-2xl tracking-tighter text-emerald-950">
@@ -87,7 +90,7 @@
 <aside id="mobile-menu"
   class="mobile-panel md:hidden"
   [class.mobile-panel--open]="isMobileMenuOpen()"
-  [attr.aria-hidden]="!isMobileMenuOpen()">
+  [attr.inert]="!isMobileMenuOpen() ? '' : null">
 
   <div class="mobile-panel__header">
     <a routerLink="/" (click)="isMobileMenuOpen.set(false)" class="text-lg tracking-tighter text-emerald-950">
