@@ -101,6 +101,40 @@ html, body {
   touch-action: manipulation; 
 }
 
+html {
+  background-color: #ffffff;
+  -webkit-text-size-adjust: 100%;
+}
+
+input, textarea, select {
+  font-size: 16px !important;
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+
+input[type="date"] {
+  -webkit-appearance: none;
+  min-height: 44px;
+}
+
+button, a, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+img {
+  animation: imgFadeIn 0.3s ease-in-out;
+}
+
+@keyframes imgFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 *:focus-visible {
   outline: 2px solid #10b981;
   outline-offset: 2px;
