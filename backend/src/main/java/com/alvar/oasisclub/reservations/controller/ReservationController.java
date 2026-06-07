@@ -62,13 +62,13 @@ public class ReservationController {
 
     if (!isAdmin) {
       throw new org.springframework.security.access.AccessDeniedException(
-          "Users must pay reservations through checkout"
+          "Los socios deben pagar las reservas mediante el proceso de pago"
       );
     }
 
     UUID effectiveClientId;
     if (request.getClientId() == null || request.getClientId().isBlank()) {
-      throw new IllegalArgumentException("clientId is required for admin reservation creation");
+      throw new IllegalArgumentException("El cliente es obligatorio para crear una reserva como administrador");
     }
     effectiveClientId = UUID.fromString(request.getClientId());
 
@@ -95,7 +95,7 @@ public class ReservationController {
       AuthenticatedUser user = accessControl.requireUser(authentication);
       ReservationEntity reservation = reservationService.getEntityById(id);
       if (reservation.getClientId() == null || !reservation.getClientId().equals(user.clientId())) {
-        throw new org.springframework.security.access.AccessDeniedException("Not allowed to delete this reservation");
+        throw new org.springframework.security.access.AccessDeniedException("No tienes permiso para eliminar esta reserva");
       }
     }
 

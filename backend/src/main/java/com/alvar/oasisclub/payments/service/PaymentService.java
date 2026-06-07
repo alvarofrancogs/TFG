@@ -153,13 +153,13 @@ public class PaymentService {
 
   private Event verifyEvent(String payload, String signatureHeader) {
     if (webhookSecret == null || webhookSecret.isBlank()) {
-      throw new IllegalStateException("STRIPE_WEBHOOK_SECRET is not configured");
+      throw new IllegalStateException("STRIPE_WEBHOOK_SECRET no está configurado");
     }
     try {
       return Webhook.constructEvent(payload, signatureHeader, webhookSecret);
     } catch (SignatureVerificationException ex) {
       
-      throw new AccessDeniedException("Invalid Stripe webhook signature", ex);
+      throw new AccessDeniedException("Firma del webhook de Stripe no válida", ex);
     }
   }
 

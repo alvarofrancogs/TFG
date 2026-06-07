@@ -116,7 +116,7 @@ public class PaymentWebhookProcessor {
       log.error("[WEBHOOK] Processing failed for event_id={} type={} timestamp={} — error: {}",
           eventId, eventType, eventTs, ex.getMessage(), ex);
       
-      throw new RuntimeException("Webhook processing failed, triggering rollback", ex);
+      throw new RuntimeException("Error procesando el webhook, deshaciendo cambios", ex);
     }
   }
 
@@ -124,7 +124,7 @@ public class PaymentWebhookProcessor {
     try {
       return objectMapper.readTree(payload).path("data").path("object");
     } catch (Exception ex) {
-      throw new IllegalArgumentException("Invalid Stripe webhook payload");
+      throw new IllegalArgumentException("Datos del webhook de Stripe no válidos");
     }
   }
 

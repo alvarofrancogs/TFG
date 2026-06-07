@@ -10,12 +10,12 @@ public class AccessControlService {
 
   public AuthenticatedUser requireUser(Authentication authentication) {
     if (authentication == null || !authentication.isAuthenticated()) {
-      throw new AccessDeniedException("Authentication required");
+      throw new AccessDeniedException("Se requiere autenticación");
     }
 
     Object principal = authentication.getPrincipal();
     if (!(principal instanceof AuthenticatedUser user)) {
-      throw new AccessDeniedException("Invalid authentication context");
+      throw new AccessDeniedException("Contexto de autenticación no válido");
     }
 
     return user;
@@ -29,7 +29,7 @@ public class AccessControlService {
 
   public void requireAdmin(Authentication authentication) {
     if (!isAdmin(authentication)) {
-      throw new AccessDeniedException("Admin role required");
+      throw new AccessDeniedException("Se requiere rol de administrador");
     }
   }
 

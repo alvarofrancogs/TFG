@@ -150,7 +150,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
     Map<String, Object> body = Map.of(
         "timestamp", LocalDateTime.now().toString(),
         "status", 429,
-        "error", "Too Many Requests",
+        "error", "Demasiadas solicitudes",
         "message", "Has superado el límite de solicitudes. Por favor, espera un momento.",
         "path", request.getServletPath()
     );

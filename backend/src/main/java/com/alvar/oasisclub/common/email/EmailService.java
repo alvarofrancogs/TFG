@@ -25,7 +25,7 @@ public class EmailService {
 
   @Async
   public void sendPasswordResetEmail(String toEmail, String resetLink) {
-    String subject = "Oasis Club | Reset Password";
+    String subject = "Oasis Club | Recuperar contraseña";
     String plainText = buildResetEmailText(resetLink);
     String htmlText = buildResetEmailHtml(resetLink);
     sendEmail(toEmail, subject, plainText, htmlText, "password-reset");
@@ -33,7 +33,7 @@ public class EmailService {
 
   @Async
   public void sendWelcomeEmail(String toEmail, String userName) {
-    String subject = "Welcome to Oasis Club";
+    String subject = "Oasis Club | Bienvenido";
     String plainText = buildWelcomeEmailText(userName);
     String htmlText = buildWelcomeEmailHtml(userName);
     sendEmail(toEmail, subject, plainText, htmlText, "welcome");

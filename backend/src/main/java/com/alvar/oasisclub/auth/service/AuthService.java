@@ -5,6 +5,7 @@ import com.alvar.oasisclub.auth.dto.LoginRequest;
 import com.alvar.oasisclub.auth.dto.RegisterRequest;
 import com.alvar.oasisclub.auth.entity.PasswordResetTokenEntity;
 import com.alvar.oasisclub.auth.exception.EmailAlreadyRegisteredException;
+import com.alvar.oasisclub.auth.exception.EmailNotFoundException;
 import com.alvar.oasisclub.auth.exception.InvalidCredentialsException;
 import com.alvar.oasisclub.auth.exception.PasswordResetTokenInvalidException;
 import com.alvar.oasisclub.auth.mapper.AuthMapper;
@@ -109,9 +110,7 @@ public class AuthService {
     ClientEntity client = clientService.findByEmail(normalizedEmail);
 
     if (client == null) {
-      
-      log.debug("[FORGOT_PASSWORD] Email not registered — no token generated");
-      return;
+      throw new EmailNotFoundException("No existe ninguna cuenta con ese correo electrónico");
     }
 
     

@@ -101,7 +101,7 @@ public class StripeCheckoutClientImpl implements StripeCheckoutClient {
   
   private RequestOptions requestOptions(String idempotencyKey) {
     if (secretKey == null || secretKey.isBlank()) {
-      throw new IllegalStateException("STRIPE_SECRET_KEY is not configured");
+      throw new IllegalStateException("STRIPE_SECRET_KEY no está configurado");
     }
     RequestOptions.RequestOptionsBuilder builder = RequestOptions.builder()
         .setApiKey(secretKey)

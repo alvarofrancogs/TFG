@@ -91,7 +91,7 @@ public class ReservationService {
   @Transactional(readOnly = true)
   public ReservationEntity getEntityById(UUID id) {
     return reservationRepository.findById(id)
-        .orElseThrow(() -> new ReservationNotFoundException("Reservation not found"));
+        .orElseThrow(() -> new ReservationNotFoundException("Reserva no encontrada"));
   }
 
   @Transactional
@@ -279,7 +279,7 @@ public class ReservationService {
   @Transactional(readOnly = true)
   public ReservationEntity getByStripeSessionIdAndClientId(String stripeSessionId, UUID clientId) {
     return reservationRepository.findByStripeSessionIdAndClientId(stripeSessionId, clientId)
-        .orElseThrow(() -> new ReservationNotFoundException("Reservation not found"));
+        .orElseThrow(() -> new ReservationNotFoundException("Reserva no encontrada"));
   }
 
   @Transactional(readOnly = true)

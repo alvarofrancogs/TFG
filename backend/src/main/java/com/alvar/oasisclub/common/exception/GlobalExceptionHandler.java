@@ -1,6 +1,7 @@
 package com.alvar.oasisclub.common.exception;
 
 import com.alvar.oasisclub.auth.exception.EmailAlreadyRegisteredException;
+import com.alvar.oasisclub.auth.exception.EmailNotFoundException;
 import com.alvar.oasisclub.auth.exception.InvalidCredentialsException;
 import com.alvar.oasisclub.auth.exception.PasswordResetTokenInvalidException;
 import com.alvar.oasisclub.clients.exception.ClientEmailAlreadyExistsException;
@@ -87,7 +88,8 @@ public class GlobalExceptionHandler {
       ClientNotFoundException.class,
       CourtNotFoundException.class,
       ReservationNotFoundException.class,
-      EventNotFoundException.class
+      EventNotFoundException.class,
+      EmailNotFoundException.class
   })
   public ResponseEntity<ApiErrorResponse> handleNotFound(
       RuntimeException ex,
