@@ -1,66 +1,84 @@
-    <div class="min-h-screen bg-[#f8f9fa] flex flex-col">
-      <nav role="navigation" aria-label="Administración" class="bg-emerald-950 text-white px-6 lg:px-12 py-4 md:py-6 flex justify-between items-center fixed top-0 left-0 right-0 z-[60]">
-        <div class="flex items-center space-x-12">
-          <a routerLink="/admin" class="text-lg md:text-xl font-light tracking-widest uppercase" aria-label="Panel de administración - Inicio">
-            Club<span class="font-bold">Admin</span>
-          </a>
-          
-          <div class="hidden md:flex space-x-8" role="menubar" aria-label="Navegación principal">
-            <a routerLink="/admin/reservas" routerLinkActive="opacity-100 border-b-2 border-white" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
-               class="text-xs font-semibold tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-all py-2">Reservas</a>
-            <a routerLink="/admin/clientes" routerLinkActive="opacity-100 border-b-2 border-white" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
-               class="text-xs font-semibold tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-all py-2">Clientes</a>
-            <a routerLink="/admin/pistas" routerLinkActive="opacity-100 border-b-2 border-white" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
-               class="text-xs font-semibold tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-all py-2">Pistas</a>
-            <a routerLink="/admin/eventos" routerLinkActive="opacity-100 border-b-2 border-white" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
-               class="text-xs font-semibold tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-all py-2">Eventos</a>
-          </div>
-        </div>
-        
-        <div class="flex items-center space-x-4">
-          <button (click)="logout()" class="hidden md:block text-xs font-semibold tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-opacity"
-                  aria-label="Cerrar sesión de administración">
-            Cerrar Sesión
-          </button>
-          
-          <button (click)="isMobileMenuOpen.set(!isMobileMenuOpen())"
-                  [attr.aria-expanded]="isMobileMenuOpen()"
-                  aria-controls="mobile-admin-menu"
-                  aria-label="Abrir menú de navegación"
-                  class="md:hidden p-2 text-white focus:outline-none focus:ring-2 focus:ring-white/40 rounded">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              @if (isMobileMenuOpen()) {
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path>
-              } @else {
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path>
-              }
-            </svg>
-          </button>
-        </div>
-      </nav>
+<div class="min-h-screen bg-[#f8f9fa] flex flex-col">
+  <nav role="navigation" aria-label="Administración"
+    class="admin-topbar fixed top-0 left-0 right-0 z-[60]">
+    <div class="flex justify-between items-center px-6 lg:px-12 h-14 md:h-[72px]">
+      <div class="flex items-center space-x-12">
+        <a routerLink="/admin" class="text-lg md:text-xl font-light tracking-widest uppercase text-white"
+          aria-label="Panel de administración - Inicio">
+          Club<span class="font-bold">Admin</span>
+        </a>
 
-      @if (isMobileMenuOpen()) {
-        <div id="mobile-admin-menu" class="md:hidden bg-emerald-900 text-white px-6 py-6 flex flex-col space-y-6 shadow-xl fixed top-[60px] left-0 right-0 z-[59]"
-             role="menu" aria-label="Menú de navegación móvil">
-          <a routerLink="/admin/reservas" routerLinkActive="opacity-100" (click)="isMobileMenuOpen.set(false)"
-             role="menuitem" class="text-sm font-semibold tracking-[0.2em] uppercase opacity-80 hover:opacity-100">Reservas</a>
-          <a routerLink="/admin/clientes" routerLinkActive="opacity-100" (click)="isMobileMenuOpen.set(false)"
-             role="menuitem" class="text-sm font-semibold tracking-[0.2em] uppercase opacity-80 hover:opacity-100">Clientes</a>
-          <a routerLink="/admin/pistas" routerLinkActive="opacity-100" (click)="isMobileMenuOpen.set(false)"
-             role="menuitem" class="text-sm font-semibold tracking-[0.2em] uppercase opacity-80 hover:opacity-100">Pistas</a>
-          <a routerLink="/admin/eventos" routerLinkActive="opacity-100" (click)="isMobileMenuOpen.set(false)"
-             role="menuitem" class="text-sm font-semibold tracking-[0.2em] uppercase opacity-80 hover:opacity-100">Eventos</a>
-          <hr class="border-white/10" role="separator">
-          <button (click)="logout(); isMobileMenuOpen.set(false)"
-                  role="menuitem"
-                  class="text-left text-sm font-semibold tracking-[0.2em] text-red-400 uppercase"
-                  aria-label="Cerrar sesión">Cerrar Sesión</button>
+        <div class="hidden md:flex space-x-8" role="menubar" aria-label="Navegación principal">
+          <a routerLink="/admin/reservas" routerLinkActive="opacity-100 border-b-2 border-white" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
+            class="text-xs font-semibold tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-all py-2 text-white">Reservas</a>
+          <a routerLink="/admin/clientes" routerLinkActive="opacity-100 border-b-2 border-white" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
+            class="text-xs font-semibold tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-all py-2 text-white">Clientes</a>
+          <a routerLink="/admin/pistas" routerLinkActive="opacity-100 border-b-2 border-white" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
+            class="text-xs font-semibold tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-all py-2 text-white">Pistas</a>
+          <a routerLink="/admin/eventos" routerLinkActive="opacity-100 border-b-2 border-white" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
+            class="text-xs font-semibold tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-all py-2 text-white">Eventos</a>
         </div>
-      }
+      </div>
 
-      <main class="flex-grow pt-[60px] md:pt-[72px]">
-        <router-outlet></router-outlet>
-      </main>
+      <div class="flex items-center space-x-4">
+        <button (click)="logout()" class="hidden md:block text-xs font-semibold tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-opacity text-white"
+          aria-label="Cerrar sesión de administración">
+          Cerrar Sesión
+        </button>
+
+        <button (click)="isMobileMenuOpen.set(!isMobileMenuOpen())"
+          [attr.aria-expanded]="isMobileMenuOpen()"
+          aria-controls="mobile-admin-menu"
+          [attr.aria-label]="isMobileMenuOpen() ? 'Cerrar menú' : 'Abrir menú'"
+          class="md:hidden p-2 text-white relative w-9 h-9 flex items-center justify-center">
+          <span class="admin-hamburger" [class.admin-hamburger--open]="isMobileMenuOpen()" aria-hidden="true">
+            <span class="admin-hamburger__line"></span>
+            <span class="admin-hamburger__line"></span>
+            <span class="admin-hamburger__line"></span>
+          </span>
+        </button>
+      </div>
     </div>
-  
+  </nav>
 
+  <div id="mobile-admin-menu"
+    class="admin-mobile-menu md:hidden"
+    [class.admin-mobile-menu--open]="isMobileMenuOpen()"
+    [attr.inert]="!isMobileMenuOpen() ? '' : null"
+    role="menu" aria-label="Menú de navegación móvil">
+
+    <a routerLink="/admin/reservas" routerLinkActive="admin-mobile-link--active" (click)="isMobileMenuOpen.set(false)"
+      role="menuitem" class="admin-mobile-link">
+      <span>Reservas</span>
+      <svg class="w-3.5 h-3.5 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+    </a>
+    <a routerLink="/admin/clientes" routerLinkActive="admin-mobile-link--active" (click)="isMobileMenuOpen.set(false)"
+      role="menuitem" class="admin-mobile-link">
+      <span>Clientes</span>
+      <svg class="w-3.5 h-3.5 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+    </a>
+    <a routerLink="/admin/pistas" routerLinkActive="admin-mobile-link--active" (click)="isMobileMenuOpen.set(false)"
+      role="menuitem" class="admin-mobile-link">
+      <span>Pistas</span>
+      <svg class="w-3.5 h-3.5 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+    </a>
+    <a routerLink="/admin/eventos" routerLinkActive="admin-mobile-link--active" (click)="isMobileMenuOpen.set(false)"
+      role="menuitem" class="admin-mobile-link">
+      <span>Eventos</span>
+      <svg class="w-3.5 h-3.5 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+    </a>
+
+    <div class="admin-mobile-menu__footer">
+      <button (click)="logout(); isMobileMenuOpen.set(false)"
+        role="menuitem"
+        class="admin-mobile-link admin-mobile-link--danger"
+        aria-label="Cerrar sesión">
+        <span>Cerrar Sesión</span>
+      </button>
+    </div>
+  </div>
+
+  <main class="flex-grow pt-14 md:pt-[72px]">
+    <router-outlet></router-outlet>
+  </main>
+</div>
