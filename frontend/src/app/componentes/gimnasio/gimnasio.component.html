@@ -132,6 +132,7 @@
             <div class="gym-main__actions">
               @if (isEditing()) {
                 @if (confirmDeleteDay()) {
+                  <span class="text-[11px] font-bold tracking-[0.18em] uppercase text-red-600">¿Eliminar día?</span>
                   <button (click)="removeCurrentDay()" class="btn-danger-solid">
                     <span class="gym-btn__dash">—</span>
                     Confirmar
