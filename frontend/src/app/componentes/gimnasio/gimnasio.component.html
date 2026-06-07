@@ -131,18 +131,28 @@
             
             <div class="gym-main__actions">
               @if (isEditing()) {
-                <button (click)="addExercise()" class="btn-green-outline">
-                  <span class="gym-btn__dash">—</span>
-                  Añadir ejercicio
-                </button>
-                <button (click)="removeCurrentDay()" class="btn-danger-outline">
-                  <span class="gym-btn__dash">—</span>
-                  Eliminar día
-                </button>
-                <button (click)="toggleEdit()" class="btn-green-outline">
-                  <span class="gym-btn__dash">—</span>
-                  Guardar
-                </button>
+                @if (confirmDeleteDay()) {
+                  <button (click)="removeCurrentDay()" class="btn-danger-solid">
+                    <span class="gym-btn__dash">—</span>
+                    Confirmar
+                  </button>
+                  <button (click)="cancelDeleteDay()" class="btn-cancel-outline">
+                    Cancelar
+                  </button>
+                } @else {
+                  <button (click)="addExercise()" class="btn-green-outline">
+                    <span class="gym-btn__dash">—</span>
+                    Añadir ejercicio
+                  </button>
+                  <button (click)="requestDeleteDay()" class="btn-danger-outline">
+                    <span class="gym-btn__dash">—</span>
+                    Eliminar día
+                  </button>
+                  <button (click)="toggleEdit()" class="btn-green-outline">
+                    <span class="gym-btn__dash">—</span>
+                    Guardar
+                  </button>
+                }
               } @else {
                 <button (click)="toggleEdit()" class="btn-green-outline">
                   <span class="gym-btn__dash">—</span>

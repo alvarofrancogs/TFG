@@ -26,6 +26,9 @@ export class GimnasioComponent implements OnInit {
   selectedDayId = signal(1);
   routineDays = signal<RoutineDay[]>([]);
   loading = signal(true);
+  confirmDeleteDay = signal(false);
+
+  private persistTimeout: ReturnType<typeof setTimeout> | null = null;
 
   currentDay = computed(() => this.routineDays().find((d) => d.dayOrder === this.selectedDayId()));
 
@@ -95,10 +98,6 @@ export class GimnasioComponent implements OnInit {
     const idToRemove = this.selectedDayId();
 
     this.routineDays.update((days) => {
-      if (days.length <= 1) {
-        return days;
-      }
-
       const filtered = days.filter((d) => d.dayOrder !== idToRemove);
       const reindexed = filtered.map((day, index) => ({...day, dayOrder: index + 1}));
       this.selectedDayId.set(reindexed[0]?.dayOrder ?? 1);
@@ -106,7 +105,21 @@ export class GimnasioComponent implements OnInit {
       return reindexed;
     });
 
+    this.confirmDeleteDay.set(false);
+
+    if (this.routineDays().length === 0) {
+      this.isEditing.set(false);
+    }
+
     this.persistRoutine();
+  }
+
+  requestDeleteDay() {
+    this.confirmDeleteDay.set(true);
+  }
+
+  cancelDeleteDay() {
+    this.confirmDeleteDay.set(false);
   }
 
   selectDay(dayOrder: number) {
@@ -186,19 +199,26 @@ export class GimnasioComponent implements OnInit {
       return;
     }
 
-    const payloadDays = this.routineDays().map((day) => ({
-      ...day,
-      exercises: day.exercises.map((exercise) => ({
-        id: exercise.id,
-        order: exercise.order,
-        name: exercise.name,
-        sets: exercise.sets,
-        reps: exercise.reps,
-        rest: exercise.rest,
-      })),
-    }));
+    if (this.persistTimeout !== null) {
+      clearTimeout(this.persistTimeout);
+    }
 
-    this.gymApi.update(session.clientId, {days: payloadDays}).subscribe();
+    this.persistTimeout = setTimeout(() => {
+      this.persistTimeout = null;
+      const payloadDays = this.routineDays().map((day) => ({
+        ...day,
+        exercises: day.exercises.map((exercise) => ({
+          id: exercise.id,
+          order: exercise.order,
+          name: exercise.name,
+          sets: exercise.sets,
+          reps: exercise.reps,
+          rest: exercise.rest,
+        })),
+      }));
+
+      this.gymApi.update(session.clientId, {days: payloadDays}).subscribe();
+    }, 400);
   }
 
   private ensureExercisesHaveKeys(days: RoutineDay[]): RoutineDay[] {
