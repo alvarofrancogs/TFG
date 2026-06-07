@@ -27,6 +27,11 @@ export class PerfilComponent implements OnInit {
   myRoutine = signal<RoutineDay[]>([]);
   loading = signal(true);
 
+  
+  confirmDeleteReservationId = signal<string | null>(null);
+  confirmDeleteDayId = signal<number | null>(null);
+  confirmDeleteExerciseId = signal<string | null>(null);
+
   ngOnInit() {
     const session = this.authStore.session();
     if (!session) return;
@@ -48,9 +53,34 @@ export class PerfilComponent implements OnInit {
   deleteReservation(reservationId: string) {
     this.reservationsApi.delete(reservationId).subscribe({
       next: () => {
+        this.confirmDeleteReservationId.set(null);
         this.myReservations.update((res) => res.filter((r) => r.id !== reservationId));
       },
     });
+  }
+
+  requestDeleteReservation(id: string) {
+    this.confirmDeleteReservationId.set(id);
+  }
+
+  cancelDeleteReservation() {
+    this.confirmDeleteReservationId.set(null);
+  }
+
+  requestDeleteDay(dayId: number) {
+    this.confirmDeleteDayId.set(dayId);
+  }
+
+  cancelDeleteDay() {
+    this.confirmDeleteDayId.set(null);
+  }
+
+  requestDeleteExercise(exerciseId: string) {
+    this.confirmDeleteExerciseId.set(exerciseId);
+  }
+
+  cancelDeleteExercise() {
+    this.confirmDeleteExerciseId.set(null);
   }
 
   deleteExercise(dayId: number, exerciseId?: string) {
@@ -66,6 +96,7 @@ export class PerfilComponent implements OnInit {
     });
 
     this.myRoutine.set(updatedRoutine);
+    this.confirmDeleteExerciseId.set(null);
     this.gymApi.update(session.clientId, { days: updatedRoutine }).subscribe();
   }
 
@@ -75,6 +106,7 @@ export class PerfilComponent implements OnInit {
 
     const updatedRoutine = this.myRoutine().filter((day) => day.dayOrder !== dayId);
     this.myRoutine.set(updatedRoutine);
+    this.confirmDeleteDayId.set(null);
     this.gymApi.update(session.clientId, { days: updatedRoutine }).subscribe();
   }
 
