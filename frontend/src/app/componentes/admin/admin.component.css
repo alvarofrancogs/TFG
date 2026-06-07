@@ -84,7 +84,7 @@
   text-align: left;
 }
 
-.admin-mobile-link:last-child {
+.admin-mobile-link:last-of-type {
   border-bottom: none;
 }
 
@@ -100,10 +100,10 @@
 
 .admin-mobile-link--danger {
   color: #f87171;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
   border-bottom: none;
-  margin-top: 0.5rem;
-  padding-top: 1.25rem;
+  border-top: none;
+  margin-top: 0;
+  padding-top: 1rem;
 }
 
 .admin-mobile-link--danger:hover {
@@ -112,5 +112,22 @@
 
 .admin-mobile-menu__footer {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
+  padding-top: 0;
+}
+
+
+.admin-nav-active {
+  opacity: 1 !important;
+}
+
+.admin-nav-indicator {
+  position: absolute;
+  bottom: -2px;
+  height: 2px;
+  background-color: #ffffff;
+  transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.15s ease;
+  pointer-events: none;
 }

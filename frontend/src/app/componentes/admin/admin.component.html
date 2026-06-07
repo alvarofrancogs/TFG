@@ -8,15 +8,20 @@
           Club<span class="font-bold">Admin</span>
         </a>
 
-        <div class="hidden md:flex space-x-8" role="menubar" aria-label="Navegación principal">
-          <a routerLink="/admin/reservas" routerLinkActive="opacity-100 border-b-2 border-white" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
+        <div class="hidden md:flex space-x-8 relative" #adminDesktopLinks role="menubar" aria-label="Navegación principal">
+          <a routerLink="/admin/reservas" routerLinkActive="admin-nav-active" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
             class="text-xs font-semibold tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-all py-2 text-white">Reservas</a>
-          <a routerLink="/admin/clientes" routerLinkActive="opacity-100 border-b-2 border-white" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
+          <a routerLink="/admin/clientes" routerLinkActive="admin-nav-active" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
             class="text-xs font-semibold tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-all py-2 text-white">Clientes</a>
-          <a routerLink="/admin/pistas" routerLinkActive="opacity-100 border-b-2 border-white" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
+          <a routerLink="/admin/pistas" routerLinkActive="admin-nav-active" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
             class="text-xs font-semibold tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-all py-2 text-white">Pistas</a>
-          <a routerLink="/admin/eventos" routerLinkActive="opacity-100 border-b-2 border-white" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
+          <a routerLink="/admin/eventos" routerLinkActive="admin-nav-active" [routerLinkActiveOptions]="{exact:false}" role="menuitem"
             class="text-xs font-semibold tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-all py-2 text-white">Eventos</a>
+
+          <span class="admin-nav-indicator"
+            [style.left]="adminIndicatorStyle().left"
+            [style.width]="adminIndicatorStyle().width"
+            [style.opacity]="adminIndicatorStyle().opacity"></span>
         </div>
       </div>
 
@@ -78,7 +83,9 @@
     </div>
   </div>
 
-  <main class="flex-grow pt-14 md:pt-[72px]">
+  <main class="flex-grow pt-14 md:pt-[72px] transition-all duration-300"
+    [style.filter]="isMobileMenuOpen() ? 'blur(2px)' : 'none'"
+    [class.pointer-events-none]="isMobileMenuOpen()">
     <router-outlet></router-outlet>
   </main>
 </div>

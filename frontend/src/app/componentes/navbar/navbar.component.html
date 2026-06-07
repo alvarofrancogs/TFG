@@ -8,38 +8,43 @@
         OASIS<span class="font-bold">CLUB</span>
       </a>
 
-      <div class="hidden md:flex space-x-12">
-        <a routerLink="/" routerLinkActive="text-emerald-950 font-medium"
+      <div class="hidden md:flex space-x-12 relative" #desktopLinks>
+        <a routerLink="/" routerLinkActive="nav-link--active"
           [routerLinkActiveOptions]="{exact: true}"
           class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
           Inicio
         </a>
-        <a routerLink="/quienes-somos" routerLinkActive="text-emerald-950 font-medium"
+        <a routerLink="/quienes-somos" routerLinkActive="nav-link--active"
           class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors cursor-pointer">
           Quiénes Somos
         </a>
-        <a routerLink="/eventos" routerLinkActive="text-emerald-950 font-medium"
+        <a routerLink="/eventos" routerLinkActive="nav-link--active"
           class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
           Eventos
         </a>
-        <a routerLink="/contacto" routerLinkActive="text-emerald-950 font-medium"
+        <a routerLink="/contacto" routerLinkActive="nav-link--active"
           class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
           Contacto
         </a>
         @if (auth.isLoggedIn()) {
-          <a routerLink="/reservar" routerLinkActive="text-emerald-950 font-medium"
+          <a routerLink="/reservar" routerLinkActive="nav-link--active"
             class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
             Reservar
           </a>
-          <a routerLink="/gimnasio" routerLinkActive="text-emerald-950 font-medium"
+          <a routerLink="/gimnasio" routerLinkActive="nav-link--active"
             class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
             Gimnasio
           </a>
-          <a routerLink="/perfil" routerLinkActive="text-emerald-950 font-medium"
+          <a routerLink="/perfil" routerLinkActive="nav-link--active"
             class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
             Mi Área
           </a>
         }
+
+        <span #navIndicator class="nav-indicator"
+          [style.left]="indicatorStyle().left"
+          [style.width]="indicatorStyle().width"
+          [style.opacity]="indicatorStyle().opacity"></span>
       </div>
 
       <div class="flex items-center">
