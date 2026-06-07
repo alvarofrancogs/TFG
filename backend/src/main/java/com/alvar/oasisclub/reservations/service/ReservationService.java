@@ -17,7 +17,6 @@ import com.alvar.oasisclub.reservations.mapper.ReservationMapper;
 import com.alvar.oasisclub.reservations.repository.ReservationRepository;
 import com.alvar.oasisclub.schedule.service.ScheduleSlotService;
 import com.stripe.exception.StripeException;
-import com.alvar.oasisclub.common.exception.StripeOperationFailedException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -216,10 +215,10 @@ public class ReservationService {
       }
     } catch (StripeException ex) {
       
-      log.error("Stripe operation failed for reservation {} sessionId {} idempotencyKey {} — cancellation NOT completed: {}",
-          reservation.getId(), sessionId, idempotencyKey, ex.getMessage(), ex);
-      throw new StripeOperationFailedException(
-          "La cancelación no se ha completado porque Stripe no respondió correctamente. Puede reintentarse.", ex);
+      
+      
+      log.warn("Stripe operation failed for reservation {} sessionId {} idempotencyKey {} — proceeding with DB delete: {}",
+          reservation.getId(), sessionId, idempotencyKey, ex.getMessage());
     }
 
     
