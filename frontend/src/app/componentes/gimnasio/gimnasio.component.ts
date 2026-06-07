@@ -41,8 +41,7 @@ export class GimnasioComponent implements OnInit {
 
     this.gymApi.getByClient(session.clientId).subscribe({
       next: (days) => {
-        const routineToUse = days.length > 0 ? days : this.defaultRoutine();
-        const routineWithKeys = this.ensureExercisesHaveKeys(routineToUse);
+        const routineWithKeys = this.ensureExercisesHaveKeys(days);
         this.routineDays.set(routineWithKeys);
         this.daysCount.set(routineWithKeys.length);
         this.selectedDayId.set(routineWithKeys[0]?.dayOrder ?? 1);
@@ -50,6 +49,14 @@ export class GimnasioComponent implements OnInit {
       },
       error: () => this.loading.set(false),
     });
+  }
+
+  addFirstDay() {
+    this.routineDays.set([{dayOrder: 1, name: '', exercises: []}]);
+    this.daysCount.set(1);
+    this.selectedDayId.set(1);
+    this.isEditing.set(true);
+    this.persistRoutine();
   }
 
   toggleEdit() {

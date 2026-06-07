@@ -75,5 +75,34 @@ public class GymService {
 
     return getRoutine(clientId);
   }
+
+  
+  @Transactional
+  public void seedDefaultRoutine(UUID clientId) {
+    GymRoutineDayEntity day = dayRepository.save(GymRoutineDayEntity.builder()
+        .clientId(clientId)
+        .dayOrder(1)
+        .name("Fuerza")
+        .build());
+
+    String[][] defaults = {
+        {"Sentadilla Libre",  "4", "10",   "90s"},
+        {"Press de Banca",    "4", "8",    "90s"},
+        {"Dominadas",         "3", "10",   "60s"},
+        {"Plancha Abdominal", "3", "60s",  "45s"},
+    };
+
+    int order = 1;
+    for (String[] e : defaults) {
+      exerciseRepository.save(GymRoutineExerciseEntity.builder()
+          .routineDayId(day.getId())
+          .exerciseOrder(order++)
+          .name(e[0])
+          .setsCount(Integer.parseInt(e[1]))
+          .reps(e[2])
+          .restInterval(e[3])
+          .build());
+    }
+  }
 }
 

@@ -15,6 +15,7 @@ import com.alvar.oasisclub.clients.entity.ClientEntity;
 import com.alvar.oasisclub.clients.service.ClientService;
 import com.alvar.oasisclub.common.config.AppFrontendUrlProperties;
 import com.alvar.oasisclub.common.email.EmailService;
+import com.alvar.oasisclub.gym.service.GymService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -43,6 +44,7 @@ public class AuthService {
   private final PasswordResetTokenRepository resetTokenRepository;
   private final EmailService emailService;
   private final AppFrontendUrlProperties appFrontendUrlProperties;
+  private final GymService gymService;
 
   
   
@@ -93,6 +95,7 @@ public class AuthService {
         .build();
 
     clientService.save(client);
+    gymService.seedDefaultRoutine(client.getId());
     emailService.sendWelcomeEmail(client.getEmail(), client.getName());
 
     String token = jwtService.generateToken(client.getId(), client.getEmail(), client.getRole());
