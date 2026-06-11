@@ -13,7 +13,7 @@ import {AuthApiService} from '../../servicios/auth-api.service';
   styleUrl: './restablecer-clave.component.css',
 })
 export class RestablecerClaveComponent implements OnInit {
-  readonly minPasswordLength = 6;
+  readonly minPasswordLength = 8;
 
   private authApi = inject(AuthApiService);
   private route = inject(ActivatedRoute);

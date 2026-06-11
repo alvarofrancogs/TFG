@@ -16,7 +16,7 @@ import {AuthApiService} from '../../servicios/auth-api.service';
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
-  readonly minPasswordLength = 6;
+  readonly minPasswordLength = 8;
 
   private authApi = inject(AuthApiService);
   private authStore = inject(AuthStore);

@@ -14,7 +14,7 @@ import {AuthApiService} from '../../servicios/auth-api.service';
   styleUrl: './registro.component.css',
 })
 export class RegistroComponent {
-  readonly minPasswordLength = 6;
+  readonly minPasswordLength = 8;
   readonly maxPasswordLength = 128;
   readonly maxNameLength = 120;
   readonly maxEmailLength = 180;

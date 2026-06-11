@@ -272,9 +272,19 @@ public class GlobalExceptionHandler {
         yield friendly + " debe ser menor o igual a " + max;
       }
       case "size" -> {
-        String mn = args != null && args.length > 2 ? String.valueOf(args[2]) : "?";
-        String mx = args != null && args.length > 1 ? String.valueOf(args[1]) : "?";
-        yield friendly + " debe tener entre " + mn + " y " + mx + " caracteres";
+        long mn = args != null && args.length > 2 && args[2] instanceof Number n ? n.longValue() : -1;
+        long mx = args != null && args.length > 1 && args[1] instanceof Number n ? n.longValue() : -1;
+        boolean hasMin = mn > 0;
+        boolean hasMax = mx >= 0 && mx < Integer.MAX_VALUE;
+        if (hasMin && hasMax) {
+          yield friendly + " debe tener entre " + mn + " y " + mx + " caracteres";
+        } else if (hasMin) {
+          yield friendly + " debe tener al menos " + mn + " caracteres";
+        } else if (hasMax) {
+          yield friendly + " no puede superar " + mx + " caracteres";
+        } else {
+          yield friendly + " tiene un tamaño no válido";
+        }
       }
       case "email"           -> friendly + " debe ser un correo electrónico válido";
       case "pattern"         -> friendly + ": " + translateConstraintMessage(error.getDefaultMessage());
