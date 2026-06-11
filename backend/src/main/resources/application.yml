@@ -30,12 +30,18 @@ spring:
 
 server:
   port: ${PORT:8080}
+  
+  
+  forward-headers-strategy: framework
 
 springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
+  
   api-docs:
+    enabled: ${SWAGGER_ENABLED:true}
     path: /v3/api-docs
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLED:true}
+    path: /swagger-ui.html
 
 app:
   jwt:
