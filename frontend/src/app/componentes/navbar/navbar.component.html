@@ -8,7 +8,7 @@
         OASIS<span class="font-bold">CLUB</span>
       </a>
 
-      <div class="hidden md:flex space-x-12 relative" #desktopLinks>
+      <div class="hidden md:flex space-x-6 lg:space-x-8 xl:space-x-10 relative" #desktopLinks>
         <a routerLink="/" routerLinkActive="nav-link--active"
           [routerLinkActiveOptions]="{exact: true}"
           class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
@@ -21,10 +21,6 @@
         <a routerLink="/eventos" routerLinkActive="nav-link--active"
           class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
           Eventos
-        </a>
-        <a routerLink="/contacto" routerLinkActive="nav-link--active"
-          class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
-          Contacto
         </a>
         @if (auth.isLoggedIn()) {
           <a routerLink="/reservar" routerLinkActive="nav-link--active"
@@ -40,6 +36,10 @@
             Mi Área
           </a>
         }
+        <a routerLink="/contacto" routerLinkActive="nav-link--active"
+          class="text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors">
+          Contacto
+        </a>
 
         <span #navIndicator class="nav-indicator"
           [style.left]="indicatorStyle().left"
@@ -49,11 +49,6 @@
 
       <div class="flex items-center">
         @if (auth.isLoggedIn()) {
-          <a routerLink="/perfil"
-            class="hidden md:block text-[13px] font-light text-gray-500 hover:text-emerald-950 transition-colors mr-6">
-            Perfil
-          </a>
-          <div class="hidden md:block h-6 w-px bg-gray-200 mr-6"></div>
           <button (click)="logout()"
             class="hidden md:block bg-[#0B2118] text-white text-[13px] font-medium px-6 py-2.5 hover:bg-emerald-900 transition-colors">
             Salir

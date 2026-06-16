@@ -1,4 +1,4 @@
-import { Component, inject, signal, AfterViewInit, ElementRef, ViewChild, NgZone, OnDestroy } from '@angular/core';
+import { Component, inject, signal, AfterViewInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { AuthStore } from '../../auth.store';
 import { filter, Subscription } from 'rxjs';
@@ -13,7 +13,6 @@ import { filter, Subscription } from 'rxjs';
 export class NavbarComponent implements AfterViewInit, OnDestroy {
   auth = inject(AuthStore);
   private router = inject(Router);
-  private zone = inject(NgZone);
   isMobileMenuOpen = signal(false);
 
   @ViewChild('desktopLinks') desktopLinksRef!: ElementRef<HTMLDivElement>;
