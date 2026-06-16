@@ -24,51 +24,106 @@
         </h2>
 
         @if (successMsg()) {
-          <div class="mb-6 px-4 py-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[13px]">
-            {{ successMsg() }}
-          </div>
-        }
-        @if (errorMsg()) {
-          <div class="mb-6 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-[13px]">
-            {{ errorMsg() }}
+          <div class="ac-success-banner">
+            <span class="ac-success-banner__line"></span>
+            <div class="ac-success-banner__body">
+              <p class="ac-success-banner__label">Confirmado</p>
+              <p class="ac-success-banner__text">{{ successMsg() }}</p>
+            </div>
+            <svg class="ac-success-banner__check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7"/>
+            </svg>
           </div>
         }
 
-        <form (submit)="addClient($event)" class="space-y-6" novalidate>
+        <form (submit)="addClient($event, addForm)" class="space-y-6" novalidate #addForm="ngForm">
           <div class="ac-field">
             <label for="new-client-name" class="ac-label">Nombre Completo</label>
             <input id="new-client-name" type="text" [(ngModel)]="newClient.name" name="name" required
-              autocomplete="name" placeholder="Ej: Ana García" class="ac-input">
+              #nameModel="ngModel"
+              autocomplete="name" placeholder="Ej: Ana García"
+              class="ac-input" [class.ac-input--error]="nameModel.invalid && nameModel.touched">
+            @if (nameModel.invalid && nameModel.touched) {
+              <p class="mt-1 text-[11px] text-red-500">El nombre es obligatorio.</p>
+            }
           </div>
 
           <div class="ac-field">
             <label for="new-client-email" class="ac-label">Correo Electrónico</label>
-            <input id="new-client-email" type="email" [(ngModel)]="newClient.email" name="email" required
-              autocomplete="email" placeholder="correo@ejemplo.com" class="ac-input">
+            <input id="new-client-email" type="email" [(ngModel)]="newClient.email" name="email" required email
+              #emailModel="ngModel"
+              autocomplete="email" placeholder="correo@ejemplo.com"
+              class="ac-input" [class.ac-input--error]="(emailModel.invalid && emailModel.touched) || emailServerError()">
+            @if (emailModel.invalid && emailModel.touched) {
+              @if (emailModel.errors?.['required']) {
+                <p class="mt-1 text-[11px] text-red-500">El correo es obligatorio.</p>
+              } @else if (emailModel.errors?.['email']) {
+                <p class="mt-1 text-[11px] text-red-500">Introduce un correo válido.</p>
+              }
+            } @else if (emailServerError()) {
+              <p class="mt-1 text-[11px] text-red-500">{{ emailServerError() }}</p>
+            }
           </div>
 
           <div class="ac-field">
             <label for="new-client-phone" class="ac-label">Teléfono</label>
             <input id="new-client-phone" type="tel" [(ngModel)]="newClient.phone" name="phone"
-              autocomplete="tel" placeholder="600 000 000" class="ac-input">
+              #phoneModel="ngModel"
+              pattern="^[+]?[0-9\s\-().]{7,20}$"
+              autocomplete="tel" placeholder="600 000 000"
+              class="ac-input" [class.ac-input--error]="(phoneModel.invalid && phoneModel.touched) || phoneServerError()">
+            @if (phoneModel.invalid && phoneModel.touched) {
+              <p class="mt-1 text-[11px] text-red-500">Introduce un teléfono válido (ej. 612345678 o +34 612 345 678).</p>
+            } @else if (phoneServerError()) {
+              <p class="mt-1 text-[11px] text-red-500">{{ phoneServerError() }}</p>
+            }
           </div>
 
           <div class="ac-field">
             <label for="new-client-birthdate" class="ac-label">Fecha de Nacimiento</label>
             <input id="new-client-birthdate" type="date" [(ngModel)]="newClient.birthDate" name="birthDate"
-              class="ac-input">
+              #birthDateModel="ngModel"
+              class="ac-input" [class.ac-input--error]="birthDateModel.invalid && birthDateModel.touched">
           </div>
 
-          <div class="ac-field">
+          <div class="ac-field" style="position: relative;">
             <label for="new-client-password" class="ac-label">Contraseña Inicial</label>
-            <input id="new-client-password" type="password" [(ngModel)]="newClient.password" name="password"
-              required autocomplete="new-password" class="ac-input">
+            <input id="new-client-password"
+              [type]="showPassword ? 'text' : 'password'"
+              [(ngModel)]="newClient.password" name="password"
+              required minlength="8"
+              #passwordModel="ngModel"
+              autocomplete="new-password"
+              class="ac-input" style="padding-right: 2rem;"
+              [class.ac-input--error]="(passwordModel.invalid && passwordModel.touched) || passwordServerError()">
+            <button type="button"
+              (click)="showPassword = !showPassword"
+              style="position:absolute;right:0;top:50%;transform:translateY(-50%) translateY(6px);background:none;border:none;padding:0.25rem;color:#9ca3af;cursor:pointer;"
+              [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Ver contraseña'">
+              @if (showPassword) {
+                <svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
+              } @else {
+                <svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              }
+            </button>
+            @if (passwordModel.invalid && passwordModel.touched) {
+              @if (passwordModel.errors?.['required']) {
+                <p class="mt-1 text-[11px] text-red-500">La contraseña es obligatoria.</p>
+              } @else if (passwordModel.errors?.['minlength']) {
+                <p class="mt-1 text-[11px] text-red-500">Debe tener al menos 8 caracteres.</p>
+              }
+            } @else if (passwordServerError()) {
+              <p class="mt-1 text-[11px] text-red-500">{{ passwordServerError() }}</p>
+            }
           </div>
 
           <button type="submit" class="btn-green-outline w-full justify-center">
             <span class="ac-btn__dash">—</span>
             Registrar Socio
           </button>
+          @if (generalServerError()) {
+            <p class="mt-3 text-[12px] text-red-500 font-light">{{ generalServerError() }}</p>
+          }
         </form>
       </div>
 

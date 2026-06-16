@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 
 import { ClientsApiService } from '../../servicios/clients-api.service';
 import { Client, CreateClientRequest } from '../../modelos/client.models';
@@ -20,6 +20,10 @@ export class AdminClientesComponent implements OnInit {
   search = signal('');
   successMsg = signal('');
   errorMsg = signal('');
+  emailServerError = signal('');
+  phoneServerError = signal('');
+  passwordServerError = signal('');
+  generalServerError = signal('');
   confirmDeleteId = signal<string | null>(null);
 
   newClient = {
@@ -29,6 +33,8 @@ export class AdminClientesComponent implements OnInit {
     phone: '',
     birthDate: '',
   };
+
+  showPassword = false;
 
   ngOnInit() {
     this.loadClients();
@@ -50,11 +56,10 @@ export class AdminClientesComponent implements OnInit {
     this.loadClients();
   }
 
-  addClient(event: Event) {
+  addClient(event: Event, form: NgForm) {
     event.preventDefault();
     this.successMsg.set('');
-    this.errorMsg.set('');
-    if (!this.newClient.name || !this.newClient.email || !this.newClient.password) return;
+    this.clearServerErrors();
 
     const request: CreateClientRequest = {
       name: this.newClient.name.trim(),
@@ -66,20 +71,36 @@ export class AdminClientesComponent implements OnInit {
 
     this.clientsApi.create(request).subscribe({
       next: () => {
-        this.newClient.name = '';
-        this.newClient.email = '';
-        this.newClient.password = '';
-        this.newClient.phone = '';
-        this.newClient.birthDate = '';
+        this.newClient = { name: '', email: '', password: '', phone: '', birthDate: '' };
+        form.resetForm({ name: '', email: '', password: '', phone: '', birthDate: '' });
         this.successMsg.set('Socio registrado correctamente.');
         this.loadClients();
         setTimeout(() => this.successMsg.set(''), 4000);
       },
-      error: () => {
-        this.errorMsg.set('Error al registrar el socio. Comprueba los datos.');
-        setTimeout(() => this.errorMsg.set(''), 4000);
+      error: (err) => {
+        this.assignServerError(err?.error?.message || 'Error al registrar el socio.');
       }
     });
+  }
+
+  private clearServerErrors() {
+    this.emailServerError.set('');
+    this.phoneServerError.set('');
+    this.passwordServerError.set('');
+    this.generalServerError.set('');
+  }
+
+  private assignServerError(msg: string) {
+    const lower = msg.toLowerCase();
+    if (lower.includes('email') || lower.includes('correo')) {
+      this.emailServerError.set(msg);
+    } else if (lower.includes('teléfono') || lower.includes('telefono') || lower.includes('phone')) {
+      this.phoneServerError.set(msg);
+    } else if (lower.includes('contraseña') || lower.includes('password')) {
+      this.passwordServerError.set(msg);
+    } else {
+      this.generalServerError.set(msg);
+    }
   }
 
   requestDelete(id: string) {
