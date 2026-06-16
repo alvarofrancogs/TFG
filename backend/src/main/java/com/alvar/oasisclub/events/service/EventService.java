@@ -11,6 +11,7 @@ import com.alvar.oasisclub.events.entity.EventRegistrationEntity;
 import com.alvar.oasisclub.events.repository.EventRegistrationRepository;
 import com.alvar.oasisclub.events.repository.EventRepository;
 import com.alvar.oasisclub.courts.repository.CourtRepository;
+import com.alvar.oasisclub.newsletter.NewsletterService;
 import com.alvar.oasisclub.reservations.dto.CreateMaintenanceBlockRequest;
 import com.alvar.oasisclub.reservations.entity.ReservationStatus;
 import com.alvar.oasisclub.reservations.repository.ReservationRepository;
@@ -41,6 +42,7 @@ public class EventService {
   private final ReservationService reservationService;
   private final CourtRepository courtRepository;
   private final ReservationRepository reservationRepository;
+  private final NewsletterService newsletterService;
 
   public EventService(
       EventRepository eventRepository,
@@ -50,7 +52,8 @@ public class EventService {
       ScheduleSlotService scheduleSlotService,
       @Lazy ReservationService reservationService,
       CourtRepository courtRepository,
-      ReservationRepository reservationRepository
+      ReservationRepository reservationRepository,
+      NewsletterService newsletterService
   ) {
     this.eventRepository = eventRepository;
     this.registrationRepository = registrationRepository;
@@ -60,6 +63,7 @@ public class EventService {
     this.reservationService = reservationService;
     this.courtRepository = courtRepository;
     this.reservationRepository = reservationRepository;
+    this.newsletterService = newsletterService;
   }
 
   @Transactional
@@ -94,6 +98,21 @@ public class EventService {
       saved.setCourtNames(names);
       eventRepository.save(saved);
       blockCourtsForEvent(request, saved);
+    }
+
+    
+    try {
+      newsletterService.notifyNewEventToSubscribers(
+          saved.getTitle(),
+          saved.getDescription(),
+          saved.getEventDate(),
+          saved.getStartTime(),
+          saved.getEndTime(),
+          saved.getCategory() != null ? saved.getCategory().name() : "Evento"
+      );
+    } catch (Exception ex) {
+      log.warn("Could not notify newsletter subscribers about new event {}: {}",
+          saved.getId(), ex.getMessage());
     }
 
     return toResponse(saved, 0L, false);

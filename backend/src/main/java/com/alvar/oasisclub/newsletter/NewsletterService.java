@@ -48,4 +48,29 @@ public class NewsletterService {
         .map(c -> Boolean.TRUE.equals(c.getNewsletterSubscribed()))
         .orElse(false);
   }
+
+  
+  @Transactional(readOnly = true)
+  public void notifyNewEventToSubscribers(
+      String eventTitle,
+      String eventDescription,
+      java.time.LocalDate eventDate,
+      java.time.LocalTime startTime,
+      java.time.LocalTime endTime,
+      String category
+  ) {
+    java.util.List<ClientEntity> subscribers = clientRepository.findByNewsletterSubscribedTrue();
+    for (ClientEntity subscriber : subscribers) {
+      emailService.sendNewEventNotificationEmail(
+          subscriber.getEmail(),
+          subscriber.getName(),
+          eventTitle,
+          eventDescription,
+          eventDate,
+          startTime,
+          endTime,
+          category
+      );
+    }
+  }
 }
