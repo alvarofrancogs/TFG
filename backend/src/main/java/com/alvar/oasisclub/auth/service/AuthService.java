@@ -118,6 +118,14 @@ public class AuthService {
 
     
     
+    if ("ADMIN".equalsIgnoreCase(client.getRole())) {
+      log.warn("[FORGOT_PASSWORD] Attempt to reset admin password from public endpoint — denied for client_id={}",
+          client.getId());
+      throw new EmailNotFoundException("No existe ninguna cuenta con ese correo electrónico");
+    }
+
+    
+    
     LocalDateTime now = LocalDateTime.now();
     List<PasswordResetTokenEntity> previousTokens =
         resetTokenRepository.findByClientIdAndUsedFalseAndExpirationAfter(client.getId(), now);
