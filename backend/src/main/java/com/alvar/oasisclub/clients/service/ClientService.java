@@ -7,6 +7,7 @@ import com.alvar.oasisclub.clients.exception.ClientEmailAlreadyExistsException;
 import com.alvar.oasisclub.clients.exception.ClientNotFoundException;
 import com.alvar.oasisclub.clients.mapper.ClientMapper;
 import com.alvar.oasisclub.clients.repository.ClientRepository;
+import com.alvar.oasisclub.common.email.EmailService;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -22,6 +23,7 @@ public class ClientService {
 
   private final ClientRepository clientRepository;
   private final ClientMapper clientMapper;
+  private final EmailService emailService;
 
   @Transactional(readOnly = true)
   public List<ClientResponse> getAllClients() {
@@ -76,6 +78,7 @@ public class ClientService {
     }
 
     ClientEntity saved = clientRepository.save(clientMapper.toEntity(request));
+    emailService.sendWelcomeEmail(saved.getEmail(), saved.getName());
     return clientMapper.toResponse(saved);
   }
 

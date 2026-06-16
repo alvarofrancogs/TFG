@@ -19,5 +19,7 @@ public interface ClientRepository extends JpaRepository<ClientEntity, UUID> {
       String email,
       Pageable pageable
   );
+
+  java.util.List<ClientEntity> findByNewsletterSubscribedTrue();
 }
 
