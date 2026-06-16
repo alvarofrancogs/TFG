@@ -287,7 +287,7 @@ public class GlobalExceptionHandler {
         }
       }
       case "email"           -> friendly + " debe ser un correo electrónico válido";
-      case "pattern"         -> friendly + ": " + translateConstraintMessage(error.getDefaultMessage());
+      case "pattern"         -> translateConstraintMessage(error.getDefaultMessage());
       case "past"            -> friendly + " debe ser una fecha pasada";
       case "future",
            "futureorpresent" -> friendly + " debe ser una fecha futura o presente";

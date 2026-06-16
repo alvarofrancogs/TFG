@@ -45,6 +45,68 @@ public class EmailService {
   }
 
   @Async
+  public void sendNewEventNotificationEmail(
+      String toEmail,
+      String userName,
+      String eventTitle,
+      String eventDescription,
+      java.time.LocalDate eventDate,
+      java.time.LocalTime startTime,
+      java.time.LocalTime endTime,
+      String category
+  ) {
+    String subject = "Oasis Club | Nuevo evento: " + eventTitle;
+    String plainText = """
+        OASIS CLUB
+
+        Nuevo evento disponible
+
+        Hola, %s.
+
+        Hemos publicado un nuevo evento en el club:
+
+        %s
+        Fecha: %s
+        Horario: %s – %s
+        %s
+
+        Reserva tu plaza desde la sección de Eventos.
+
+        El equipo de Oasis Club.
+        """.formatted(
+            userName,
+            eventTitle,
+            formatReservationDate(eventDate),
+            formatReservationTime(startTime),
+            formatReservationTime(endTime),
+            eventDescription != null && !eventDescription.isBlank() ? "\n" + eventDescription : ""
+        );
+
+    String detailsRows = buildDetailRow("Categoría", category)
+        + buildDetailRow("Fecha", formatReservationDate(eventDate))
+        + buildDetailRow("Horario", formatReservationTime(startTime) + " – " + formatReservationTime(endTime), true);
+
+    String descriptionBlock = (eventDescription != null && !eventDescription.isBlank())
+        ? buildEmailParagraph("<span style=\"font-style: italic;\">%s</span>".formatted(escapeHtml(eventDescription)))
+        : "";
+
+    String content = buildEmailTitle("Nuevo", "evento")
+        + buildEmailParagraph("""
+            Estimado/a <span style="font-weight: 500; color: #111111;">%s</span>,<br><br>
+            Hemos publicado un nuevo evento en
+            <span style="font-weight: 500; color: #111111;">Oasis Club</span>.
+            Te avisamos por ser suscriptor del newsletter para que puedas reservar tu plaza con antelación.
+            """.formatted(escapeHtml(userName)))
+        + "<h2 style=\"font-family: 'Playfair Display', Georgia, serif; font-size: 22px; font-weight: 400; font-style: italic; color: #0B2118; text-align: center; margin: 0 0 24px;\">"
+        + escapeHtml(eventTitle) + "</h2>"
+        + descriptionBlock
+        + buildDetailsTable(detailsRows)
+        + buildEmailFootnote("Plazas limitadas. Inscríbete pronto desde la sección de Eventos.");
+
+    sendEmail(toEmail, subject, plainText, wrapEmailLayout(content), "new-event-notification");
+  }
+
+  @Async
   public void sendWelcomeEmail(String toEmail, String userName) {
     String subject = "Oasis Club | Bienvenido";
     String plainText = buildWelcomeEmailText(userName);
