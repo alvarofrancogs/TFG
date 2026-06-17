@@ -10,8 +10,12 @@ import com.alvar.oasisclub.clients.repository.ClientRepository;
 import com.alvar.oasisclub.common.email.EmailService;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -97,6 +101,15 @@ public class ClientService {
   public ClientEntity getEntityById(UUID id) {
     return clientRepository.findById(id)
         .orElseThrow(() -> new ClientNotFoundException("Cliente no encontrado"));
+  }
+
+  @Transactional(readOnly = true)
+  public Map<UUID, ClientEntity> getEntitiesByIds(Collection<UUID> ids) {
+    if (ids == null || ids.isEmpty()) {
+      return Map.of();
+    }
+    return clientRepository.findAllById(ids).stream()
+        .collect(Collectors.toMap(ClientEntity::getId, Function.identity()));
   }
 
   @Transactional(readOnly = true)

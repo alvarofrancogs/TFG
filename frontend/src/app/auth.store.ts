@@ -4,7 +4,7 @@ import {isPlatformBrowser} from '@angular/common';
 import {AuthSession, UserRole} from './modelos/auth.models';
 
 const STORAGE_KEY = 'oasisclub.auth.session';
-const VALID_ROLES: UserRole[] = ['ADMIN', 'MEMBER', 'EMPLOYEE'];
+const VALID_ROLES: UserRole[] = ['ADMIN', 'MEMBER'];
 
 @Injectable({providedIn: 'root'})
 export class AuthStore {

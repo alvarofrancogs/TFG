@@ -366,6 +366,106 @@ public class EmailService {
     sendEmail(toEmail, subject, plainText, wrapEmailLayout(content), "event-unregistration");
   }
 
+  @Async
+  public void sendEventRegistrationRemovedByAdminEmail(
+      String toEmail,
+      String userName,
+      String eventTitle,
+      LocalDate eventDate,
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
+    String subject = "Oasis Club | Inscripción cancelada";
+    String plainText = """
+        OASIS CLUB
+
+        Inscripción cancelada
+
+        Hola, %s.
+
+        Te informamos de que tu inscripción al siguiente evento ha sido cancelada por el equipo del club:
+
+        Evento: %s
+        Fecha: %s
+        Horario: %s – %s
+
+        Si crees que se trata de un error o necesitas más información, ponte en contacto con nosotros.
+
+        El equipo de Oasis Club.
+        """.formatted(
+            userName,
+            eventTitle,
+            formatReservationDate(eventDate),
+            formatReservationTime(startTime),
+            formatReservationTime(endTime)
+        );
+
+    String detailsRows = buildDetailRow("Evento", eventTitle)
+        + buildDetailRow("Fecha", formatReservationDate(eventDate))
+        + buildDetailRow("Horario", formatReservationTime(startTime) + " – " + formatReservationTime(endTime), true);
+
+    String content = buildEmailTitle("Inscripción", "Cancelada")
+        + buildEmailParagraph("""
+            Estimado/a <span style="font-weight: 500; color: #111111;">%s</span>,<br><br>
+            Te informamos de que tu inscripción al siguiente evento ha sido
+            <span style="font-weight: 500; color: #111111;">cancelada por el equipo del club</span>.
+            """.formatted(escapeHtml(userName)))
+        + buildDetailsTable(detailsRows)
+        + buildEmailFootnote("Si crees que se trata de un error, ponte en contacto con nosotros.");
+
+    sendEmail(toEmail, subject, plainText, wrapEmailLayout(content), "event-registration-removed-by-admin");
+  }
+
+  @Async
+  public void sendEventCancelledEmail(
+      String toEmail,
+      String userName,
+      String eventTitle,
+      LocalDate eventDate,
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
+    String subject = "Oasis Club | Evento cancelado: " + eventTitle;
+    String plainText = """
+        OASIS CLUB
+
+        Evento cancelado
+
+        Hola, %s.
+
+        Lamentamos informarte de que el siguiente evento al que estabas inscrito/a ha sido cancelado:
+
+        Evento: %s
+        Fecha: %s
+        Horario: %s – %s
+
+        Disculpa las molestias. Te animamos a consultar otros eventos disponibles en nuestra web.
+
+        El equipo de Oasis Club.
+        """.formatted(
+            userName,
+            eventTitle,
+            formatReservationDate(eventDate),
+            formatReservationTime(startTime),
+            formatReservationTime(endTime)
+        );
+
+    String detailsRows = buildDetailRow("Evento", eventTitle)
+        + buildDetailRow("Fecha", formatReservationDate(eventDate))
+        + buildDetailRow("Horario", formatReservationTime(startTime) + " – " + formatReservationTime(endTime), true);
+
+    String content = buildEmailTitle("Evento", "Cancelado")
+        + buildEmailParagraph("""
+            Estimado/a <span style="font-weight: 500; color: #111111;">%s</span>,<br><br>
+            Lamentamos informarte de que el siguiente evento al que estabas inscrito/a
+            ha sido <span style="font-weight: 500; color: #111111;">cancelado</span>.
+            """.formatted(escapeHtml(userName)))
+        + buildDetailsTable(detailsRows)
+        + buildEmailFootnote("Disculpa las molestias. Consulta otros eventos disponibles en la sección de Agenda.");
+
+    sendEmail(toEmail, subject, plainText, wrapEmailLayout(content), "event-cancelled");
+  }
+
   
   
   

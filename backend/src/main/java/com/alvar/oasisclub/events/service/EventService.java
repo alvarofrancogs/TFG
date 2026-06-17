@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -255,13 +256,30 @@ public class EventService {
 
   @Transactional
   public void adminRemoveRegistration(UUID eventId, UUID registrationId) {
-    requireEvent(eventId);
+    EventEntity event = requireEvent(eventId);
     EventRegistrationEntity reg = registrationRepository.findById(registrationId)
         .orElseThrow(() -> new IllegalArgumentException("Inscripción no encontrada"));
     if (!reg.getEvent().getId().equals(eventId)) {
       throw new IllegalArgumentException("La inscripción no pertenece a este evento");
     }
+
+    UUID clientId = reg.getClientId();
     registrationRepository.delete(reg);
+
+    try {
+      ClientEntity client = clientService.getEntityById(clientId);
+      emailService.sendEventRegistrationRemovedByAdminEmail(
+          client.getEmail(),
+          client.getName(),
+          event.getTitle(),
+          event.getEventDate(),
+          event.getStartTime(),
+          event.getEndTime()
+      );
+    } catch (Exception ex) {
+      log.warn("Could not send admin-removal email for event {} client {}: {}",
+          eventId, clientId, ex.getMessage());
+    }
   }
 
   
@@ -269,14 +287,48 @@ public class EventService {
   public void deleteEvent(UUID eventId) {
     EventEntity event = requireEvent(eventId);
 
-    
+    List<EventRegistrationEntity> registrations =
+        registrationRepository.findByEventIdOrderByCreatedAtAsc(eventId);
+
+    String title = event.getTitle();
+    LocalDate eventDate = event.getEventDate();
+    LocalTime startTime = event.getStartTime();
+    LocalTime endTime = event.getEndTime();
+
     if (event.getSport() != null) {
       int released = releaseMaintenanceBlocks(event);
       log.info("Event {}: released {} maintenance block(s) before deletion", eventId, released);
     }
 
     eventRepository.delete(event);
-    log.info("Event {} deleted", eventId);
+
+    List<UUID> clientIds = registrations.stream()
+        .map(EventRegistrationEntity::getClientId)
+        .toList();
+    Map<UUID, ClientEntity> clientsById = clientService.getEntitiesByIds(clientIds);
+
+    for (EventRegistrationEntity reg : registrations) {
+      ClientEntity client = clientsById.get(reg.getClientId());
+      if (client == null) {
+        log.warn("Client {} not found for cancelled event {} notification", reg.getClientId(), eventId);
+        continue;
+      }
+      try {
+        emailService.sendEventCancelledEmail(
+            client.getEmail(),
+            client.getName(),
+            title,
+            eventDate,
+            startTime,
+            endTime
+        );
+      } catch (Exception ex) {
+        log.warn("Could not send cancellation email for event {} to client {}: {}",
+            eventId, reg.getClientId(), ex.getMessage());
+      }
+    }
+
+    log.info("Event {} deleted, {} registered user(s) notified", eventId, registrations.size());
   }
 
   
