@@ -37,14 +37,13 @@
           <label for="name" class="absolute left-0 -top-3.5 text-[10px] font-semibold tracking-[0.1em] text-gray-600 uppercase transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-600 peer-placeholder-shown:top-3 peer-placeholder-shown:font-light peer-placeholder-shown:tracking-normal peer-focus:-top-3.5 peer-focus:text-[10px] peer-focus:font-semibold peer-focus:tracking-[0.1em] peer-focus:text-emerald-950">
             Nombre completo
           </label>
-          @if (nameModel.invalid && (nameModel.dirty || nameModel.touched)) {
-            @if (nameModel.errors?.['required']) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">El nombre es obligatorio.</p>
-            }
-            @if (nameModel.errors?.['maxlength']) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">El nombre no puede superar {{ maxNameLength }} caracteres.</p>
-            }
-          }
+          <app-flash-message
+            [text]="nameModel.invalid && (nameModel.dirty || nameModel.touched)
+              ? (nameModel.errors?.['required'] ? 'El nombre es obligatorio.'
+                 : nameModel.errors?.['maxlength'] ? ('El nombre no puede superar ' + maxNameLength + ' caracteres.') : '')
+              : ''"
+            type="error">
+          </app-flash-message>
         </div>
 
         
@@ -64,14 +63,13 @@
           <label for="email" class="absolute left-0 -top-3.5 text-[10px] font-semibold tracking-[0.1em] text-gray-600 uppercase transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-600 peer-placeholder-shown:top-3 peer-placeholder-shown:font-light peer-placeholder-shown:tracking-normal peer-focus:-top-3.5 peer-focus:text-[10px] peer-focus:font-semibold peer-focus:tracking-[0.1em] peer-focus:text-emerald-950">
             Correo electrónico
           </label>
-          @if (emailModel.invalid && (emailModel.dirty || emailModel.touched)) {
-            @if (emailModel.errors?.['required']) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">El correo es obligatorio.</p>
-            }
-            @if (emailModel.errors?.['email']) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">Introduce un correo válido.</p>
-            }
-          }
+          <app-flash-message
+            [text]="emailModel.invalid && (emailModel.dirty || emailModel.touched)
+              ? (emailModel.errors?.['required'] ? 'El correo es obligatorio.'
+                 : emailModel.errors?.['email'] ? 'Introduce un correo válido.' : '')
+              : ''"
+            type="error">
+          </app-flash-message>
         </div>
 
         
@@ -90,39 +88,35 @@
           <label for="phone" class="absolute left-0 -top-3.5 text-[10px] font-semibold tracking-[0.1em] text-gray-600 uppercase transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-600 peer-placeholder-shown:top-3 peer-placeholder-shown:font-light peer-placeholder-shown:tracking-normal peer-focus:-top-3.5 peer-focus:text-[10px] peer-focus:font-semibold peer-focus:tracking-[0.1em] peer-focus:text-emerald-950">
             Teléfono
           </label>
-          @if (phoneModel.invalid && (phoneModel.dirty || phoneModel.touched)) {
-            @if (phoneModel.errors?.['required']) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">El teléfono es obligatorio.</p>
-            }
-            @if (phoneModel.errors?.['pattern']) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">Introduce un teléfono válido (ej. 612345678 o +34 612 345 678).</p>
-            }
-          }
+          <app-flash-message
+            [text]="phoneModel.invalid && (phoneModel.dirty || phoneModel.touched)
+              ? (phoneModel.errors?.['required'] ? 'El teléfono es obligatorio.'
+                 : phoneModel.errors?.['pattern'] ? 'Introduce un teléfono válido (ej. 612345678 o +34 612 345 678).' : '')
+              : ''"
+            type="error">
+          </app-flash-message>
         </div>
 
         
         <div class="relative pt-2">
-          <input
+          <label class="block text-[10px] font-semibold tracking-[0.1em] text-gray-600 uppercase mb-2">
+            Fecha de nacimiento
+          </label>
+          <app-date-picker
             [(ngModel)]="birthDate"
             #birthDateModel="ngModel"
             name="birthDate"
-            type="date"
-            id="birthDate"
-            class="block w-full border-0 border-b border-gray-200 py-3 text-emerald-950 focus:border-emerald-950 focus:ring-0 bg-transparent transition-colors text-sm font-light"
             required
             [max]="maxBirthDate"
-          >
-          <label for="birthDate" class="absolute left-0 -top-3.5 text-[10px] font-semibold tracking-[0.1em] text-gray-600 uppercase">
-            Fecha de nacimiento
-          </label>
-          @if (birthDateModel.invalid && (birthDateModel.dirty || birthDateModel.touched)) {
-            @if (birthDateModel.errors?.['required']) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">La fecha de nacimiento es obligatoria.</p>
-            }
-            @if (birthDateModel.errors?.['max']) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">Debes tener al menos 14 años para registrarte.</p>
-            }
-          }
+            placeholder="Seleccionar fecha">
+          </app-date-picker>
+          <app-flash-message
+            [text]="birthDateModel.invalid && (birthDateModel.dirty || birthDateModel.touched)
+              ? (birthDateModel.errors?.['required'] ? 'La fecha de nacimiento es obligatoria.'
+                 : birthDateModel.errors?.['max'] ? 'Debes tener al menos 14 años para registrarte.' : '')
+              : ''"
+            type="error">
+          </app-flash-message>
         </div>
 
         
@@ -156,27 +150,22 @@
             }
           </button>
 
-          @if (passwordModel.invalid && (passwordModel.dirty || passwordModel.touched)) {
-            @if (passwordModel.errors?.['required']) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">La contraseña es obligatoria.</p>
-            }
-            @if (passwordModel.errors?.['minlength']) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">Debe tener al menos {{ minPasswordLength }} caracteres.</p>
-            }
-          }
+          <app-flash-message
+            [text]="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched)
+              ? (passwordModel.errors?.['required'] ? 'La contraseña es obligatoria.'
+                 : passwordModel.errors?.['minlength'] ? ('Debe tener al menos ' + minPasswordLength + ' caracteres.') : '')
+              : ''"
+            type="error">
+          </app-flash-message>
         </div>
 
-        @if (errorMessage()) {
-          <div class="auth-banner auth-banner--error" role="alert">
-            <div class="auth-banner__body">
-              <p class="auth-banner__label">No se pudo crear la cuenta</p>
-              <p class="auth-banner__text">{{ errorMessage() }}</p>
-            </div>
-            <svg class="auth-banner__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/>
-            </svg>
-          </div>
-        }
+        <app-flash-message
+          [text]="errorMessage()"
+          type="error"
+          spacing="mt-2"
+          [autoDismissMs]="4000"
+          (dismissed)="errorMessage.set('')">
+        </app-flash-message>
 
         <button [disabled]="loading() || registroForm.invalid" type="submit" class="w-full bg-[#0B2118] text-white py-4 text-[11px] font-medium tracking-[0.15em] uppercase hover:bg-emerald-900 transition-colors mt-8 disabled:opacity-60 disabled:cursor-not-allowed">
           @if (loading()) {

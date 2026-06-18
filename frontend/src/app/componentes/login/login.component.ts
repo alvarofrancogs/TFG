@@ -6,11 +6,12 @@ import {Router, RouterLink} from '@angular/router';
 import {AuthStore} from '../../auth.store';
 import {AuthSession} from '../../modelos/auth.models';
 import {AuthApiService} from '../../servicios/auth-api.service';
+import {FlashMessageComponent} from '../flash-message/flash-message.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, FlashMessageComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })

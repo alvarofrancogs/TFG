@@ -4,11 +4,12 @@ import {FormsModule, NgForm} from '@angular/forms';
 import {RouterLink} from '@angular/router';
 
 import {AuthApiService} from '../../servicios/auth-api.service';
+import {FlashMessageComponent} from '../flash-message/flash-message.component';
 
 @Component({
   selector: 'app-recuperar-clave',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, FlashMessageComponent],
   templateUrl: './recuperar-clave.component.html',
   styleUrl: './recuperar-clave.component.css',
 })

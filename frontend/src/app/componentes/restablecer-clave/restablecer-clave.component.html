@@ -43,14 +43,13 @@
               Nueva contraseña
             </label>
 
-            @if (newPasswordModel.invalid && (newPasswordModel.dirty || newPasswordModel.touched)) {
-              @if (newPasswordModel.errors?.['required']) {
-                <p class="mt-2 text-[11px] text-red-500 font-light">La contraseña es obligatoria.</p>
-              }
-              @if (newPasswordModel.errors?.['minlength']) {
-                <p class="mt-2 text-[11px] text-red-500 font-light">Debe tener al menos {{ minPasswordLength }} caracteres.</p>
-              }
-            }
+            <app-flash-message
+              [text]="newPasswordModel.invalid && (newPasswordModel.dirty || newPasswordModel.touched)
+                ? (newPasswordModel.errors?.['required'] ? 'La contraseña es obligatoria.'
+                   : newPasswordModel.errors?.['minlength'] ? ('Debe tener al menos ' + minPasswordLength + ' caracteres.') : '')
+                : ''"
+              type="error">
+            </app-flash-message>
           </div>
 
           <div class="relative">
@@ -68,25 +67,23 @@
               Confirmar contraseña
             </label>
 
-            @if (confirmPasswordModel.invalid && (confirmPasswordModel.dirty || confirmPasswordModel.touched)) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">Debes confirmar la contraseña.</p>
-            }
-            @if (confirmPassword && newPassword && confirmPassword !== newPassword) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">Las contraseñas no coinciden.</p>
-            }
+            <app-flash-message
+              [text]="confirmPasswordModel.invalid && (confirmPasswordModel.dirty || confirmPasswordModel.touched)
+                ? 'Debes confirmar la contraseña.'
+                : (confirmPassword && newPassword && confirmPassword !== newPassword)
+                  ? 'Las contraseñas no coinciden.'
+                  : ''"
+              type="error">
+            </app-flash-message>
           </div>
 
-          @if (errorMessage()) {
-            <div class="auth-banner auth-banner--error" role="alert">
-              <div class="auth-banner__body">
-                <p class="auth-banner__label">No se pudo cambiar la contraseña</p>
-                <p class="auth-banner__text">{{ errorMessage() }}</p>
-              </div>
-              <svg class="auth-banner__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/>
-              </svg>
-            </div>
-          }
+          <app-flash-message
+            [text]="errorMessage()"
+            type="error"
+            spacing="mt-2"
+            [autoDismissMs]="4000"
+            (dismissed)="errorMessage.set('')">
+          </app-flash-message>
 
           <button
             [disabled]="loading() || resetForm.invalid || confirmPassword !== newPassword"

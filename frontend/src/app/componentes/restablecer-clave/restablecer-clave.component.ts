@@ -4,11 +4,12 @@ import {FormsModule, NgForm} from '@angular/forms';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 
 import {AuthApiService} from '../../servicios/auth-api.service';
+import {FlashMessageComponent} from '../flash-message/flash-message.component';
 
 @Component({
   selector: 'app-restablecer-clave',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, FlashMessageComponent],
   templateUrl: './restablecer-clave.component.html',
   styleUrl: './restablecer-clave.component.css',
 })

@@ -36,14 +36,13 @@
             Correo electrónico
           </label>
 
-          @if (emailModel.invalid && (emailModel.dirty || emailModel.touched)) {
-            @if (emailModel.errors?.['required']) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">El correo es obligatorio.</p>
-            }
-            @if (emailModel.errors?.['email']) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">Introduce un correo válido.</p>
-            }
-          }
+          <app-flash-message
+            [text]="emailModel.invalid && (emailModel.dirty || emailModel.touched)
+              ? (emailModel.errors?.['required'] ? 'El correo es obligatorio.'
+                 : emailModel.errors?.['email'] ? 'Introduce un correo válido.' : '')
+              : ''"
+            type="error">
+          </app-flash-message>
         </div>
 
         <div class="relative">
@@ -75,31 +74,26 @@
             }
           </button>
 
-          @if (passwordModel.invalid && (passwordModel.dirty || passwordModel.touched)) {
-            @if (passwordModel.errors?.['required']) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">La contraseña es obligatoria.</p>
-            }
-            @if (passwordModel.errors?.['minlength']) {
-              <p class="mt-2 text-[11px] text-red-500 font-light">Debe tener al menos {{ minPasswordLength }} caracteres.</p>
-            }
-          }
+          <app-flash-message
+            [text]="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched)
+              ? (passwordModel.errors?.['required'] ? 'La contraseña es obligatoria.'
+                 : passwordModel.errors?.['minlength'] ? ('Debe tener al menos ' + minPasswordLength + ' caracteres.') : '')
+              : ''"
+            type="error">
+          </app-flash-message>
         </div>
 
         <div class="flex justify-end pt-2">
           <a routerLink="/recuperar-clave" class="text-[13px] font-light text-emerald-950 hover:underline decoration-emerald-950/30 underline-offset-4 transition-all">¿No te acuerdas de tu contraseña?</a>
         </div>
 
-        @if (errorMessage()) {
-          <div class="auth-banner auth-banner--error" role="alert">
-            <div class="auth-banner__body">
-              <p class="auth-banner__label">No se pudo iniciar sesión</p>
-              <p class="auth-banner__text">{{ errorMessage() }}</p>
-            </div>
-            <svg class="auth-banner__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/>
-            </svg>
-          </div>
-        }
+        <app-flash-message
+          [text]="errorMessage()"
+          type="error"
+          spacing="mt-2"
+          [autoDismissMs]="4000"
+          (dismissed)="errorMessage.set('')">
+        </app-flash-message>
 
         <button [disabled]="loading() || loginForm.invalid" type="submit" class="w-full bg-[#0B2118] text-white py-4 text-[11px] font-medium tracking-[0.15em] uppercase hover:bg-emerald-900 transition-colors mt-8 disabled:opacity-60 disabled:cursor-not-allowed">
           @if (loading()) {

@@ -5,11 +5,13 @@ import {Router, RouterLink} from '@angular/router';
 
 import {AuthStore} from '../../auth.store';
 import {AuthApiService} from '../../servicios/auth-api.service';
+import {DatePickerComponent} from '../date-picker/date-picker.component';
+import {FlashMessageComponent} from '../flash-message/flash-message.component';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, DatePickerComponent, FlashMessageComponent],
   templateUrl: './registro.component.html',
   styleUrl: './registro.component.css',
 })
