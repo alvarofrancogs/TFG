@@ -10,11 +10,12 @@ import { AvailabilitySlot } from '../../modelos/reservation.models';
 import { CourtApiService } from '../../servicios/court-api.service';
 import { PaymentsApiService } from '../../servicios/payments-api.service';
 import { ReservationsApiService } from '../../servicios/reservations-api.service';
+import { FlashMessageComponent } from '../flash-message/flash-message.component';
 
 @Component({
   selector: 'app-reservas',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, NgOptimizedImage],
+  imports: [CommonModule, FormsModule, RouterLink, NgOptimizedImage, FlashMessageComponent],
   templateUrl: './reservas.component.html',
   styleUrls: ['./reservas.component.css'],
 })
