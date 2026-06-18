@@ -211,24 +211,29 @@
 
 @media (max-width: 380px) {
   .dp-panel {
-    padding: 0.75rem;
+    padding: 0.625rem;
   }
 
   .dp-header {
-    margin-bottom: 0.625rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .dp-header__label {
+    font-size: 12px;
   }
 
   .dp-nav {
-    width: 2rem;
-    height: 2rem;
+    width: 1.875rem;
+    height: 1.875rem;
   }
 
   .dp-day {
-    min-height: 38px;
-    font-size: 13px;
+    min-height: 34px;
+    font-size: 12px;
   }
 
   .dp-weekdays__cell {
     padding: 0.25rem 0;
+    font-size: 9px;
   }
 }

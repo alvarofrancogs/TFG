@@ -12,7 +12,14 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  AbstractControl,
+  ControlValueAccessor,
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
+  ValidationErrors,
+  Validator,
+} from '@angular/forms';
 
 interface DayCell {
   date: Date;
@@ -61,9 +68,14 @@ function startOfDay(d: Date): Date {
       useExisting: forwardRef(() => DatePickerComponent),
       multi: true,
     },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => DatePickerComponent),
+      multi: true,
+    },
   ],
 })
-export class DatePickerComponent implements OnChanges, ControlValueAccessor {
+export class DatePickerComponent implements OnChanges, ControlValueAccessor, Validator {
   @Input() set value(v: string) { this.innerValue.set(v ?? ''); }
   get value(): string { return this.innerValue(); }
 
@@ -71,6 +83,11 @@ export class DatePickerComponent implements OnChanges, ControlValueAccessor {
   @Input() max = '';
   @Input() placeholder = 'Seleccionar fecha';
   @Input() disabled = false;
+  /**
+   * If true, days outside [min, max] are NOT visually disabled.
+   * Validation still happens via Angular Forms (NG_VALIDATORS).
+   */
+  @Input() validateOnly = false;
   @Output() valueChange = new EventEmitter<string>();
 
   isOpen = signal(false);
@@ -80,6 +97,7 @@ export class DatePickerComponent implements OnChanges, ControlValueAccessor {
 
   private onChange: (v: string) => void = () => {};
   private onTouched: () => void = () => {};
+  private validatorOnChange: () => void = () => {};
 
   weekdays = WEEKDAYS;
 
@@ -96,6 +114,7 @@ export class DatePickerComponent implements OnChanges, ControlValueAccessor {
     const selected = fromIso(this.innerValue());
     const minDate = fromIso(this.min);
     const maxDate = fromIso(this.max);
+    const allowVisualDisable = !this.validateOnly;
 
     const first = new Date(year, month, 1);
     const firstWeekday = (first.getDay() + 6) % 7; // monday-first
@@ -114,7 +133,7 @@ export class DatePickerComponent implements OnChanges, ControlValueAccessor {
         inMonth: d.getMonth() === month,
         isToday: t === today.getTime(),
         isSelected: selected !== null && t === selected.getTime(),
-        isDisabled: beforeMin || afterMax,
+        isDisabled: allowVisualDisable && (beforeMin || afterMax),
       });
     }
     return cells;
@@ -126,6 +145,9 @@ export class DatePickerComponent implements OnChanges, ControlValueAccessor {
       if (parsed) {
         this.viewMonth.set(new Date(parsed.getFullYear(), parsed.getMonth(), 1));
       }
+    }
+    if (changes['min'] || changes['max']) {
+      this.validatorOnChange();
     }
   }
 
@@ -139,13 +161,21 @@ export class DatePickerComponent implements OnChanges, ControlValueAccessor {
     if (this.disabled) return;
     this.isOpen.update(v => !v);
     if (this.isOpen()) {
-      const parsed = fromIso(this.innerValue());
-      this.viewMonth.set(parsed
-        ? new Date(parsed.getFullYear(), parsed.getMonth(), 1)
-        : new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+      this.viewMonth.set(this.computeOpenMonth());
     } else {
       this.onTouched();
     }
+  }
+
+  private computeOpenMonth(): Date {
+    const parsed = fromIso(this.innerValue());
+    if (parsed) return new Date(parsed.getFullYear(), parsed.getMonth(), 1);
+    const maxDate = fromIso(this.max);
+    if (maxDate) return new Date(maxDate.getFullYear(), maxDate.getMonth(), 1);
+    const minDate = fromIso(this.min);
+    if (minDate) return new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), 1);
   }
 
   prevMonth(event: MouseEvent) {
@@ -194,6 +224,28 @@ export class DatePickerComponent implements OnChanges, ControlValueAccessor {
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
     if (isDisabled) this.isOpen.set(false);
+  }
+
+  // Validator
+  validate(control: AbstractControl): ValidationErrors | null {
+    const raw = control.value;
+    if (!raw) return null;
+    const value = typeof raw === 'string' ? fromIso(raw) : null;
+    if (!value) return null;
+
+    const minDate = fromIso(this.min);
+    if (minDate && value.getTime() < minDate.getTime()) {
+      return { min: { min: this.min, actual: raw } };
+    }
+    const maxDate = fromIso(this.max);
+    if (maxDate && value.getTime() > maxDate.getTime()) {
+      return { max: { max: this.max, actual: raw } };
+    }
+    return null;
+  }
+
+  registerOnValidatorChange(fn: () => void): void {
+    this.validatorOnChange = fn;
   }
 
   @HostListener('document:click', ['$event'])
