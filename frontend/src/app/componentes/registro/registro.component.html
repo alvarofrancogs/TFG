@@ -99,16 +99,17 @@
 
         
         <div class="relative pt-2">
-          <label class="block text-[10px] font-semibold tracking-[0.1em] text-gray-600 uppercase mb-2">
+          <label for="birthDate" class="block text-[10px] font-semibold tracking-[0.1em] text-gray-600 uppercase mb-2">
             Fecha de nacimiento
           </label>
           <app-date-picker
             [(ngModel)]="birthDate"
             #birthDateModel="ngModel"
             name="birthDate"
+            inputId="birthDate"
             required
             [max]="maxBirthDate"
-            validateOnly
+            [validateOnly]="true"
             placeholder="Seleccionar fecha">
           </app-date-picker>
           <app-flash-message
