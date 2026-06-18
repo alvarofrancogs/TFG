@@ -3,17 +3,24 @@ import { FormsModule, NgForm } from '@angular/forms';
 
 import { ClientsApiService } from '../../servicios/clients-api.service';
 import { Client, CreateClientRequest } from '../../modelos/client.models';
+import { DatePickerComponent } from '../date-picker/date-picker.component';
+import { FlashMessageComponent } from '../flash-message/flash-message.component';
 
 @Component({
   selector: 'app-admin-clientes',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, DatePickerComponent, FlashMessageComponent],
   templateUrl: './admin-clientes.component.html',
   styleUrl: './admin-clientes.component.css',
 })
 export class AdminClientesComponent implements OnInit {
   private clientsApi = inject(ClientsApiService);
   readonly resultLimit = 10;
+
+  readonly todayIso = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  })();
 
   clients = signal<Client[]>([]);
   loading = signal(true);

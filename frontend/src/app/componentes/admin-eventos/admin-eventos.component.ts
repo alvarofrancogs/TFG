@@ -8,11 +8,13 @@ import { EventsApiService } from '../../servicios/events-api.service';
 import { ScheduleApiService } from '../../servicios/schedule-api.service';
 
 import { DropdownComponent, DropdownOption } from '../dropdown/dropdown.component';
+import { DatePickerComponent } from '../date-picker/date-picker.component';
+import { FlashMessageComponent } from '../flash-message/flash-message.component';
 
 @Component({
   selector: 'app-admin-eventos',
   standalone: true,
-  imports: [FormsModule, DropdownComponent],
+  imports: [FormsModule, DropdownComponent, DatePickerComponent, FlashMessageComponent],
   templateUrl: './admin-eventos.component.html',
   styleUrl: './admin-eventos.component.css',
 })
@@ -54,6 +56,11 @@ export class AdminEventosComponent implements OnInit {
   });
 
   selectedCourtIds = signal<string[]>([]);
+
+  readonly todayIso = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  })();
 
   readonly categories: EventCategory[] = ['TORNEO', 'LIGA', 'MASTERCLASS', 'SOCIAL'];
 

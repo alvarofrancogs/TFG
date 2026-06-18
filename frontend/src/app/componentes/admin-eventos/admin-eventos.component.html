@@ -7,9 +7,12 @@
       <h1 class="text-2xl font-light text-gray-900" style="font-family: 'Playfair Display', serif;">Gestión de Eventos</h1>
     </div>
 
-    @if (actionError()) {
-      <div class="px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-[13px]">{{ actionError() }}</div>
-    }
+    <app-flash-message
+      [text]="actionError()"
+      type="error"
+      [autoDismissMs]="4000"
+      (dismissed)="actionError.set('')">
+    </app-flash-message>
 
     <section class="bg-white border border-gray-200 p-6 lg:p-8">
       <h2 class="text-[11px] font-bold tracking-[0.25em] uppercase text-gray-600 mb-6">Crear nuevo evento</h2>
@@ -39,7 +42,12 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
           <div class="admin-field">
             <label class="admin-label">Fecha</label>
-            <input type="date" [(ngModel)]="form.eventDate" name="eventDate" required class="admin-input" />
+            <app-date-picker
+              [value]="form.eventDate"
+              [min]="todayIso"
+              placeholder="Seleccionar fecha"
+              (valueChange)="form.eventDate = $event">
+            </app-date-picker>
           </div>
           <div class="admin-field">
             <label class="admin-label">Hora inicio</label>
@@ -94,12 +102,18 @@
           </div>
         }
 
-        @if (createError()) {
-          <p class="text-[13px] text-red-600">{{ createError() }}</p>
-        }
-        @if (createSuccess()) {
-          <p class="text-[13px] text-emerald-700">{{ createSuccess() }}</p>
-        }
+        <app-flash-message
+          [text]="createError()"
+          type="error"
+          [autoDismissMs]="4000"
+          (dismissed)="createError.set('')">
+        </app-flash-message>
+        <app-flash-message
+          [text]="createSuccess()"
+          type="success"
+          [autoDismissMs]="4000"
+          (dismissed)="createSuccess.set('')">
+        </app-flash-message>
 
         <button type="submit"
           class="btn-green-outline">
