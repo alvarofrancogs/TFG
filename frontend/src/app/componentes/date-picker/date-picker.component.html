@@ -1,0 +1,77 @@
+<div class="dp-wrapper">
+
+  <button
+    type="button"
+    class="dp-trigger"
+    [class.dp-trigger--open]="isOpen()"
+    [class.dp-trigger--placeholder]="!value"
+    [class.dp-trigger--disabled]="disabled"
+    [disabled]="disabled"
+    (click)="toggle()"
+    [attr.aria-expanded]="isOpen()"
+    aria-haspopup="dialog">
+    <span class="dp-trigger__label">
+      {{ value ? triggerLabel : placeholder }}
+    </span>
+    <svg class="dp-trigger__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    </svg>
+  </button>
+
+  @if (isOpen()) {
+    <div class="dp-panel" role="dialog" aria-label="Selector de fecha">
+
+      <div class="dp-header">
+        <div class="dp-header__nav">
+          <button type="button" class="dp-nav" (click)="prevYear($event)" aria-label="Año anterior">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 19l-7-7 7-7M19 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button type="button" class="dp-nav" (click)="prevMonth($event)" aria-label="Mes anterior">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+        </div>
+        <span class="dp-header__label">{{ monthLabel() }}</span>
+        <div class="dp-header__nav">
+          <button type="button" class="dp-nav" (click)="nextMonth($event)" aria-label="Mes siguiente">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+          <button type="button" class="dp-nav" (click)="nextYear($event)" aria-label="Año siguiente">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="dp-weekdays">
+        @for (w of weekdays; track w) {
+          <span class="dp-weekdays__cell">{{ w }}</span>
+        }
+      </div>
+
+      <div class="dp-grid">
+        @for (cell of days(); track cell.iso) {
+          <button
+            type="button"
+            class="dp-day"
+            [class.dp-day--out]="!cell.inMonth"
+            [class.dp-day--today]="cell.isToday"
+            [class.dp-day--selected]="cell.isSelected"
+            [class.dp-day--disabled]="cell.isDisabled"
+            [disabled]="cell.isDisabled"
+            (click)="selectDay(cell)">
+            {{ cell.day }}
+          </button>
+        }
+      </div>
+
+    </div>
+  }
+</div>

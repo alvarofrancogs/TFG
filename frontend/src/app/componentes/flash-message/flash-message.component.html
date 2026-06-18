@@ -1,0 +1,14 @@
+@if (display()) {
+  <p
+    class="flash-message"
+    [class.flash-message--error]="type === 'error'"
+    [class.flash-message--success]="type === 'success'"
+    [class.flash-message--warning]="type === 'warning'"
+    [class.flash-message--info]="type === 'info'"
+    [class.flash-message--leaving]="leaving()"
+    [class]="spacing"
+    role="status"
+    [attr.aria-live]="type === 'error' ? 'assertive' : 'polite'">
+    {{ display() }}
+  </p>
+}
