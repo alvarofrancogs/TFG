@@ -9,6 +9,7 @@ import {
   SimpleChanges,
   computed,
   forwardRef,
+  inject,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -83,10 +84,9 @@ export class DatePickerComponent implements OnChanges, ControlValueAccessor, Val
   @Input() max = '';
   @Input() placeholder = 'Seleccionar fecha';
   @Input() disabled = false;
-  /**
-   * If true, days outside [min, max] are NOT visually disabled.
-   * Validation still happens via Angular Forms (NG_VALIDATORS).
-   */
+  /** Forwarded to the trigger button. Lets a `<label for="...">` reference this picker. */
+  @Input() inputId: string | null = null;
+ 
   @Input() validateOnly = false;
   @Output() valueChange = new EventEmitter<string>();
 
@@ -95,11 +95,13 @@ export class DatePickerComponent implements OnChanges, ControlValueAccessor, Val
   private innerValue = signal('');
   private viewMonth = signal<Date>(startOfDay(new Date()));
 
-  private onChange: (v: string) => void = () => {};
-  private onTouched: () => void = () => {};
-  private validatorOnChange: () => void = () => {};
+  private onChange: (v: string) => void = () => undefined;
+  private onTouched: () => void = () => undefined;
+  private validatorOnChange: () => void = () => undefined;
 
   weekdays = WEEKDAYS;
+
+  private el = inject(ElementRef);
 
   monthLabel = computed(() => {
     const d = this.viewMonth();
@@ -226,7 +228,6 @@ export class DatePickerComponent implements OnChanges, ControlValueAccessor, Val
     if (isDisabled) this.isOpen.set(false);
   }
 
-  // Validator
   validate(control: AbstractControl): ValidationErrors | null {
     const raw = control.value;
     if (!raw) return null;
@@ -255,6 +256,4 @@ export class DatePickerComponent implements OnChanges, ControlValueAccessor, Val
       this.isOpen.set(false);
     }
   }
-
-  constructor(private el: ElementRef) {}
 }
