@@ -80,9 +80,12 @@
               </label>
             </div>
 
-            @if (error()) {
-              <p class="text-red-600 text-[13px] font-light">{{ error() }}</p>
-            }
+            <app-flash-message
+              [text]="error()"
+              type="error"
+              [autoDismissMs]="4000"
+              (dismissed)="error.set('')">
+            </app-flash-message>
 
             <button type="submit"
               [disabled]="!canSubmit"

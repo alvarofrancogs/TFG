@@ -6,11 +6,12 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 import { DropdownComponent, DropdownOption } from '../dropdown/dropdown.component';
+import { FlashMessageComponent } from '../flash-message/flash-message.component';
 
 @Component({
   selector: 'app-contacto',
   standalone: true,
-  imports: [RouterLink, FormsModule, DropdownComponent],
+  imports: [RouterLink, FormsModule, DropdownComponent, FlashMessageComponent],
   templateUrl: './contacto.html',
   styleUrl: './contacto.css',
 })

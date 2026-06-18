@@ -39,11 +39,13 @@
 
   <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-12 pb-24">
 
-    @if (actionError()) {
-      <div class="mb-6 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-[13px]">
-        {{ actionError() }}
-      </div>
-    }
+    <app-flash-message
+      [text]="actionError()"
+      type="error"
+      spacing="mb-6"
+      [autoDismissMs]="4000"
+      (dismissed)="actionError.set('')">
+    </app-flash-message>
 
     @if (loading()) {
       <div class="space-y-0">
@@ -149,9 +151,13 @@
             class="text-white/50 text-[11px] font-light tracking-wide underline underline-offset-4 hover:text-white/80 transition-colors disabled:opacity-40">
             {{ subscribeLoading() ? 'Procesando...' : 'Cancelar suscripción' }}
           </button>
-          @if (subscribeError()) {
-            <p class="text-red-400 text-[12px] font-light mt-2">{{ subscribeError() }}</p>
-          }
+          <app-flash-message
+            [text]="subscribeError()"
+            type="error"
+            spacing="mt-2"
+            [autoDismissMs]="4000"
+            (dismissed)="subscribeError.set('')">
+          </app-flash-message>
 
         } @else if (subscribeSuccess()) {
           
@@ -171,9 +177,12 @@
               class="bg-white text-[#0B2118] px-6 py-3.5 text-[11px] font-bold tracking-[0.15em] uppercase hover:bg-emerald-50 transition-colors disabled:opacity-50 self-start">
               {{ subscribeLoading() ? 'Enviando...' : 'Suscribirse' }}
             </button>
-            @if (subscribeError()) {
-              <p class="text-red-400 text-[12px] font-light">{{ subscribeError() }}</p>
-            }
+            <app-flash-message
+              [text]="subscribeError()"
+              type="error"
+              [autoDismissMs]="4000"
+              (dismissed)="subscribeError.set('')">
+            </app-flash-message>
           </div>
         }
       </div>

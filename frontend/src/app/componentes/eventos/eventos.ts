@@ -6,10 +6,11 @@ import { AuthStore } from '../../auth.store';
 import { EventCategory, EventResponse } from '../../modelos/event.models';
 import { EventsApiService } from '../../servicios/events-api.service';
 import { NewsletterService } from '../../servicios/newsletter.service';
+import { FlashMessageComponent } from '../flash-message/flash-message.component';
 
 @Component({
   selector: 'app-eventos',
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, FlashMessageComponent],
   templateUrl: './eventos.html',
   styleUrl: './eventos.css',
 })
