@@ -8,11 +8,13 @@ import { ReservationsApiService } from '../../servicios/reservations-api.service
 import { ScheduleApiService } from '../../servicios/schedule-api.service';
 
 import { DropdownComponent, DropdownOption } from '../dropdown/dropdown.component';
+import { DatePickerComponent } from '../date-picker/date-picker.component';
+import { FlashMessageComponent } from '../flash-message/flash-message.component';
 
 @Component({
   selector: 'app-admin-reservas',
   standalone: true,
-  imports: [FormsModule, DropdownComponent],
+  imports: [FormsModule, DropdownComponent, DatePickerComponent, FlashMessageComponent],
   templateUrl: './admin-reservas.component.html',
   styleUrl: './admin-reservas.component.css',
 })
@@ -315,7 +317,7 @@ export class AdminReservasComponent implements OnInit {
     return time.substring(0, 5);
   }
 
-  private today() {
+  today() {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   }

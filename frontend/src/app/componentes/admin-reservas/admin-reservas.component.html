@@ -9,9 +9,13 @@
     <p class="text-[15px] font-light text-gray-500 leading-relaxed max-w-lg">
       Ocupación en tiempo real · {{ selectedDate() }}
     </p>
-    @if (loadError()) {
-      <div class="mt-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-[13px]">{{ loadError() }}</div>
-    }
+    <app-flash-message
+      [text]="loadError()"
+      type="error"
+      spacing="mt-4"
+      [autoDismissMs]="4000"
+      (dismissed)="loadError.set('')">
+    </app-flash-message>
   </section>
 
   <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 pb-24">
@@ -24,13 +28,12 @@
         <div class="flex flex-col sm:flex-row sm:items-center gap-6">
           <div class="flex items-center gap-4">
             <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600">Fecha</span>
-            <input
-              id="calendar-date"
-              type="date"
-              [ngModel]="selectedDate()"
-              (ngModelChange)="changeDate($event)"
-              class="border-b border-gray-300 pb-1 text-sm text-gray-900 bg-transparent focus:border-[#0B2118] focus:outline-none transition-colors"
-            >
+            <div class="w-[220px]">
+              <app-date-picker
+                [value]="selectedDate()"
+                (valueChange)="changeDate($event)">
+              </app-date-picker>
+            </div>
           </div>
 
           <div class="flex gap-2">
@@ -216,12 +219,20 @@
             Franjas horarias
           </h2>
 
-          @if (scheduleError()) {
-            <div class="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-[13px]">{{ scheduleError() }}</div>
-          }
-          @if (scheduleSuccess()) {
-            <div class="mb-4 px-4 py-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[13px]">{{ scheduleSuccess() }}</div>
-          }
+          <app-flash-message
+            [text]="scheduleError()"
+            type="error"
+            spacing="mb-4"
+            [autoDismissMs]="4000"
+            (dismissed)="scheduleError.set('')">
+          </app-flash-message>
+          <app-flash-message
+            [text]="scheduleSuccess()"
+            type="success"
+            spacing="mb-4"
+            [autoDismissMs]="4000"
+            (dismissed)="scheduleSuccess.set('')">
+          </app-flash-message>
 
           <div class="flex flex-wrap gap-2 mb-6">
             @for (slot of scheduleSlots(); track slot) {
@@ -265,12 +276,20 @@
           </h2>
           <p class="text-[13px] font-light text-gray-600 mb-6">Inhabilita una pista por labores de limpieza o reparación.</p>
 
-          @if (blockError()) {
-            <div class="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-[13px]">{{ blockError() }}</div>
-          }
-          @if (blockSuccess()) {
-            <div class="mb-4 px-4 py-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[13px]">{{ blockSuccess() }}</div>
-          }
+          <app-flash-message
+            [text]="blockError()"
+            type="error"
+            spacing="mb-4"
+            [autoDismissMs]="4000"
+            (dismissed)="blockError.set('')">
+          </app-flash-message>
+          <app-flash-message
+            [text]="blockSuccess()"
+            type="success"
+            spacing="mb-4"
+            [autoDismissMs]="4000"
+            (dismissed)="blockSuccess.set('')">
+          </app-flash-message>
 
           <form (submit)="blockCourt($event)" class="space-y-6" novalidate>
 
@@ -293,14 +312,15 @@
               @if (courtsForBlock().length === 0) {
                 <p class="text-[13px] font-light text-gray-600">Sin pistas disponibles.</p>
               } @else {
-                <div class="space-y-0">
+                <div class="ar-court-grid">
                   @for (court of courtsForBlock(); track court.id) {
                     <button type="button" (click)="blockForm.courtId = court.id"
                       class="ar-court-select-row"
-                      [class.ar-court-select-row--active]="blockForm.courtId === court.id">
-                      <span>{{ court.name }}</span>
+                      [class.ar-court-select-row--active]="blockForm.courtId === court.id"
+                      [attr.aria-pressed]="blockForm.courtId === court.id">
+                      <span class="ar-court-select-row__name">{{ court.name }}</span>
                       @if (blockForm.courtId === court.id) {
-                        <span class="text-[10px] font-bold tracking-widest uppercase text-[#0B2118]">Seleccionada</span>
+                        <span class="ar-court-select-row__tag">Seleccionada</span>
                       }
                     </button>
                   }
@@ -309,9 +329,13 @@
             </div>
 
             <div>
-              <label for="block-date" class="block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-3">Fecha</label>
-              <input id="block-date" type="date" [(ngModel)]="blockForm.date" name="date"
-                class="w-full border-b border-gray-300 pb-1 text-sm text-gray-900 bg-transparent focus:border-[#0B2118] focus:outline-none transition-colors">
+              <label class="block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-600 mb-3">Fecha</label>
+              <app-date-picker
+                [value]="blockForm.date"
+                [min]="today()"
+                placeholder="Seleccionar fecha"
+                (valueChange)="blockForm.date = $event">
+              </app-date-picker>
             </div>
 
             <div>
