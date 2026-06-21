@@ -1,10 +1,5 @@
 # Oasis Club — Plataforma Digital para la Gestión de un Club Deportivo
 
-[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![Angular](https://img.shields.io/badge/Angular-Latest-red.svg)](https://angular.dev/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15%2B-blue.svg)](https://www.postgresql.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Este proyecto consiste en el diseño y desarrollo de una aplicación web completa orientada a la administración y reserva de instalaciones en un club deportivo y a la gestión del entrenamiento personalizado de sus socios. Implementando una arquitectura moderna desacoplada en la que el frontend y el backend se comunican mediante una API REST protegida por JWT.
 
