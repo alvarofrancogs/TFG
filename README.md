@@ -58,7 +58,7 @@ Desarrollado bajo una arquitectura limpia en capas (Controlador, Servicio, Repos
 
 Construido utilizando Angular como framework corporativo para interfaces de usuario SPA (Single Page Application).
 
-* **Angular 17+ & TypeScript:** Tipado estático y desarrollo estructurado basado en componentes reutilizables y servicios inyectables.
+* **Angular 21 & TypeScript:** Tipado estático y desarrollo estructurado basado en componentes reutilizables y servicios inyectables.
 * **Angular Signals:** Utilización del nuevo motor reactivo nativo de Angular para la gestión de estados compartidos en tiempo real (por ejemplo, en la sesión del usuario a través de `AuthStore`). Esto optimiza la detección de cambios y los renders del árbol de componentes.
 * **RxJS:** Programación reactiva mediante flujos de datos asíncronos para el manejo eficiente de peticiones HTTP, eventos del DOM y observables de navegación.
 * **Angular Guards (Guardas de Ruta):** Control perimetral a nivel de cliente (`AdminOnlyGuard`, `GuestOnlyGuard`). Impide la carga de rutas y la visualización de vistas si el usuario no cuenta con el token adecuado almacenado en el navegador.
