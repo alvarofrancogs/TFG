@@ -45,7 +45,7 @@ El sistema se basa en un modelo desacoplado y sin estado (Stateless):
 Desarrollado bajo una arquitectura limpia en capas (Controlador, Servicio, Repositorio, Entidad) utilizando Java 21 y el ecosistema de Spring Boot.
 
 * **Java 21 (LTS):** Aprovechamiento de características modernas del lenguaje (como la mejora de rendimiento general de la JVM, Pattern Matching y el soporte nativo para características avanzadas).
-* **Spring Boot 3.x:** Acelerador de desarrollo que nos provee de autoconfiguración y dependencias integradas.
+* **Spring Boot 4.0.3:** Acelerador de desarrollo que nos provee de autoconfiguración y dependencias integradas.
 * **Spring Security:** Framework encargado de la seguridad perimetral de la API. Se ha configurado de manera stateless para no almacenar sesiones HTTP en el servidor, utilizando un filtro personalizado (`JwtFilter`) que intercepta y autentica cada petición.
 * **JSON Web Tokens (JWT):** Utilizado como mecanismo seguro para delegar la autenticación al cliente. Los tokens viajan cifrados, tienen una validez de 24 horas (`expiration-ms: 86400000`) y permiten al servidor verificar la identidad del cliente mediante su firma matemática sin realizar accesos redundantes a la base de datos.
 * **Spring Data JPA (Hibernate):** Capa de abstracción de datos para interactuar con la base de datos relacional sin necesidad de escribir SQL nativo complejo, asegurando la portabilidad del código.
