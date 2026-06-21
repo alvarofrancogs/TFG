@@ -6,6 +6,11 @@ import com.alvar.oasisclub.events.dto.CreateEventRequest;
 import com.alvar.oasisclub.events.dto.EventRegistrationResponse;
 import com.alvar.oasisclub.events.dto.EventResponse;
 import com.alvar.oasisclub.events.service.EventService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -24,24 +29,51 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/events")
 @AllArgsConstructor
+@Tag(name = "Eventos", description = "Gestión de eventos del club, inscripciones y cancelaciones")
 public class EventController {
 
   private final EventService eventService;
   private final AccessControlService accessControl;
 
   @GetMapping
+  @Operation(
+      summary = "Listar eventos activos",
+      description = "Devuelve los eventos activos y públicos del club. Si el usuario está autenticado, también indica si ya está inscrito en cada evento."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Lista de eventos activos obtenida correctamente")
+  })
   public List<EventResponse> getActiveEvents(Authentication authentication) {
     UUID clientId = extractClientId(authentication);
     return eventService.getActiveEvents(clientId);
   }
 
   @GetMapping("/all")
+  @Operation(
+      summary = "Listar todos los eventos (administrador)",
+      description = "Devuelve todos los eventos del club incluyendo los no activos o pasados. Solo accesible por administradores."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Lista completa de eventos obtenida correctamente"),
+      @ApiResponse(responseCode = "401", description = "No autenticado"),
+      @ApiResponse(responseCode = "403", description = "Solo los administradores pueden ver todos los eventos")
+  })
   public List<EventResponse> getAllEvents(Authentication authentication) {
     accessControl.requireAdmin(authentication);
     return eventService.getAllEvents();
   }
 
   @PostMapping
+  @Operation(
+      summary = "Crear evento",
+      description = "Crea un nuevo evento en el club. Solo accesible por administradores."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Evento creado correctamente"),
+      @ApiResponse(responseCode = "400", description = "Datos del evento inválidos"),
+      @ApiResponse(responseCode = "401", description = "No autenticado"),
+      @ApiResponse(responseCode = "403", description = "Solo los administradores pueden crear eventos")
+  })
   public ResponseEntity<EventResponse> createEvent(
       @Valid @RequestBody CreateEventRequest request,
       Authentication authentication
@@ -52,8 +84,18 @@ public class EventController {
   }
 
   @DeleteMapping("/{id}")
+  @Operation(
+      summary = "Eliminar evento",
+      description = "Elimina un evento del sistema. Esto también cancela todas las inscripciones asociadas. Solo accesible por administradores."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "204", description = "Evento eliminado correctamente"),
+      @ApiResponse(responseCode = "401", description = "No autenticado"),
+      @ApiResponse(responseCode = "403", description = "Solo los administradores pueden eliminar eventos"),
+      @ApiResponse(responseCode = "404", description = "Evento no encontrado")
+  })
   public ResponseEntity<Void> deleteEvent(
-      @PathVariable UUID id,
+      @Parameter(description = "ID UUID del evento") @PathVariable UUID id,
       Authentication authentication
   ) {
     accessControl.requireAdmin(authentication);
@@ -62,8 +104,18 @@ public class EventController {
   }
 
   @GetMapping("/{id}/registrations")
+  @Operation(
+      summary = "Listar inscritos en un evento",
+      description = "Devuelve la lista de clientes inscritos en un evento específico. Solo accesible por administradores."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Lista de inscritos obtenida correctamente"),
+      @ApiResponse(responseCode = "401", description = "No autenticado"),
+      @ApiResponse(responseCode = "403", description = "Solo los administradores pueden ver los inscritos"),
+      @ApiResponse(responseCode = "404", description = "Evento no encontrado")
+  })
   public List<EventRegistrationResponse> getRegistrations(
-      @PathVariable UUID id,
+      @Parameter(description = "ID UUID del evento") @PathVariable UUID id,
       Authentication authentication
   ) {
     accessControl.requireAdmin(authentication);
@@ -71,9 +123,19 @@ public class EventController {
   }
 
   @DeleteMapping("/{id}/registrations/{regId}")
+  @Operation(
+      summary = "Eliminar inscripción (administrador)",
+      description = "Elimina la inscripción de un cliente en un evento. Solo accesible por administradores."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "204", description = "Inscripción eliminada correctamente"),
+      @ApiResponse(responseCode = "401", description = "No autenticado"),
+      @ApiResponse(responseCode = "403", description = "Solo los administradores pueden eliminar inscripciones"),
+      @ApiResponse(responseCode = "404", description = "Evento o inscripción no encontrada")
+  })
   public ResponseEntity<Void> removeRegistration(
-      @PathVariable UUID id,
-      @PathVariable UUID regId,
+      @Parameter(description = "ID UUID del evento") @PathVariable UUID id,
+      @Parameter(description = "ID UUID de la inscripción") @PathVariable UUID regId,
       Authentication authentication
   ) {
     accessControl.requireAdmin(authentication);
@@ -82,8 +144,18 @@ public class EventController {
   }
 
   @PostMapping("/{id}/register")
+  @Operation(
+      summary = "Inscribirse en un evento",
+      description = "Inscribe al cliente autenticado en el evento indicado. Si el evento tiene aforo limitado, se validará la disponibilidad de plazas."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Inscripción realizada correctamente"),
+      @ApiResponse(responseCode = "400", description = "El cliente ya está inscrito o no hay plazas disponibles"),
+      @ApiResponse(responseCode = "401", description = "No autenticado"),
+      @ApiResponse(responseCode = "404", description = "Evento no encontrado")
+  })
   public ResponseEntity<Void> register(
-      @PathVariable UUID id,
+      @Parameter(description = "ID UUID del evento") @PathVariable UUID id,
       Authentication authentication
   ) {
     AuthenticatedUser user = accessControl.requireUser(authentication);
@@ -92,8 +164,17 @@ public class EventController {
   }
 
   @DeleteMapping("/{id}/register")
+  @Operation(
+      summary = "Cancelar inscripción propia",
+      description = "Cancela la inscripción del cliente autenticado en el evento indicado."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "204", description = "Inscripción cancelada correctamente"),
+      @ApiResponse(responseCode = "401", description = "No autenticado"),
+      @ApiResponse(responseCode = "404", description = "Evento o inscripción no encontrada")
+  })
   public ResponseEntity<Void> unregister(
-      @PathVariable UUID id,
+      @Parameter(description = "ID UUID del evento") @PathVariable UUID id,
       Authentication authentication
   ) {
     AuthenticatedUser user = accessControl.requireUser(authentication);

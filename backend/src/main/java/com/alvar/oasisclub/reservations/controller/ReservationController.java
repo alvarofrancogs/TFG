@@ -11,6 +11,11 @@ import com.alvar.oasisclub.reservations.dto.ReservationResponse;
 import com.alvar.oasisclub.reservations.entity.ReservationEntity;
 import com.alvar.oasisclub.reservations.entity.SportType;
 import com.alvar.oasisclub.reservations.service.ReservationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
@@ -31,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1")
 @AllArgsConstructor
+@Tag(name = "Reservas", description = "Gestión de reservas de pistas, disponibilidad y bloques de mantenimiento")
 public class ReservationController {
 
   private final ReservationService reservationService;
@@ -38,10 +44,18 @@ public class ReservationController {
   private final ClientService clientService;
 
   @GetMapping("/reservations")
+  @Operation(
+      summary = "Listar reservas",
+      description = "Devuelve la lista de reservas. Los administradores ven todas las reservas; los clientes solo ven las suyas. Se puede filtrar por deporte, estado y fecha."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Lista de reservas obtenida correctamente"),
+      @ApiResponse(responseCode = "401", description = "No autenticado")
+  })
   public List<ReservationResponse> getReservations(
-      @RequestParam(required = false) String sport,
-      @RequestParam(required = false) String status,
-      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+      @Parameter(description = "Filtrar por tipo de deporte (PADEL, TENNIS, etc.)") @RequestParam(required = false) String sport,
+      @Parameter(description = "Filtrar por estado (CONFIRMED, PENDING, CANCELLED)") @RequestParam(required = false) String status,
+      @Parameter(description = "Filtrar por fecha en formato YYYY-MM-DD") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
       Authentication authentication
   ) {
     if (!accessControl.isAdmin(authentication)) {
@@ -53,6 +67,16 @@ public class ReservationController {
   }
 
   @PostMapping("/reservations")
+  @Operation(
+      summary = "Crear reserva (solo administrador)",
+      description = "Crea una reserva confirmada directamente para un cliente. Solo disponible para administradores. Los clientes deben pasar por el flujo de pago de Stripe."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Reserva creada correctamente"),
+      @ApiResponse(responseCode = "400", description = "Datos inválidos o cliente no especificado"),
+      @ApiResponse(responseCode = "401", description = "No autenticado"),
+      @ApiResponse(responseCode = "403", description = "Solo los administradores pueden crear reservas directamente")
+  })
   public ResponseEntity<ReservationResponse> createReservation(
       @Valid @RequestBody CreateReservationRequest request,
       Authentication authentication
@@ -81,6 +105,16 @@ public class ReservationController {
   }
 
   @PostMapping("/reservations/maintenance")
+  @Operation(
+      summary = "Crear bloque de mantenimiento",
+      description = "Bloquea una pista en una franja horaria específica por motivos de mantenimiento. Solo accesible por administradores."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Bloque de mantenimiento creado correctamente"),
+      @ApiResponse(responseCode = "400", description = "Datos del bloque inválidos"),
+      @ApiResponse(responseCode = "401", description = "No autenticado"),
+      @ApiResponse(responseCode = "403", description = "Solo los administradores pueden crear bloques de mantenimiento")
+  })
   public ResponseEntity<ReservationResponse> createMaintenance(
       @Valid @RequestBody CreateMaintenanceBlockRequest request,
       Authentication authentication
@@ -90,7 +124,20 @@ public class ReservationController {
   }
 
   @DeleteMapping("/reservations/{id}")
-  public ResponseEntity<Void> deleteReservation(@PathVariable UUID id, Authentication authentication) {
+  @Operation(
+      summary = "Cancelar reserva",
+      description = "Elimina una reserva existente. Los administradores pueden eliminar cualquier reserva; los clientes solo pueden cancelar las suyas propias."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "204", description = "Reserva cancelada correctamente"),
+      @ApiResponse(responseCode = "401", description = "No autenticado"),
+      @ApiResponse(responseCode = "403", description = "Sin permisos para cancelar esta reserva"),
+      @ApiResponse(responseCode = "404", description = "Reserva no encontrada")
+  })
+  public ResponseEntity<Void> deleteReservation(
+      @Parameter(description = "ID UUID de la reserva") @PathVariable UUID id,
+      Authentication authentication
+  ) {
     if (!accessControl.isAdmin(authentication)) {
       AuthenticatedUser user = accessControl.requireUser(authentication);
       ReservationEntity reservation = reservationService.getEntityById(id);
@@ -104,11 +151,19 @@ public class ReservationController {
   }
 
   @GetMapping("/availability")
+  @Operation(
+      summary = "Consultar disponibilidad de una pista",
+      description = "Devuelve las franjas horarias disponibles y ocupadas de una pista específica en una fecha concreta."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Disponibilidad obtenida correctamente"),
+      @ApiResponse(responseCode = "400", description = "Parámetros inválidos"),
+      @ApiResponse(responseCode = "404", description = "Pista no encontrada")
+  })
   public List<AvailabilitySlotResponse> getAvailability(
-      @RequestParam UUID courtId,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+      @Parameter(description = "ID UUID de la pista") @RequestParam UUID courtId,
+      @Parameter(description = "Fecha en formato YYYY-MM-DD") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
   ) {
     return reservationService.getAvailability(courtId, date);
   }
 }
-

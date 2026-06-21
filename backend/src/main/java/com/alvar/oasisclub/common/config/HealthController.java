@@ -13,8 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
+@Tag(name = "Health Check", description = "Verificación de estado e integraciones de la plataforma")
 public class HealthController {
 
   private static final Logger log = LoggerFactory.getLogger(HealthController.class);
@@ -36,6 +39,10 @@ public class HealthController {
   }
 
   @GetMapping("/health")
+  @Operation(
+      summary = "Verificar estado del sistema",
+      description = "Verifica el estado del backend, conectividad con Stripe y discrepancias en los webhooks."
+  )
   public ResponseEntity<Map<String, Object>> health() {
     Map<String, Object> body = new HashMap<>();
 
