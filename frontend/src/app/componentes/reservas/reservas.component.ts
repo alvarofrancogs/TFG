@@ -95,7 +95,19 @@ export class ReservasComponent implements OnInit {
 
     this.reservationsService.getAvailability(court.id, dateStr).subscribe({
       next: (slots) => {
-        const sortedSlots = [...slots].sort((a, b) => a.time.localeCompare(b.time));
+        const now = new Date();
+        const selected = this.selectedDate();
+        const isToday = now.getFullYear() === selected.getFullYear()
+          && now.getMonth() === selected.getMonth()
+          && now.getDate() === selected.getDate();
+
+        let valid = slots;
+        if (isToday) {
+          const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+          valid = slots.filter(s => s.time > currentTime);
+        }
+
+        const sortedSlots = [...valid].sort((a, b) => a.time.localeCompare(b.time));
         this.availableTimes.set(sortedSlots);
       },
       error: (err: unknown) => {
